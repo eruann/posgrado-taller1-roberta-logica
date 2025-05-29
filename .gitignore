@@ -1,0 +1,9 @@
+# Carpetas a ignorar
+archivados/
+data/
+
+# También es buena práctica ignorar archivos comunes
+__pycache__/
+*.pyc
+.DS_Store
+.env
