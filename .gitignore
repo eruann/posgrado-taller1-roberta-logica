@@ -1,9 +1,11 @@
 # Carpetas a ignorar
 archivados/
 data/
+mlruns/
 
 # También es buena práctica ignorar archivos comunes
 __pycache__/
 *.pyc
 .DS_Store
 .env
+.cursor/rules/datascientist.mdc

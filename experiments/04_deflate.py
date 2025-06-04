@@ -57,6 +57,7 @@ def parse_args():
     p.add_argument("--n_remove", type=int, default=3, help="Número de PCs a eliminar")
     p.add_argument("--batch_size", type=int, default=10000,
                    help="Número de filas por lote")
+    p.add_argument("--layer_num", type=int, default=12, help="Layer number to use (default: 12)")
     return p.parse_args()
 
 # ---------------------------------------------------------------------------
@@ -81,6 +82,7 @@ def main():
             "n_remove": args.n_remove,
             "batch_size": args.batch_size
         })
+        mlflow.log_param("layer_num", args.layer_num)
 
         # Iterate over record batches
         for batch in dataset.to_batches(batch_size=args.batch_size):
