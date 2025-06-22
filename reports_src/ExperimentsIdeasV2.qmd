@@ -1,0 +1,181 @@
+---
+title: "Experiments Ideas"
+date: "2025-06-17"
+author: "Matias Rodriguez"
+format: pdf
+output-dir: .
+geometry: "left=2cm,right=2cm,top=2cm,bottom=2cm"
+header-includes:
+  - \usepackage{geometry}
+  - \geometry{a4paper,margin=1in}
+---
+
+# Experiments Ideas
+
+## 0 Pipelines
+
+### 0.1 Pipeline original  
+1. Embeddings de las capas 9 – 12 de **RoBERTa** (768 dim).  
+2. PCA **o** ZCA-whitening → cortes en 1 / 5 / 50 dim **o** eliminación de 1 / 3 / 5 / 10 PCs dominantes.  
+3. UMAP (vecinos 15 / 100).  
+4. K-means (k = 3; Euclídea / Manhattan; con ZCA → Euclídea≈Mahalanobis).  
+5. Purity y NMI.
+
+### 0.2 Pipeline extendido  
+*Para estudiar la relación inferencial explícita.*
+
+| Variante | Definición | Dimensión |
+|----------|-----------|-----------|
+|**Concatenado**|$\mathbf p\,\|\,\mathbf c\,\|\,\mathbf d$|2304|
+|**Diferencia**|$\mathbf d=\mathbf c-\mathbf p$|768|
+
+Los pasos 2 – 5 del pipeline original se aplican igual a cada variante.
+
+---
+
+## 1 Centrado + normalización (All-but-mean)
+
+**Objetivo**  
+Eliminar el sesgo global que empuja todos los vectores hacia la misma dirección (“cono” anisotrópico) y fijar norma 1 para comparabilidad.
+
+**Pasos**
+
+$$
+\mu^{(\ell)} \;=\; \frac{1}{N}\sum_{i=1}^{N}\mathbf v^{(\ell)}_{i}
+$$
+
+$$
+\mathbf v^{(\ell)}_{i} \;\leftarrow\;
+\frac{\mathbf v^{(\ell)}_{i}-\mu^{(\ell)}}{\lVert \mathbf v^{(\ell)}_{i}-\mu^{(\ell)} \rVert_2}
+$$
+
+**Inserción**  Antes de cualquier otra técnica; sobre 768 o 2304 dim, según el vector.
+
+**Lectura**  Mu et al., 2017 — “All-but-the-Top” <https://arxiv.org/abs/1702.01417>
+
+---
+
+## 2 Eliminación de *k* PCs dominantes
+
+**Objetivo**  
+Quitar las direcciones que concentran la mayor varianza residual y mejorar la discriminabilidad angular.
+
+$$
+\mathbf v \leftarrow \mathbf v-\sum_{j=1}^{k}(\mathbf v\!\cdot\!\mathbf u_j)\,\mathbf u_j,
+\qquad k\in\{1,3,5,10\}.
+$$
+
+* Concatenado: probar $k=5,10$.  
+* Diferencia: probar $k=1,3$.
+
+**Lectura**  Ethayarajh, 2019 <https://arxiv.org/abs/1909.00512>
+
+---
+
+## 3 ZCA-whitening global
+
+**Objetivo**  
+Igualar la varianza en todas las direcciones para imponer isotropía y revelar señales semántico-lógicas ocultas.
+
+$$
+\mathbf v' \;=\; \Sigma^{-1/2}\,\mathbf v
+$$
+
+* Concatenado: aplicar **siempre**.  
+* Diferencia: aplicar **solo** si Purity < 0.35 tras §2.
+
+**Lectura**  Cai et al., 2021 <https://openreview.net/forum?id=xYGNO86OWDH>
+
+---
+
+## 4 Isotropía local por clúster (Cluster-PCA + nulling)
+
+**Objetivo**  
+Eliminar conos locales dentro de subgrupos léxicos que persisten tras el ajuste global.
+
+**Pasos**
+
+1. K-means grande ($K=100$).  
+2. Anular 1–2 PCs de cada clúster.  
+3. Renormalizar.
+
+* Concatenado: aplicar.  
+* Diferencia: solo si Purity < 0.35.
+
+**Lectura**  Rajaee & Pilehvar, 2021 <https://arxiv.org/abs/2106.01183>
+
+---
+
+## 5 Supresión de dimensiones *outlier*
+
+**Objetivo**  
+Apagar dimensiones fuera de escala que distorsionan las distancias.
+
+**Pasos**
+
+1. Media y $\sigma$ por dimensión (tras centrado).  
+2. Si $\lvert v_d\rvert>3\sigma_d$ en ≥ 80 % de los ejemplos, fijar $v_d=0$.  
+3. Renormalizar.
+
+* Concatenado: aplicar.  
+* Diferencia: raramente necesario.
+
+**Lectura**  Hämmerl et al., 2023 <https://alexfraser.github.io/pubs/haemmerl_findings_acl2023_outliers.pdf>
+
+---
+
+## 6 Residualización de centroides + re-clustering
+
+**Objetivo**  
+Suprimir la dirección interna de cada clúster para descubrir sub-estructuras finas.
+
+$$
+\tilde{\mathbf x}= \mathbf x - c_{\text{label}(\mathbf x)},\qquad
+\lVert \tilde{\mathbf x} \rVert_2 = 1
+$$
+
+Aplicar tras el K-means base; repetir 1–2 iteraciones cuando Purity > 0.40.
+
+**Lectura**  Miklautz et al., 2024 <https://arxiv.org/abs/2411.02275>
+
+---
+
+## 7 Linear Discriminant Analysis (LDA)
+
+**Objetivo**  
+Máxima separación lineal entre clases SNLI; útil para visualización 2-D o como proyección previa.
+
+* Concatenado: aporta vistas limpias 2-D.  
+* Diferencia: suele superar UMAP linealmente.
+
+**Lecturas**  
+Fisher, 1936 <https://royalsocietypublishing.org/doi/10.1098/rspl.1936.0051>  
+scikit-learn LDA <https://scikit-learn.org/stable/modules/lda_qda.html>
+
+---
+
+## 8 Construcción práctica de vectores
+
+```python
+p = embed(premise)        # (768,)
+c = embed(conclusion)     # (768,)
+d = c - p                 # diferencia (768,)
+
+concatenado = np.concatenate([p, c, d])  # (2304,)
+```
+
+# 1 Centrar + normalizar.
+
+# 2 PC-drop según §2.
+
+# 3 ZCA según §3.
+
+# 4 UMAP → K-means → Purity / NMI.
+
+Bibliografía adicional
+
+* Nie et al., 2020 — “On the Delta Embedding of Premise–Hypothesis Pairs” https://arxiv.org/abs/2010.04245
+
+* Reimers & Gurevych, 2019 — Sentence-BERT https://arxiv.org/abs/1908.10084
+
+* Ethayarajh, 2019 — sección 5 https://arxiv.org/abs/1909.00512
