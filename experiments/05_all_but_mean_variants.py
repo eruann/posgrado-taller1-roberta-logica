@@ -120,6 +120,21 @@ def apply_normalization(premise_emb, hypothesis_emb, delta_emb, norm_type):
         else:
             raise ValueError(f"Unknown normalization type: {norm_type}")
         
+        # Apply L2 normalization only to 'all_but_mean' and 'per_type'
+        if norm_type in ['all_but_mean', 'per_type']:
+            # L2 normalize each vector to unit length
+            premise_norms = cp.linalg.norm(norm_premise, axis=1, keepdims=True)
+            premise_norms = cp.where(premise_norms < 1e-10, 1.0, premise_norms)
+            norm_premise = norm_premise / premise_norms
+            
+            hypothesis_norms = cp.linalg.norm(norm_hypothesis, axis=1, keepdims=True)
+            hypothesis_norms = cp.where(hypothesis_norms < 1e-10, 1.0, hypothesis_norms)
+            norm_hypothesis = norm_hypothesis / hypothesis_norms
+            
+            delta_norms = cp.linalg.norm(norm_delta, axis=1, keepdims=True)
+            delta_norms = cp.where(delta_norms < 1e-10, 1.0, delta_norms)
+            norm_delta = norm_delta / delta_norms
+        
         # Validate outputs
         for name, emb in [('premise', norm_premise), ('hypothesis', norm_hypothesis), ('delta', norm_delta)]:
             if cp.any(cp.isnan(emb)) or cp.any(cp.isinf(emb)):
@@ -358,7 +373,10 @@ def main():
     # Set up MLflow
     mlflow.set_experiment(args.experiment_name)
     
-    with mlflow.start_run():
+    # Create descriptive run name
+    run_name = f"{args.normalization_type}_layer{args.layer_num}"
+    
+    with mlflow.start_run(run_name=run_name):
         start_time = time.time()
         
         # Log parameters

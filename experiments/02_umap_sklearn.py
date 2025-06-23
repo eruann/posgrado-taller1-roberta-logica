@@ -133,7 +133,7 @@ def main():
         out_path.parent.mkdir(parents=True, exist_ok=True)
         final_df.to_parquet(out_path)
         print(f"UMAP results saved to: {out_path}")
-        mlflow.log_artifact(str(out_path), "umap_embeddings")
+        mlflow.log_artifact(str(out_path), "umap_embeddings", copy=False)
 
         # Log data quality metrics
         mlflow.log_metric("output_rows", len(final_df))

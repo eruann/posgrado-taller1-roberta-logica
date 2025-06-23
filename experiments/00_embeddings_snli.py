@@ -157,7 +157,7 @@ def main():
         tok = RobertaTokenizer.from_pretrained("roberta-base")
         model = RobertaModel.from_pretrained("roberta-base", torch_dtype=dtype).to(args.device).eval()
         ds = load_dataset_with_mapping(args.source_path, args.dataset)
-        mlflow.log_metric("n_samples", len(ds))
+        mlflow.log_metric("n_samples", int(len(ds)))
 
         # Ensure output directory exists
         out_dir = Path(args.out)
@@ -176,8 +176,9 @@ def main():
             
             # Process each layer
             for layer_idx, (p_vec, c_vec) in enumerate(zip(p_vecs, c_vecs)):
-                diff = p_vec - c_vec
-                tmp_vecs[layer_idx].append(torch.cat([p_vec, c_vec, diff], dim=1))
+                # Concatenate premise, conclusion, and delta vectors
+                concatenated_vectors = torch.cat([p_vec, c_vec, (p_vec - c_vec)], dim=1)
+                tmp_vecs[layer_idx].append(concatenated_vectors)
             
             tmp_labels.extend(list(ds["label"][i:i+args.batch_size]))
 
@@ -186,14 +187,15 @@ def main():
             if finished_batch % args.save_every == 0 or is_last:
                 # Save each layer separately
                 for layer_idx in range(13):
-                    part_df = pd.DataFrame({
-                        "vector": torch.cat(tmp_vecs[layer_idx]).cpu().float().numpy().tolist(),
-                        "label": tmp_labels,
-                    })
+                    # Create a wide DataFrame directly from the tensor
+                    vectors_tensor = torch.cat(tmp_vecs[layer_idx]).cpu().float().numpy()
+                    n_features = vectors_tensor.shape[1]
+                    part_df = pd.DataFrame(vectors_tensor, columns=[f'feature_{j}' for j in range(n_features)])
+                    part_df['label'] = tmp_labels
+                    
                     part_name = f"embeddings_{args.dataset}_layer_{layer_idx}_part{part_idx:04d}.parquet"
                     part_path = out_dir / part_name
                     part_df.to_parquet(part_path)
-                    mlflow.log_artifact(str(part_path), artifact_path=f"partials/layer_{layer_idx}", copy=False)
                     part_paths.append(part_path)
                 
                 # Reset storage
@@ -203,27 +205,20 @@ def main():
 
         # Combine parts for each layer
         for layer_idx in range(13):
-            layer_parts = [p for p in part_paths if f"_layer_{layer_idx}_" in str(p)]
-            # Combine partial files
-            print(f"  Combinando {len(layer_parts)} archivos parciales...")
-            combined_vectors = []
-            for part_path in layer_parts:
-                part_df = pd.read_parquet(part_path)
-                combined_vectors.append(part_df)
-                # Eliminar archivo parcial después de leerlo
-                part_path.unlink()
+            layer_parts = sorted([p for p in part_paths if f"_layer_{layer_idx}_" in str(p)])
+            if not layer_parts: continue
             
-            # Combine and save
-            combined_df = pd.concat(combined_vectors, ignore_index=True)
+            print(f"Combining {len(layer_parts)} partial files for layer {layer_idx}...")
+            combined_df = pd.concat([pd.read_parquet(p) for p in layer_parts], ignore_index=True)
+            
+            # Delete partial files
+            for p in layer_parts:
+                p.unlink()
+
             layer_out_path = out_dir / f"embeddings_{args.dataset}_layer_{layer_idx}.parquet"
             combined_df.to_parquet(layer_out_path)
-            print(f"  ✅ Guardado en {layer_out_path}")
-            
-            # Log final file only
-            try:
-                mlflow.log_artifact(str(layer_out_path), artifact_path="embeddings", copy=False)
-            except Exception:
-                print("⚠️ No se pudo loguear el archivo final en MLflow")
+            print(f"  ✅ Layer {layer_idx} saved to {layer_out_path}")
+            mlflow.log_artifact(str(layer_out_path), artifact_path=f"embeddings/layer_{layer_idx}", copy=False)
 
 
 if __name__ == "__main__":

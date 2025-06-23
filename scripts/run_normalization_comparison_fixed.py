@@ -102,11 +102,11 @@ def main():
     print(f"Using source file: {source_file}")
     
     # Test configurations (reduced for quick comparison)
-    normalization_types = ['none', 'per_type', 'standard', 'all_but_mean']  # Re-added all_but_mean with fixed columns
-    pca_components = [50]  # Single PCA config for quick comparison
-    slice_values = [0, 5]  # Test both unsliced and sliced
-    umap_neighbors = [100]  # Single neighbor config
-    umap_metrics = ['euclidean']  # Single metric
+    normalization_types = ['per_type', 'all_but_mean']  # Re-added all_but_mean with fixed columns , ['none','standard','per_type','all_but_mean']
+    pca_components = [50,150]  # Single PCA config for quick comparison
+    slice_values = [0, 7]  # Test both unsliced and sliced
+    umap_neighbors = [15,100]  # Single neighbor config
+    umap_metrics = ['euclidean', 'manhattan']  # Single metric
     
     print(f"\n{'='*60}")
     print(f"NORMALIZATION COMPARISON PIPELINE")

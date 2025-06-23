@@ -1,309 +1,470 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
-experiments/01_pca.py – PCA and ZCA GPU-only (cuML) con float32
-====================================================
-Uso:
------
-python experiments/01_pca.py \
-       --source_path data/snli_train_embeddings.parquet \
-       --out data/snli_train_pca50.parquet \
-       --n_components 50 \
-       --experiment_name "pca-only-gpu-deflated-SNLI" \
-       --precision fp32 \
-       --batch_size 10000 \
-       --dataset snli
-
-Parámetros:
-----------
---source_path: Parquet de entrada con columnas 'vector','label'
---out: Parquet de salida PCA/ZCA
---n_components: Número de componentes PCA (default: 50)
---experiment_name: Nombre del experimento en MLflow (default: "pca-only-gpu-deflated-SNLI")
---precision: Precisión de punto flotante (choices: fp32, fp16, default: fp32)
---batch_size: Tamaño del batch para procesamiento en chunks (default: 10000)
---dataset: Nombre del dataset (ej: snli, mnli, etc, default: snli)
-
-Características:
---------------
-* Ejecuta PCA exclusivamente en GPU usando **cuML**, cargando los datos
-  como **float32** para reducir uso de memoria.
-* Registra un run en MLflow con todos los parámetros y métricas.
-* Guarda curva de varianza `plots/evr_curve.png` y tabla de varianza.
-* Artefacto principal: Parquet con vectores reducidos.
-* Optimización automática del tamaño de batch según memoria disponible.
+experiments/01_pca.py – GPU-Optimized PCA for Large Datasets
+============================================================
+Pure cuDF/cuML implementation for 550k samples × 2304 features on 10GB GPU.
 """
-
 import argparse
+import json
+import os
+import sys
 import time
 from pathlib import Path
+import gc
 
+import cudf
+import cupy as cp
 import numpy as np
-import pandas as pd
-import matplotlib
-# Use Agg backend to avoid Qt plugin errors
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-from tqdm import tqdm 
+from cuml.decomposition import PCA as GPU_PCA
+from cuml.decomposition import IncrementalPCA as GPU_IncrementalPCA
 import mlflow
 
-# ---------------------------------------------------------------------------
-# GPU-only PCA
-# ---------------------------------------------------------------------------
-try:
-    import cupy as cp
-    from cuml.decomposition import PCA as GPU_PCA
-except ImportError:
-    raise ImportError(
-        "cuML GPU PCA no disponible: instala cuml y verifica tu entorno CUDA/GPU"
-    )
+import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('Agg')
 
-# Force MLflow to use local mlruns directory (WSL-safe)
-tracking_dir = Path.cwd().joinpath("mlruns")
-mlflow.set_tracking_uri(tracking_dir.as_uri())
+def get_gpu_memory_gb():
+    """Get available GPU memory in GB"""
+    try:
+        mempool = cp.get_default_memory_pool()
+        device = cp.cuda.Device()
+        total_memory = device.mem_info[1]  # Total memory in bytes
+        return total_memory / (1024**3)  # Convert to GB
+    except Exception as e:
+        print(f"Warning: Could not detect GPU memory, defaulting to 8GB: {e}")
+        return 8.0  # Conservative default
 
-# ---------------------------------------------------------------------------
-# CLI
-# ---------------------------------------------------------------------------
+def calculate_optimal_chunk_size(n_features: int, gpu_memory_gb: float, mode: str = "medium") -> int:
+    """Calculate optimal chunk size based on GPU memory and data dimensions"""
+    
+    # Memory utilization factors for different modes
+    utilization_factors = {
+        "small": 0.15,   # Very conservative - 15% of GPU memory
+        "medium": 0.30,  # Balanced - 30% of GPU memory  
+        "large": 0.50    # Aggressive - 50% of GPU memory
+    }
+    
+    if mode not in utilization_factors:
+        print(f"Warning: Unknown mode '{mode}', using 'medium'")
+        mode = "medium"
+    
+    utilization_factor = utilization_factors[mode]
+    
+    # Memory overhead factor (accounts for intermediate computations, copies, etc.)
+    memory_overhead = 4.0  # Conservative 4x overhead
+    
+    # Calculate chunk size
+    # Formula: (GPU_memory * utilization) / (features * bytes_per_float * overhead)
+    available_memory_bytes = gpu_memory_gb * utilization_factor * (1024**3)
+    memory_per_sample = n_features * 4 * memory_overhead  # 4 bytes for float32
+    
+    optimal_chunk_size = int(available_memory_bytes / memory_per_sample)
+    
+    # Apply reasonable bounds
+    min_chunk_size = 1000
+    max_chunk_size = 100000
+    
+    chunk_size = max(min_chunk_size, min(max_chunk_size, optimal_chunk_size))
+    
+    print(f"GPU Memory: {gpu_memory_gb:.1f}GB, Mode: {mode}")
+    print(f"Calculated chunk size: {chunk_size:,} samples")
+    print(f"Estimated memory usage: {(chunk_size * memory_per_sample / (1024**3)):.2f}GB")
+    
+    return chunk_size
+
 def parse_args():
-    parser = argparse.ArgumentParser(description="PCA/ZCA GPU-only con cuML (float32)")
-    parser.add_argument("--source_path", dest="inp", required=True,
-                        help="Parquet de entrada con columnas 'vector','label'")
-    parser.add_argument("--out", required=True, help="Parquet de salida PCA/ZCA")
-    parser.add_argument("--n_components", type=int, default=50,
-                        help="Número de componentes PCA")
-    parser.add_argument("--experiment_name", default="pca-only-gpu-deflated-SNLI")
-    parser.add_argument("--precision", choices=["fp32", "fp16"], default="fp32",
-                        help="Precisión de punto flotante")
-    parser.add_argument("--batch_size", type=int, default=10000,
-                        help="Tamaño del batch para procesamiento en chunks")
-    parser.add_argument("--dataset", default="snli", 
-                        help="Nombre del dataset (ej: snli, mnli, etc)")
-    parser.add_argument("--layer_num", type=int, default=12, help="Layer number to use (default: 12)")
+    parser = argparse.ArgumentParser(description="GPU-optimized PCA for large datasets")
+    parser.add_argument("--source_path", required=True, help="Input parquet with vectors and 'label'")
+    parser.add_argument("--out", required=True, help="Output parquet file path")
+    parser.add_argument("--n_components", type=int, default=50, help="Number of PCA components")
+    parser.add_argument("--chunk_size_mode", default="medium", choices=["small", "medium", "large"], 
+                       help="Intelligent chunk sizing: small (conservative), medium (balanced), large (aggressive)")
+    parser.add_argument("--experiment_name", default="pca-gpu")
+    parser.add_argument("--dataset", required=True, help="Dataset name")
+    parser.add_argument("--layer_num", type=int, required=True, help="Embedding layer number")
+    parser.add_argument("--provenance", default="{}", help="Provenance JSON string")
     return parser.parse_args()
 
-# ---------------------------------------------------------------------------
-# Plot EVR curve
-# ---------------------------------------------------------------------------
-def plot_evr(evr_cum, out_png, reduction_type="PCA"):
-    plt.figure(figsize=(10, 6))
-    plt.plot(np.arange(1, len(evr_cum) + 1), evr_cum * 100, marker="o")
-    plt.axhline(90, ls="--", color="gray", label="90% varianza")
-    plt.axhline(80, ls="--", color="gray", alpha=0.5, label="80% varianza")
-    plt.axhline(70, ls="--", color="gray", alpha=0.3, label="70% varianza")
-    
-    # Add annotations for key points
-    key_points = [0.5, 0.6, 0.7, 0.8, 0.9]  # 50%, 60%, 70%, 80%, 90%
-    for threshold in key_points:
-        idxs = np.where(evr_cum >= threshold)[0]
-        if len(idxs) > 0:  # Only annotate if threshold is reached
-            idx = idxs[0]
-            plt.plot(idx + 1, evr_cum[idx] * 100, 'ro')
-            plt.annotate(f'{int(evr_cum[idx]*100)}% ({idx+1} dim)',
-                        xy=(idx + 1, evr_cum[idx] * 100),
-                        xytext=(10, 10), textcoords='offset points')
-    
-    plt.xlabel("Número de Componentes")
-    plt.ylabel("Varianza Acumulada (%)")
-    plt.title(f"Varianza Acumulada {reduction_type} (GPU, float32)")
-    plt.legend()
-    plt.grid(True, alpha=0.3)
-    plt.tight_layout()
-    plt.savefig(out_png, dpi=120)
-    plt.close()
+def log_scalar(key, value):
+    """Log scalar values handling cupy and numpy types"""
+    if hasattr(value, 'item'):
+        value = value.item()
+    elif isinstance(value, (cp.ndarray, np.ndarray)) and value.ndim == 0:
+        value = float(value)
+    mlflow.log_metric(key, value)
 
-    # Create and save variance table as CSV with consistent naming
-    variance_data = []
-    for i, var in enumerate(evr_cum):
-        if i < 10 or var >= 0.5 or i % 10 == 0:  # Show first 10, every 10th, and key points
-            variance_data.append({
-                'componentes': i + 1,
-                'varianza_acumulada': var * 100
-            })
-        if var >= 0.95:  # Stop at 95%
-            break
-    
-    # Save as CSV with matching name
-    variance_csv = out_png.with_name(out_png.stem.replace('_evr_curve', '_variance_table') + '.csv')
-    variance_df = pd.DataFrame(variance_data)
-    variance_df.to_csv(variance_csv, index=False)
-    
-    # Log to MLflow
+def aggressive_cleanup():
+    """Aggressive GPU memory cleanup"""
+    gc.collect()
+    cp.get_default_memory_pool().free_all_blocks()
+    cp.get_default_pinned_memory_pool().free_all_blocks()
+    cp.cuda.Device().synchronize()
+
+def create_variance_plot(explained_variance_ratio, output_path):
+    """Create and save explained variance plot"""
     try:
-        mlflow.log_artifact(str(variance_csv), artifact_path="variance_tables")
-    except Exception:
-        print("⚠️ No se pudo loguear la tabla de varianza en MLflow")
+        # Convert to numpy
+        if hasattr(explained_variance_ratio, 'values'):
+            variance_ratio = cp.asnumpy(explained_variance_ratio.values)
+        else:
+            variance_ratio = cp.asnumpy(explained_variance_ratio)
+        
+        cumulative_variance = np.cumsum(variance_ratio)
+        
+        # Create plot
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
+        
+        # Individual variance
+        ax1.bar(range(1, len(variance_ratio) + 1), variance_ratio * 100)
+        ax1.set_xlabel('Principal Component')
+        ax1.set_ylabel('Variance Explained (%)')
+        ax1.set_title('Individual Variance Explained')
+        ax1.grid(True, alpha=0.3)
+        
+        # Cumulative variance
+        ax2.plot(range(1, len(cumulative_variance) + 1), cumulative_variance * 100, 'bo-')
+        ax2.set_xlabel('Number of Components')
+        ax2.set_ylabel('Cumulative Variance Explained (%)')
+        ax2.set_title('Cumulative Variance Explained')
+        ax2.axhline(y=80, color='r', linestyle='--', alpha=0.7, label='80%')
+        ax2.axhline(y=95, color='g', linestyle='--', alpha=0.7, label='95%')
+        ax2.legend()
+        ax2.grid(True, alpha=0.3)
+        
+        plt.tight_layout()
+        plt.savefig(output_path, dpi=150, bbox_inches='tight')
+        plt.close()
+        
+        print(f"📊 Variance plot saved: {output_path}")
+        mlflow.log_artifact(str(output_path))
+        return True
+        
+    except Exception as e:
+        print(f"⚠️  Failed to create variance plot: {e}")
+        return False
 
-# ---------------------------------------------------------------------------
-# Main
-# ---------------------------------------------------------------------------
+def process_pca_gpu(input_path: str, output_path: str, n_components: int, chunk_size_mode: str = "medium") -> dict:
+    """Main PCA processing function with GPU optimization"""
+    print(f"Loading data from {input_path}")
+    
+    # Load data
+    df = cudf.read_parquet(input_path)
+    if df.empty:
+        raise ValueError("Input data is empty")
+    
+    feature_cols = [col for col in df.columns if col != 'label']
+    n_samples, n_features = len(df), len(feature_cols)
+    
+    print(f"Data shape: {n_samples:,} samples × {n_features:,} features")
+    print(f"Target components: {n_components}")
+    
+    # Use intelligent chunk sizing
+    gpu_memory_gb = get_gpu_memory_gb()
+    chunk_size = calculate_optimal_chunk_size(n_features, gpu_memory_gb, chunk_size_mode)
+    
+    # Memory estimation
+    memory_needed_gb = (n_samples * n_features * 4) / (1024**3)  # float32
+    print(f"Estimated memory needed: {memory_needed_gb:.2f} GB")
+    
+    # Use incremental PCA for datasets > 3GB (conservative for 10GB GPU)
+    use_incremental = memory_needed_gb > 3.0
+    
+    if use_incremental:
+        print("Using Incremental PCA for large dataset")
+        return _process_incremental_pca(df, feature_cols, output_path, n_components, chunk_size)
+    else:
+        print("Using Standard PCA for smaller dataset")
+        return _process_standard_pca(df, feature_cols, output_path, n_components)
 
-def estimate_memory_requirements(n_samples, n_features, n_components, dtype=np.float32):
-    # Input data size
-    input_size = n_samples * n_features * dtype().itemsize
-    # Output data size (reduced dimensions)
-    output_size = n_samples * n_components * dtype().itemsize
-    # PCA components size
-    components_size = n_features * n_components * dtype().itemsize
-    # Total GPU memory needed (rough estimate)
-    total_gpu = input_size + output_size + components_size
+def _process_standard_pca(df, feature_cols, output_path, n_components):
+    """Standard PCA for smaller datasets"""
+    # Extract and normalize data
+    X = df[feature_cols].values.astype('float64')
+    
+    # Input validation and cleaning
+    if cp.any(cp.isnan(X)) or cp.any(cp.isinf(X)):
+        print("Warning: NaN/Inf values detected, cleaning data")
+        X = cp.nan_to_num(X, nan=0.0, posinf=1e10, neginf=-1e10)
+    
+    # Normalize: center and scale
+    print("Normalizing data...")
+    mean_vals = cp.mean(X, axis=0)
+    std_vals = cp.std(X, axis=0)
+    std_vals = cp.where(std_vals < 1e-7, 1.0, std_vals)  # Avoid division by zero
+    X_normalized = (X - mean_vals) / std_vals
+    
+    # Fit PCA
+    print("Fitting PCA...")
+    pca = GPU_PCA(n_components=n_components, svd_solver='full')
+    X_pca = pca.fit_transform(X_normalized)
+    
+    # Output validation
+    if cp.any(cp.isnan(X_pca)) or cp.any(cp.isinf(X_pca)):
+        raise ValueError("PCA transformation produced NaN/Inf values")
+    
+    # Create output DataFrames
+    pca_df = cudf.DataFrame({
+        f'PCA_{i+1}': X_pca[:, i].astype('float32') for i in range(n_components)
+    })
+    pca_df['label'] = df['label'].values
+    
+    # Create ZCA (whitened) variant
+    eigenvalues = pca.explained_variance_
+    eigenvalues = cp.where(eigenvalues < 1e-10, 1e-10, eigenvalues)
+    whitening_matrix = pca.components_.T * cp.sqrt(1.0 / eigenvalues)
+    X_zca = cp.dot(X_pca, whitening_matrix.T)
+    
+    zca_df = cudf.DataFrame({
+        f'PCA_{i+1}': X_zca[:, i].astype('float32') for i in range(n_components)
+    })
+    zca_df['label'] = df['label'].values
+    
+    # Save both variants
+    base_path = Path(output_path)
+    pca_path = base_path.parent / f"pca_{base_path.name}"
+    zca_path = base_path.parent / f"zca_{base_path.name}"
+    
+    print(f"Saving PCA results to {pca_path}")
+    pca_df.to_parquet(pca_path)
+    
+    print(f"Saving ZCA results to {zca_path}")
+    zca_df.to_parquet(zca_path)
+    
+    # Create variance plots for both variants
+    pca_plot_path = base_path.parent / f"pca_variance_{base_path.stem}.png"
+    zca_plot_path = base_path.parent / f"zca_variance_{base_path.stem}.png"
+    create_variance_plot(pca.explained_variance_ratio_, pca_plot_path)
+    create_variance_plot(pca.explained_variance_ratio_, zca_plot_path)
+    
+    # Cleanup
+    del X, X_normalized, X_pca, X_zca
+    aggressive_cleanup()
+    
     return {
-        'input_size_gb': input_size / (1024**3),
-        'output_size_gb': output_size / (1024**3),
-        'components_size_gb': components_size / (1024**3),
-        'total_gpu_gb': total_gpu / (1024**3)
+        'explained_variance_ratio': pca.explained_variance_ratio_.tolist(),
+        'total_explained_variance': float(cp.sum(pca.explained_variance_ratio_)),
+        'n_components_used': n_components,
+        'method': 'standard_pca',
+        'variants_created': ['pca', 'zca'],
+        'pca_path': str(pca_path),
+        'zca_path': str(zca_path)
     }
 
-def get_optimal_batch_size(n_features, n_components, available_memory_gb=56):
-    # Estimate memory per sample
-    memory_per_sample = (n_features + n_components) * 4  # 4 bytes for float32
-    # Leave 20% buffer for other operations
-    safe_memory = available_memory_gb * 0.8 * (1024**3)
-    # Calculate optimal batch size
-    optimal_batch_size = int(safe_memory / memory_per_sample)
-    return min(optimal_batch_size, 10000)  # Cap at 10000
-
-def process_in_chunks(X_np, batch_size, pca, is_zca=False):
-    n_rows = X_np.shape[0]
-    n_chunks = (n_rows + batch_size - 1) // batch_size
-    results = []
+def _process_incremental_pca(df, feature_cols, output_path, n_components, chunk_size):
+    """Incremental PCA for large datasets with chunked processing"""
+    n_samples = len(df)
+    n_features = len(feature_cols)
     
-    for i in tqdm(range(0, n_rows, batch_size), 
-                 desc="Processing chunks",
-                 total=n_chunks):
-        chunk = X_np[i:i+batch_size]
-        # Process chunk
-        chunk_gpu = cp.asarray(chunk)
-        chunk_result = pca.transform(chunk_gpu)
-        results.append(cp.asnumpy(chunk_result))
-        # Clear GPU memory
-        del chunk_gpu
-        cp.get_default_memory_pool().free_all_blocks()
+    print(f"Processing {n_samples:,} samples in chunks of {chunk_size:,}")
+    
+    # First pass: compute global statistics for normalization
+    print("Computing global statistics...")
+    mean_vals = cp.zeros(n_features, dtype='float64')
+    var_vals = cp.zeros(n_features, dtype='float64')
+    
+    for start_idx in range(0, n_samples, chunk_size):
+        end_idx = min(start_idx + chunk_size, n_samples)
+        chunk_data = df.iloc[start_idx:end_idx][feature_cols].values.astype('float64')
         
-    return np.vstack(results)
+        chunk_mean = cp.mean(chunk_data, axis=0)
+        chunk_var = cp.var(chunk_data, axis=0)
+        chunk_size_actual = end_idx - start_idx
+        
+        mean_vals += chunk_mean * chunk_size_actual
+        var_vals += chunk_var * chunk_size_actual
+        
+        del chunk_data
+        aggressive_cleanup()
+        
+        if start_idx % (chunk_size * 10) == 0:
+            print(f"  Statistics progress: {end_idx:,}/{n_samples:,}")
+    
+    mean_vals /= n_samples
+    var_vals /= n_samples
+    std_vals = cp.sqrt(var_vals)
+    std_vals = cp.where(std_vals < 1e-7, 1.0, std_vals)
+    
+    print("Global statistics computed")
+    
+    # Second pass: fit incremental PCA
+    print("Fitting Incremental PCA...")
+    pca = GPU_IncrementalPCA(n_components=n_components, batch_size=chunk_size)
+    
+    for start_idx in range(0, n_samples, chunk_size):
+        end_idx = min(start_idx + chunk_size, n_samples)
+        chunk_data = df.iloc[start_idx:end_idx][feature_cols].values.astype('float64')
+        
+        # Normalize chunk
+        chunk_normalized = (chunk_data - mean_vals) / std_vals
+        
+        # Partial fit
+        pca.partial_fit(chunk_normalized)
+        
+        del chunk_data, chunk_normalized
+        aggressive_cleanup()
+        
+        if start_idx % (chunk_size * 10) == 0:
+            print(f"  PCA fitting progress: {end_idx:,}/{n_samples:,}")
+    
+    print("Incremental PCA fitted")
+    
+    # Third pass: transform data for PCA variant
+    print("Transforming data for PCA variant...")
+    pca_chunks = []
+    
+    for start_idx in range(0, n_samples, chunk_size):
+        end_idx = min(start_idx + chunk_size, n_samples)
+        chunk_data = df.iloc[start_idx:end_idx][feature_cols].values.astype('float64')
+        
+        # Normalize and transform
+        chunk_normalized = (chunk_data - mean_vals) / std_vals
+        chunk_pca = pca.transform(chunk_normalized)
+        
+        # Create DataFrame chunk
+        chunk_df = cudf.DataFrame({
+            f'PCA_{i+1}': chunk_pca[:, i].astype('float32') for i in range(n_components)
+        })
+        chunk_df['label'] = df.iloc[start_idx:end_idx]['label'].values
+        
+        pca_chunks.append(chunk_df)
+        
+        del chunk_data, chunk_normalized, chunk_pca
+        aggressive_cleanup()
+        
+        if start_idx % (chunk_size * 10) == 0:
+            print(f"  PCA transform progress: {end_idx:,}/{n_samples:,}")
+    
+    # Combine PCA results
+    print("Combining PCA results...")
+    pca_df = cudf.concat(pca_chunks, ignore_index=True)
+    del pca_chunks
+    aggressive_cleanup()
+    
+    # Fourth pass: create ZCA variant
+    print("Creating ZCA variant...")
+    eigenvalues = pca.explained_variance_
+    eigenvalues = cp.where(eigenvalues < 1e-10, 1e-10, eigenvalues)
+    whitening_matrix = pca.components_.T * cp.sqrt(1.0 / eigenvalues)
+    
+    zca_chunks = []
+    for start_idx in range(0, n_samples, chunk_size):
+        end_idx = min(start_idx + chunk_size, n_samples)
+        chunk_data = df.iloc[start_idx:end_idx][feature_cols].values.astype('float64')
+        
+        # Normalize and transform to PCA space
+        chunk_normalized = (chunk_data - mean_vals) / std_vals
+        chunk_pca = pca.transform(chunk_normalized)
+        
+        # Apply whitening transformation for ZCA
+        chunk_zca = cp.dot(chunk_pca, whitening_matrix.T)
+        
+        # Create DataFrame chunk
+        chunk_df = cudf.DataFrame({
+            f'PCA_{i+1}': chunk_zca[:, i].astype('float32') for i in range(n_components)
+        })
+        chunk_df['label'] = df.iloc[start_idx:end_idx]['label'].values
+        
+        zca_chunks.append(chunk_df)
+        
+        del chunk_data, chunk_normalized, chunk_pca, chunk_zca
+        aggressive_cleanup()
+        
+        if start_idx % (chunk_size * 10) == 0:
+            print(f"  ZCA transform progress: {end_idx:,}/{n_samples:,}")
+    
+    # Combine ZCA results
+    print("Combining ZCA results...")
+    zca_df = cudf.concat(zca_chunks, ignore_index=True)
+    del zca_chunks
+    aggressive_cleanup()
+    
+    # Save both variants
+    base_path = Path(output_path)
+    pca_path = base_path.parent / f"pca_{base_path.name}"
+    zca_path = base_path.parent / f"zca_{base_path.name}"
+    
+    print(f"Saving PCA results to {pca_path}")
+    pca_df.to_parquet(pca_path)
+    
+    print(f"Saving ZCA results to {zca_path}")
+    zca_df.to_parquet(zca_path)
+    
+    # Create variance plots for both variants
+    pca_plot_path = base_path.parent / f"pca_variance_{base_path.stem}.png"
+    zca_plot_path = base_path.parent / f"zca_variance_{base_path.stem}.png"
+    create_variance_plot(pca.explained_variance_ratio_, pca_plot_path)
+    create_variance_plot(pca.explained_variance_ratio_, zca_plot_path)
+    
+    return {
+        'explained_variance_ratio': pca.explained_variance_ratio_.tolist(),
+        'total_explained_variance': float(cp.sum(pca.explained_variance_ratio_)),
+        'n_components_used': n_components,
+        'method': 'incremental_pca',
+        'variants_created': ['pca', 'zca'],
+        'pca_path': str(pca_path),
+        'zca_path': str(zca_path)
+    }
 
 def main():
     args = parse_args()
+    
+    # Set up MLflow
     mlflow.set_experiment(args.experiment_name)
     
-    # Load data as float32 to save memory
-    df = pd.read_parquet(args.inp)
-    X_np = np.vstack(df["vector"].values).astype("float32")
-    y = df["label"].values
-
-    n_samples, n_features = X_np.shape
+    # Create descriptive run name
+    run_name = f"{args.dataset}_{args.n_components}comp_layer{args.layer_num}"
     
-    # Store original batch_size if it might be adjusted
-    original_batch_size = args.batch_size
-    optimal_batch = get_optimal_batch_size(n_features, args.n_components)
-    batch_size_adjusted = False
-    if args.batch_size != optimal_batch:
-        print(f"Adjusting batch size from {args.batch_size} to {optimal_batch} for better memory usage")
-        args.batch_size = optimal_batch
-        batch_size_adjusted = True
-
-    # Process both PCA and ZCA
-    for reduction_type in ["pca", "zca"]:
-        print(f"\nProcessing {reduction_type.upper()}...")
+    with mlflow.start_run(run_name=run_name):
+        start_time = time.time()
         
-        # Ensure args.batch_size reflects the potentially adjusted value for run name
-        run_name = f"{reduction_type}_{args.dataset}_{args.n_components}_layer{args.layer_num}_batch{args.batch_size}"
-        with mlflow.start_run(run_name=run_name) as run:
-            # Log all CLI parameters for this specific run
-            # We will log original_batch_size separately if it was adjusted
-            temp_args_dict = vars(args).copy()
-            if batch_size_adjusted:
-                # Log the actual batch size used for computation under 'batch_size'
-                # And the original one separately
-                temp_args_dict['batch_size'] = args.batch_size # The (potentially) adjusted one
+        # Log parameters
+        mlflow.log_param("source_path", str(args.source_path))
+        mlflow.log_param("out", str(args.out))
+        mlflow.log_param("n_components", args.n_components)
+        mlflow.log_param("chunk_size_mode", args.chunk_size_mode)
+        mlflow.log_param("dataset", args.dataset)
+        mlflow.log_param("layer_num", args.layer_num)
+        
+        # Log provenance
+        try:
+            provenance = json.loads(args.provenance)
+            mlflow.log_params(provenance)
+        except json.JSONDecodeError:
+            print("Warning: Could not decode provenance JSON")
+        
+        # Set tags
+        mlflow.set_tag("experiment_name", args.experiment_name)
+        mlflow.set_tag("dataset", args.dataset)
+        mlflow.set_tag("layer_num", args.layer_num)
+        
+        try:
+            # Execute PCA
+            results = process_pca_gpu(
+                str(args.source_path), 
+                str(args.out), 
+                args.n_components,
+                args.chunk_size_mode
+            )
             
-            for k_arg, v_arg in temp_args_dict.items():
-                mlflow.log_param(k_arg, v_arg)
+            # Log results
+            for key, value in results.items():
+                if isinstance(value, (int, float)):
+                    log_scalar(key, value)
+                elif isinstance(value, list) and len(value) <= 100:  # Don't log huge arrays
+                    mlflow.log_param(key, str(value)[:500])  # Truncate if too long
+                else:
+                    mlflow.log_param(key, str(value))
             
-            if batch_size_adjusted:
-                mlflow.log_param("initial_requested_batch_size", original_batch_size)
+            # Log execution time
+            execution_time = time.time() - start_time
+            log_scalar("execution_time_seconds", execution_time)
             
-            mlflow.log_param("effective_batch_size", args.batch_size) # Log effective batch size for this run
-
-            # Log layer_num explicitly as it's key
-            mlflow.log_param("layer_num", args.layer_num)
-            # Set tags for this run
-            mlflow.set_tag("dataset", args.dataset)
-            mlflow.set_tag("experiment_name", args.experiment_name)
-            mlflow.set_tag("reduction_mode", reduction_type)
-
-            # Log dataset statistics per run
-            mlflow.log_param("n_samples", n_samples)
-            mlflow.log_param("n_features", n_features)
-            # n_components is already in temp_args_dict via vars(args)
-
-            # Calculate and log memory requirements for this specific type of PCA run
-            mem_req = estimate_memory_requirements(n_samples, n_features, args.n_components)
-            print(f"Memory requirements for {reduction_type.upper()}:")
-            for k_mem, v_mem in mem_req.items():
-                print(f"  {k_mem}: {v_mem:.2f} GB")
-                mlflow.log_metric(f"{reduction_type}_{k_mem}", v_mem)
-
-            # GPU PCA - First fit on a sample to get components
-            print("Fitting on sample...")
-            sample_size = min(10000, n_samples)
-            sample_indices = np.random.choice(n_samples, sample_size, replace=False)
-            X_sample = X_np[sample_indices]
-            X_sample_gpu = cp.asarray(X_sample)
-            if reduction_type == "zca":
-                print("Initializing PCA with whiten=True for ZCA.")
-                pca = GPU_PCA(n_components=args.n_components, random_state=42, whiten=True)
-            else:
-                # whiten defaults to False, so explicitly setting it is optional but clear
-                pca = GPU_PCA(n_components=args.n_components, random_state=42, whiten=False)
-            pca.fit(X_sample_gpu)
-            del X_sample_gpu
-            cp.get_default_memory_pool().free_all_blocks()
-
-            # Transform all data in chunks
-            print("Transforming data in chunks...")
-            start = time.perf_counter()
-            X_red = process_in_chunks(X_np, args.batch_size, pca, is_zca=(reduction_type=="zca"))
-            duration = time.perf_counter() - start
-            mlflow.log_metric(f"{reduction_type}_seconds", float(duration))
-
-            # Calculate explained variance
-            evr_cum = cp.asnumpy(cp.cumsum(pca.explained_variance_ratio_))
-            mlflow.log_metric(f"{reduction_type}_explained_variance_pct", float(evr_cum[-1] * 100))
-
-            # Save reduced Parquet
-            out_dir = Path(args.out).parent
-            out_dir.mkdir(parents=True, exist_ok=True)
+            print(f"✓ PCA completed successfully in {execution_time:.1f}s")
             
-            # Modified output path construction
-            base_out_path = Path(args.out) 
-            # Assumes args.out is like "dataset_ncomps_layer.parquet"
-            # Prepend reduction_type to the filename part.
-            out_path_name = f"{reduction_type}_{base_out_path.name}"
-            out_path = base_out_path.with_name(out_path_name)
-            
-            pd.DataFrame({
-                "vector": list(X_red),
-                "label": y
-            }).to_parquet(out_path)
-            # Don't log parquet to MLflow to avoid copies
-
-            # Save EVR curve
-            evr_png_name = f"evr_curve_{reduction_type}_{args.dataset}_{args.n_components}_layer{args.layer_num}.png"
-            evr_png = out_dir / evr_png_name
-            plot_evr(evr_cum, evr_png, reduction_type=reduction_type.upper())
-            mlflow.log_artifact(str(evr_png), artifact_path="plots")
-
-            # Save variance table as CSV
-            variance_csv_name = f"variance_table_{reduction_type}_{args.dataset}_{args.n_components}_layer{args.layer_num}.csv"
-            variance_csv = out_dir / variance_csv_name
-            variance_df = pd.DataFrame({
-                'componentes': np.arange(1, len(evr_cum) + 1),
-                'varianza_acumulada': evr_cum * 100
-            })
-            variance_df.to_csv(variance_csv, index=False)
-            mlflow.log_artifact(str(variance_csv), artifact_path="variance_tables")
-
-            print(f"✅ {reduction_type.upper()} GPU guardado en {out_path} – varianza acumulada {evr_cum[-1]*100:.2f}% (tiempo {duration:.1f}s)")
+        except Exception as e:
+            mlflow.log_param("error", str(e))
+            print(f"✗ PCA failed: {e}")
+            sys.exit(1)
 
 if __name__ == "__main__":
-    main()
+    main() 

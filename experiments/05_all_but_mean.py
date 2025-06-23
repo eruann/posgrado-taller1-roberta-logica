@@ -107,7 +107,7 @@ def main():
 
         print(f"Saving normalized data to {args.out_path}...")
         normalized_df.to_parquet(args.out_path)
-        mlflow.log_artifact(str(args.out_path), artifact_path="normalized_embeddings")
+        mlflow.log_artifact(str(args.out_path), artifact_path="normalized_embeddings", copy=False)
         
         print("Done.")
 

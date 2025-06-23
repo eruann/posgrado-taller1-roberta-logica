@@ -209,7 +209,7 @@ def main():
         # Estimate memory and adjust batch_size if needed
         mem_req = estimate_memory_requirements(n_samples, n_features, 2, dtype)
         for k, v in mem_req.items():
-            mlflow.log_metric(k, v)
+            mlflow.log_metric(k, float(v))
         optimal_batch = get_optimal_batch_size(n_features, 2)
         if args.batch_size != optimal_batch:
             mlflow.log_param("adjusted_batch_size", optimal_batch)

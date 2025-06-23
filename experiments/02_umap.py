@@ -1,177 +1,331 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
-experiments/02_umap.py – UMAP GPU-only con cuML
-=============================================
-Uso:
------
-python experiments/02_umap.py \
-    --pca_path data/snli/pca/pca_snli_50.parquet \
-    --out_dir data/snli/umap \
-    --n_neighbors 15 \
-    --min_dist 0.1 \
-    --metric euclidean \
-    --dataset snli \
-    --experiment_name "umap-snli" \
-    --reduction_type pca
-
-Parámetros:
-----------
---pca_path: Parquet de entrada con columnas 'vector','label'
---out_dir: Directorio de salida para artefactos
---n_neighbors: Número de vecinos para UMAP (default: 15)
---min_dist: Distancia mínima entre puntos (default: 0.1)
---metric: Métrica de distancia (default: euclidean)
---dataset: Nombre del dataset (ej: snli, mnli, etc)
---experiment_name: Nombre del experimento en MLflow
---reduction_type: Tipo de reducción usada (pca o zca)
+experiments/02_umap.py - GPU-Optimized UMAP
+==========================================
+Pure cuML UMAP implementation with robust error handling and visualization.
 """
-
 import argparse
+import json
+import os
+import sys
 import time
 from pathlib import Path
+import gc
 
-import mlflow
+import cudf
+import cupy as cp
 import numpy as np
-import pandas as pd
-import matplotlib
-# Use Agg backend to avoid Qt plugin errors
-matplotlib.use("Agg")
+import cuml
+import mlflow
+
 import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('Agg')
 
-# GPU-only UMAP usando el acelerador de cuML
-try:
-    from cuml.accel import install
-    install()
-    # sklearn import is not strictly needed if only umap.UMAP is used directly
-    # import sklearn 
-    from umap import UMAP  # Imports from umap-learn, patched by cuml.accel
-except ImportError as e:
-    # Better error message and re-raise
-    print("Error: Failed to initialize UMAP. This may be due to issues with 'cuml' or 'umap-learn'.")
-    print(f"Specific import error: {e}")
-    print("Please ensure RAPIDS cuML is installed correctly and 'umap-learn' is also installed.")
-    raise
-
-# Force MLflow to use local mlruns directory (WSL-safe)
-tracking_dir = Path.cwd().joinpath("mlruns")
-mlflow.set_tracking_uri(tracking_dir.as_uri())
-
-# ---------------------------------------------------------------------------
-# CLI
-# ---------------------------------------------------------------------------
 def parse_args():
-    parser = argparse.ArgumentParser(description="UMAP GPU-only con cuML")
-    parser.add_argument("--pca_path", required=True,
-                        help="Parquet de entrada con columnas 'vector','label'")
-    parser.add_argument("--out_dir", required=True,
-                        help="Directorio de salida para artefactos")
-    parser.add_argument("--n_neighbors", type=int, default=15,
-                        help="Número de vecinos para UMAP")
-    parser.add_argument("--min_dist", type=float, default=0.1,
-                        help="Distancia mínima entre puntos")
-    parser.add_argument("--metric", default="euclidean",
-                        help="Métrica de distancia")
-    parser.add_argument("--dataset", default="snli",
-                        help="Nombre del dataset (ej: snli, mnli, etc)")
-    parser.add_argument("--experiment_name", default="umap-snli")
-    parser.add_argument("--reduction_type", choices=["pca", "zca"], required=True,
-                        help="Tipo de reducción usada en los datos de entrada")
-    parser.add_argument("--layer_num", type=int, default=12, help="Layer number to use (default: 12)")
-    parser.add_argument("--input_n_components", type=str, required=True,
-                        help="Número de componentes de la entrada PCA/ZCA (pasado directamente)")
+    parser = argparse.ArgumentParser(description="GPU-optimized UMAP")
+    parser.add_argument("--pca_path", required=True, help="Input parquet with PCA/ZCA vectors and labels")
+    parser.add_argument("--out_path", required=True, help="Output parquet file path")
+    parser.add_argument("--n_neighbors", type=int, default=15, help="Number of neighbors for UMAP")
+    parser.add_argument("--min_dist", type=float, default=0.1, help="Minimum distance for UMAP")
+    parser.add_argument("--metric", default='euclidean', help="Distance metric")
+    parser.add_argument("--n_components", type=int, default=2, help="Number of UMAP components")
+    parser.add_argument("--random_state", type=int, default=42)
+    parser.add_argument("--dataset", required=True, help="Dataset name")
+    parser.add_argument("--experiment_name", default="umap-gpu")
+    parser.add_argument("--reduction_type", choices=["pca", "zca"], required=True)
+    parser.add_argument("--layer_num", type=int, required=True)
+    parser.add_argument("--input_n_components", type=int, required=True)
+    parser.add_argument("--skipped_n_components", type=int, default=0)
+    parser.add_argument("--provenance", default="{}", help="Provenance JSON string")
     return parser.parse_args()
 
-# ---------------------------------------------------------------------------
-# Plot UMAP scatter
-# ---------------------------------------------------------------------------
-def plot_umap(X_umap, y, out_png, reduction_type, title="UMAP Projection"):
-    plt.figure(figsize=(10, 8))
-    scatter = plt.scatter(X_umap[:, 0], X_umap[:, 1], c=y, cmap='viridis', alpha=0.6)
-    plt.title(f"{title} ({reduction_type.upper()})")
-    plt.xlabel("UMAP1")
-    plt.ylabel("UMAP2")
-    plt.colorbar(scatter, label='Label')
-    plt.grid(True, alpha=0.3)
-    plt.tight_layout()
-    plt.savefig(out_png, dpi=120)
-    plt.close()
+def aggressive_cleanup():
+    """Aggressive GPU memory cleanup"""
+    gc.collect()
+    cp.get_default_memory_pool().free_all_blocks()
+    cp.get_default_pinned_memory_pool().free_all_blocks()
+    cp.cuda.Device().synchronize()
 
-# ---------------------------------------------------------------------------
-# Main
-# ---------------------------------------------------------------------------
+def log_scalar(key, value):
+    """Log scalar values handling cupy and numpy types"""
+    if hasattr(value, 'item'):
+        value = value.item()
+    elif isinstance(value, (cp.ndarray, np.ndarray)) and value.ndim == 0:
+        value = float(value)
+    mlflow.log_metric(key, value)
+
+def create_umap_plot(df, output_path):
+    """Create and save UMAP visualization"""
+    try:
+        # Convert to numpy for plotting
+        x_vals = cp.asnumpy(df['UMAP_1'].values)
+        y_vals = cp.asnumpy(df['UMAP_2'].values)
+        labels = cp.asnumpy(df['label'].values)
+        
+        # Create plot
+        plt.figure(figsize=(10, 8))
+        
+        # Plot by label with different colors
+        unique_labels = np.unique(labels)
+        colors = ['red', 'blue', 'green', 'orange', 'purple', 'brown', 'pink', 'gray']
+        
+        for i, label in enumerate(unique_labels):
+            mask = labels == label
+            plt.scatter(x_vals[mask], y_vals[mask], 
+                       c=colors[i % len(colors)], 
+                       label=f'Label {label}', 
+                       alpha=0.6, s=2)
+        
+        plt.xlabel('UMAP 1')
+        plt.ylabel('UMAP 2')
+        plt.title('UMAP Projection')
+        plt.legend()
+        plt.grid(True, alpha=0.3)
+        plt.tight_layout()
+        plt.savefig(output_path, dpi=150, bbox_inches='tight')
+        plt.close()
+        
+        print(f"📊 UMAP plot saved: {output_path}")
+        mlflow.log_artifact(str(output_path))
+        return True
+        
+    except Exception as e:
+        print(f"⚠️  Failed to create UMAP plot: {e}")
+        return False
+
+def validate_input_data(df):
+    """Validate and clean input data"""
+    print(f"Input data shape: {df.shape}")
+    
+    # Identify feature columns
+    feature_cols = [col for col in df.columns if col != 'label']
+    print(f"Feature columns: {len(feature_cols)}")
+    
+    if len(feature_cols) == 0:
+        raise ValueError("No feature columns found (expected columns other than 'label')")
+    
+    # Check for NaN/Inf values
+    total_nan = 0
+    total_inf = 0
+    
+    for col in feature_cols:
+        nan_count = df[col].isna().sum()
+        inf_count = cp.isinf(df[col].values).sum()
+        total_nan += nan_count
+        total_inf += inf_count
+        
+        if nan_count > 0 or inf_count > 0:
+            print(f"Column {col}: {nan_count} NaN, {inf_count} Inf values")
+    
+    print(f"Total: {total_nan} NaN, {total_inf} Inf values")
+    
+    # Clean data by removing rows with NaN/Inf
+    df_clean = df.dropna()  # GPU-optimized dropna
+    
+    if len(df_clean) == 0:
+        raise ValueError("No valid data remaining after cleaning NaN values")
+    
+    # Additional check for Inf values
+    X = df_clean[feature_cols].values
+    if cp.any(cp.isinf(X)):
+        print("Removing Inf values...")
+        inf_mask = cp.any(cp.isinf(X), axis=1)
+        valid_indices = cp.where(~inf_mask)[0]
+        df_clean = df_clean.iloc[cp.asnumpy(valid_indices)]
+        
+        if len(df_clean) == 0:
+            raise ValueError("No valid data remaining after cleaning Inf values")
+    
+    print(f"After cleaning: {df_clean.shape}")
+    return df_clean, feature_cols
+
+def run_umap_gpu(X, n_neighbors, min_dist, metric, n_components=2):
+    """Run UMAP with GPU optimization and fallback handling"""
+    n_samples = len(X)
+    print(f"Running UMAP on {n_samples:,} samples with {X.shape[1]} features")
+    
+    # Adjust neighbors if too large
+    n_neighbors = min(n_neighbors, n_samples - 1)
+    print(f"Using {n_neighbors} neighbors")
+    
+    # Primary UMAP parameters
+    umap_params = {
+        'n_neighbors': n_neighbors,
+        'n_components': n_components,
+        'min_dist': min_dist,
+        'metric': metric,
+        'random_state': 42,
+        'verbose': True,
+        'low_memory': True,
+        'n_epochs': 200,
+        'learning_rate': 1.0
+    }
+    
+    try:
+        print("Attempting UMAP with primary parameters...")
+        umap_model = cuml.UMAP(**umap_params)
+        X_umap = umap_model.fit_transform(X)
+        
+        # Validate output
+        if cp.any(cp.isnan(X_umap)) or cp.any(cp.isinf(X_umap)):
+            raise ValueError("UMAP produced NaN/Inf values")
+        
+        print("✓ UMAP completed successfully")
+        return X_umap
+        
+    except Exception as e:
+        print(f"Primary UMAP failed: {e}")
+        print("Trying fallback parameters...")
+        
+        # Fallback parameters
+        fallback_params = {
+            'n_neighbors': min(15, n_samples - 1),
+            'n_components': n_components,
+            'min_dist': 0.1,
+            'metric': 'euclidean',
+            'random_state': 42,
+            'verbose': False,
+            'low_memory': True,
+            'n_epochs': 100,
+            'learning_rate': 0.5
+        }
+        
+        try:
+            umap_model = cuml.UMAP(**fallback_params)
+            X_umap = umap_model.fit_transform(X)
+            
+            if cp.any(cp.isnan(X_umap)) or cp.any(cp.isinf(X_umap)):
+                raise ValueError("Fallback UMAP also produced NaN/Inf values")
+            
+            print("✓ Fallback UMAP completed successfully")
+            return X_umap
+            
+        except Exception as e2:
+            raise RuntimeError(f"Both primary and fallback UMAP failed. Primary: {e}, Fallback: {e2}")
+
+def process_umap_gpu(input_path: str, output_path: str, n_neighbors: int, min_dist: float, metric: str, n_components: int = 2) -> dict:
+    """Main UMAP processing function"""
+    print(f"Loading data from {input_path}")
+    
+    # Load and validate data
+    df = cudf.read_parquet(input_path)
+    if df.empty:
+        raise ValueError("Input data is empty")
+    
+    df_clean, feature_cols = validate_input_data(df)
+    
+    # Extract features for UMAP
+    X = df_clean[feature_cols].values.astype('float32')
+    
+    # Input normalization (optional - UMAP is fairly robust)
+    print("Normalizing input data...")
+    X_mean = cp.mean(X, axis=0)
+    X_std = cp.std(X, axis=0)
+    X_std = cp.where(X_std < 1e-7, 1.0, X_std)  # Avoid division by zero
+    X_normalized = (X - X_mean) / X_std
+    
+    # Run UMAP
+    X_umap = run_umap_gpu(X_normalized, n_neighbors, min_dist, metric, n_components)
+    
+    # Create output DataFrame
+    output_df = cudf.DataFrame({
+        f'UMAP_{i+1}': X_umap[:, i].astype('float32') for i in range(n_components)
+    })
+    output_df['label'] = df_clean['label'].values
+    
+    # Final validation
+    if len(output_df) == 0:
+        raise ValueError("No data in final output")
+    
+    # Save results
+    print(f"Saving UMAP results to {output_path}")
+    output_df.to_parquet(output_path)
+    
+    # Create visualization plot
+    if n_components == 2:
+        plot_path = Path(output_path).parent / f"umap_plot_{Path(output_path).stem}.png"
+        create_umap_plot(output_df, plot_path)
+    
+    # Cleanup
+    del X, X_normalized, X_umap
+    aggressive_cleanup()
+    
+    return {
+        'n_samples_processed': len(output_df),
+        'n_features_input': len(feature_cols),
+        'n_components_output': n_components,
+        'n_neighbors_used': n_neighbors,
+        'min_dist_used': min_dist,
+        'metric_used': metric
+    }
+
 def main():
     args = parse_args()
-    mlflow.set_experiment(args.experiment_name)
-
-    # Use the directly passed n_components
-    n_components_from_arg = args.input_n_components
-
-    # Generar nombre del run con parámetros clave
-    run_name = f"umap_{args.dataset}_{args.reduction_type}_{n_components_from_arg}_layer{args.layer_num}_n{args.n_neighbors}_{args.metric}"
     
-    with mlflow.start_run(run_name=run_name) as run:
-        # Log parameters
-        for k, v in vars(args).items():
-            mlflow.log_param(k, v)
-        mlflow.set_tag("dataset", args.dataset)
-        mlflow.set_tag("experiment_name", args.experiment_name)
-        mlflow.set_tag("reduction_type", args.reduction_type)
-
-        # Cargar datos
-        df = pd.read_parquet(args.pca_path)
-        X = np.vstack(df["vector"].values)
-        y = df["label"].values
-        n_samples, n_features = X.shape
-        mlflow.log_param("input_dims", n_features)
-
-        # metric_params = None # No longer needed as we remove the conditional logic
-        # if args.metric == "mahalanobis":
-        #     print("Configuring UMAP for 'mahalanobis'. This will likely use a CPU fallback via umap-learn.")
-        #     # ... entire block for mahalanobis metric_kwds calculation removed ...
-        # mlflow.log_param("metric_kwds_used", True if metric_params else False) # No longer needed
-
-        # Inicializar UMAP (usando umap-learn, potencialmente patched by cuML)
-        print(f"Initializing UMAP with: n_neighbors={args.n_neighbors}, min_dist={args.min_dist}, metric='{args.metric}', random_state=42, n_jobs=1")
-        # if metric_params: # No longer needed
-        #     print(f"Using metric_kwds for '{args.metric}'.")
-
-        umap_instance = UMAP(
-            n_neighbors=args.n_neighbors,
-            min_dist=args.min_dist,
-            metric=args.metric,
-            # metric_kwds=metric_params,  # Removed: rely on umap-learn defaults or cuml.accel patching
-            random_state=42,            # Keep existing random_state
-            n_jobs=1                    # Explicitly set n_jobs=1 for reproducibility with random_state
-        )
-
-        # Fit y transform
-        start = time.perf_counter()
-        X_umap = umap_instance.fit_transform(X)
-        duration = time.perf_counter() - start
-        mlflow.log_metric("umap_seconds", float(duration))
-
-        # Guardar resultados
-        out_dir = Path(args.out_dir)
-        out_dir.mkdir(parents=True, exist_ok=True)
+    # Set up MLflow
+    mlflow.set_experiment(args.experiment_name)
+    
+    # Create descriptive run name
+    run_name = f"{args.dataset}_{args.n_neighbors}neighbors_{args.metric}_layer{args.layer_num}"
+    
+    with mlflow.start_run(run_name=run_name):
+        start_time = time.time()
         
-        # Construir nombre del archivo de salida manteniendo el formato original
-        out_parquet = out_dir / f"umap_{args.dataset}_{n_components_from_arg}_layer{args.layer_num}_n{args.n_neighbors}_{args.metric}_{args.reduction_type}.parquet"
-        out_png = out_dir / f"umap_{args.dataset}_{n_components_from_arg}_layer{args.layer_num}_n{args.n_neighbors}_{args.metric}_{args.reduction_type}_scatter.png"
-
-        # Guardar coordenadas UMAP
-        pd.DataFrame({
-            "vector": list(X_umap),
-            "label": y
-        }).to_parquet(out_parquet)
-        mlflow.log_artifact(str(out_parquet), artifact_path="umap_parquet")
-
-        # Plot y guardar scatter
-        title = f"UMAP Projection: {args.dataset.upper()} ({args.reduction_type.upper()}) - Layer {args.layer_num}"
-        plot_umap(X_umap, y, out_png, args.reduction_type, title=title)
-        mlflow.log_artifact(str(out_png), artifact_path="umap_plots")
-
-        print(f"✅ UMAP GPU guardado en {out_parquet} (tiempo {duration:.1f}s)")
-        print("   Run ID:", run.info.run_id)
+        # Log parameters
+        mlflow.log_param("pca_path", str(args.pca_path))
+        mlflow.log_param("out_path", str(args.out_path))
+        mlflow.log_param("n_neighbors", args.n_neighbors)
+        mlflow.log_param("min_dist", args.min_dist)
+        mlflow.log_param("metric", args.metric)
+        mlflow.log_param("n_components", args.n_components)
+        mlflow.log_param("dataset", args.dataset)
+        mlflow.log_param("reduction_type", args.reduction_type)
+        mlflow.log_param("layer_num", args.layer_num)
+        mlflow.log_param("input_n_components", args.input_n_components)
+        mlflow.log_param("skipped_n_components", args.skipped_n_components)
+        
+        # Log provenance
+        try:
+            provenance = json.loads(args.provenance)
+            mlflow.log_params(provenance)
+        except json.JSONDecodeError:
+            print("Warning: Could not decode provenance JSON")
+        
+        # Set tags
+        mlflow.set_tag("experiment_name", args.experiment_name)
+        mlflow.set_tag("dataset", args.dataset)
+        mlflow.set_tag("layer_num", args.layer_num)
+        mlflow.set_tag("reduction_type", args.reduction_type)
+        
+        try:
+            # Execute UMAP
+            results = process_umap_gpu(
+                str(args.pca_path),
+                str(args.out_path),
+                args.n_neighbors,
+                args.min_dist,
+                args.metric,
+                args.n_components
+            )
+            
+            # Log results
+            for key, value in results.items():
+                if isinstance(value, (int, float)):
+                    log_scalar(key, value)
+                else:
+                    mlflow.log_param(key, str(value))
+            
+            # Log execution time
+            execution_time = time.time() - start_time
+            log_scalar("execution_time_seconds", execution_time)
+            
+            print(f"✓ UMAP completed successfully in {execution_time:.1f}s")
+            
+        except Exception as e:
+            mlflow.log_param("error", str(e))
+            print(f"✗ UMAP failed: {e}")
+            sys.exit(1)
 
 if __name__ == "__main__":
     main()

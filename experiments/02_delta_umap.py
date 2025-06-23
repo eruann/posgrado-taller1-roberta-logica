@@ -134,7 +134,7 @@ with mlflow.start_run(run_name=run_name) as run:
         best = max(best, accuracy_score(y, [perm[c] for c in clusters]))
 
     # Log metrics
-    mlflow.log_metric("kmeans_purity", best)
+    mlflow.log_metric("kmeans_purity", float(best))
 
     print(f"Best K-Means purity (k=3 in PCA-50 space):  {best:.3f}")
     print(f"✅ Archivos guardados en {out_dir}:")
