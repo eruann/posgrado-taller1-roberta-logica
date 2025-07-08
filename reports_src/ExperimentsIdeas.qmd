@@ -1,0 +1,197 @@
+---
+title: "Experiments Ideas"
+format: pdf
+output-dir: .
+date: "2025-06-17"
+author: "Matias Rodriguez"
+geometry: "left=2cm,right=2cm,top=2cm,bottom=2cm"
+header-includes:
+  - \usepackage{geometry}
+  - \geometry{a4paper}
+  - \geometry{margin=1in}
+---
+# Experiments Ideas
+
+## 1. Centrado + normalización de norma (All-but-the-mean)
+
+**Pasos**
+
+- Calcular el vector medio $\mu$ de todos los embeddings.  
+- Restar $\mu$ a cada vector $\mathbf{v}$ y volver a normalizarlo a norma 1.
+
+**Efecto que se busca**
+
+Elimina el sesgo global que origina el “cono” y reduce la similitud coseno espuria, preparando el espacio para análisis finos. :contentReference[oaicite:0]{index=0}  
+
+**Lecturas / enlaces**
+
+- Mu, Jiaqi et al. (2017) – “All-but-the-Top: Simple and Effective Post-processing for Word Representations”. <https://arxiv.org/abs/1702.01417>  
+- Mu & Viswanath (OpenReview) – <https://openreview.net/forum?id=HkuGJ3kCb>
+
+---
+
+## 2. Eliminación de las *k* componentes dominantes (Common-Component Removal)
+
+**Pasos**
+
+- Aplicar PCA sobre los vectores centrados.  
+- Proyectar cada embedding sobre el subespacio ortogonal a los primeros $k$ componentes (típicamente $k = 1$–10).
+
+**Efecto que se busca**
+
+“Desinfla” el cono global: las direcciones que concentran varianza desaparecen y las distancias vuelven a reflejar diferencias semánticas o lógicas. :contentReference[oaicite:1]{index=1}  
+
+**Lecturas / enlaces**
+
+- Ethayarajh (2019) – “How Contextual are Contextualized Word Representations?”. <https://arxiv.org/abs/1909.00512>  
+
+---
+
+## 3. Blanqueo / ZCA-whitening
+
+**Pasos**
+
+1. Calcular la covarianza $\Sigma$.  
+2. Aplicar la transformación $\mathbf{v}' = \Sigma^{-1/2}\,(\mathbf{v}-\mu)$.  
+3. (Opcional) Re-normalizar.
+
+**Efecto que se busca**
+
+Iguala la varianza en todas las direcciones e impone isotropía global, destapando relaciones sintácticas o lógicas ocultas. :contentReference[oaicite:2]{index=2}  
+
+**Lecturas / enlaces**
+
+- Cai et al. (2021) – “Isotropy in the Contextual Embedding Space of BERT”. <https://openreview.net/forum?id=xYGNO86OWDH>  
+- PDF directo: <https://openreview.net/pdf/8b00c8e698e9a810bfcee44a4ae5f6c3adeb7266.pdf>
+
+---
+
+## 4. Isotropía local por clúster (Cluster-PCA + nulling)
+
+**Pasos**
+
+1. Agrupar embeddings con K-means (p.ej. $K = 100$).  
+2. Dentro de cada clúster, restar el centro y anular sus PCs dominantes.  
+3. Reunir los vectores y normalizar.
+
+**Efecto que se busca**
+
+Corrige la anisotropía *dentro* de subgrupos (stop-words, tiempos verbales, etc.) sin perder semántica global. :contentReference[oaicite:3]{index=3}  
+
+**Lecturas / enlaces**
+
+- Rajaee & Pilehvar (2021) – “A Cluster-based Approach for Improving Isotropy in Contextual Embedding Space”. <https://arxiv.org/abs/2106.01183>
+
+---
+
+## 5. Supresión de dimensiones *outlier*
+
+**Pasos**
+
+- Detectar dimensiones cuya magnitud excede $3$–$5\,\sigma$ en la mayoría de los tokens.  
+- Ponerlas a 0 o escalar a la media.  
+- Normalizar otra vez.
+
+**Efecto que se busca**
+
+Apaga unas pocas dimensiones “fuera de escala” responsables de gran parte del cono, aumentando la isotropía y la discriminación entre clases. :contentReference[oaicite:4]{index=4}  
+
+**Lecturas / enlaces**
+
+- Hämmerl et al. (2023) – “Outlier Dimensions That Distort Sentence Embeddings”. <https://alexfraser.github.io/pubs/haemmerl_findings_acl2023_outliers.pdf>
+
+---
+
+## 6. Residualización de centroides y reclustering iterativo
+
+**Pasos**
+
+1. Ejecutar K-means y guardar los centroides $\{c_j\}$.  
+2. Para cada punto, restar su centro: $\tilde{\mathbf{x}} = \mathbf{x} - c_{\text{label}(\mathbf{x})}$; normalizar $\|\tilde{\mathbf{x}}\| = 1$.  
+3. Repetir K-means sobre los residuos una o dos veces.
+
+**Efecto que se busca**
+
+Suprime direcciones comunes *intra-clúster*, revela sub-estructuras finas y mitiga los plateos de rendimiento en clustering profundo. :contentReference[oaicite:5]{index=5}  
+
+**Lecturas / enlaces**
+
+- Miklautz et al. (2024) – “Breaking the Reclustering Barrier in Centroid-based Deep Clustering”. <https://arxiv.org/abs/2411.02275>  
+
+---
+
+## 7. Fisher / Linear Discriminant Analysis (LDA)
+
+**Pasos**
+
+1. Con las etiquetas (entail, neutral, contradict) calcular matrices $S_B$ y $S_W$.  
+2. Obtener la proyección que maximiza $\mathrm{Tr}(S_W^{-1}S_B)$.  
+3. Conservar una o dos componentes discriminantes.
+
+**Efecto que se busca**
+
+Proyección supervisada que maximiza la separación entre clases; útil para visualización y como pre-procesado ligero antes de un clasificador o probe.
+
+**Lecturas / enlaces**
+
+- Fisher, R.A. (1936) – “The Use of Multiple Measurements in Taxonomic Problems”. (artículo original sobre LDA) <https://royalsocietypublishing.org/doi/10.1098/rspl.1936.0051>  
+- Documentación scikit-learn sobre LDA: <https://scikit-learn.org/stable/modules/lda_qda.html>
+
+---
+
+## Random MLflow Experiment
+
+```{python}
+import mlflow
+import pandas as pd
+import random
+
+# Set the MLflow tracking URI (adjust path as needed)
+mlflow.set_tracking_uri("file:///home/matias/datascience/tesis-llm-lpo/mlruns")
+
+# Get all experiments
+experiments = mlflow.search_experiments()
+
+if experiments:
+    # Get all runs from all experiments
+    all_runs = []
+    for experiment in experiments:
+        runs = mlflow.search_runs(experiment_ids=[experiment.experiment_id])
+        all_runs.append(runs)
+    
+    # Combine all runs
+    if all_runs:
+        combined_runs = pd.concat(all_runs, ignore_index=True)
+        
+        # Select a random run
+        if len(combined_runs) > 0:
+            random_run = combined_runs.sample(n=1).iloc[0]
+            
+            print(f"Random experiment run details:")
+            print(f"Run ID: {random_run['run_id']}")
+            print(f"Experiment ID: {random_run['experiment_id']}")
+            print(f"Status: {random_run['status']}")
+            print(f"Start Time: {random_run['start_time']}")
+            
+            # Display metrics (if any)
+            metric_cols = [col for col in combined_runs.columns if col.startswith('metrics.')]
+            if metric_cols:
+                print("\nMetrics:")
+                for col in metric_cols:
+                    if pd.notna(random_run[col]):
+                        print(f"  {col.replace('metrics.', '')}: {random_run[col]}")
+            
+            # Display parameters (if any)
+            param_cols = [col for col in combined_runs.columns if col.startswith('params.')]
+            if param_cols:
+                print("\nParameters:")
+                for col in param_cols:
+                    if pd.notna(random_run[col]):
+                        print(f"  {col.replace('params.', '')}: {random_run[col]}")
+        else:
+            print("No runs found in any experiment.")
+    else:
+        print("No runs found.")
+else:
+    print("No experiments found.")
+```

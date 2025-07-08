@@ -14,7 +14,8 @@ of different normalization strategies on clustering quality.
 Usage:
     python scripts/run_normalization_comparison_fixed.py \
         --dataset_name snli \
-        --base_data_dir data/snli \
+        --embedding_type full \
+        --input_dir data/snli \
         --output_dir data/snli/normalization_comparison_fixed \
         --layer_num 9
 """
@@ -28,11 +29,30 @@ from pathlib import Path
 def parse_args():
     parser = argparse.ArgumentParser(description="Compare normalization strategies")
     parser.add_argument("--dataset_name", required=True, help="Name of the dataset (e.g., snli)")
-    parser.add_argument("--base_data_dir", required=True, type=Path, help="Base directory of the source embeddings")
+    parser.add_argument("--embedding_type", required=True, choices=['full', 'delta'], help="Type of embedding for naming outputs and selecting source directory.")
+    parser.add_argument("--full_embeddings_dir", type=Path, help="Directory containing the 'full' source embedding files.")
+    parser.add_argument("--delta_embeddings_dir", type=Path, help="Directory containing the 'delta' source embedding files.")
     parser.add_argument("--output_dir", required=True, type=Path, help="Base directory for comparison outputs")
     parser.add_argument("--layer_num", type=int, default=9, help="Layer number to test")
     parser.add_argument("--clean_output", action='store_true', help="Clean output directory before starting")
-    return parser.parse_args()
+    parser.add_argument("--filter_to_ec", action='store_true', help="Filter dataset to only Entailment/Contradiction labels (k=2)")
+    parser.add_argument(
+        "--normalization_types",
+        nargs='+',
+        default=['none', 'per_type', 'all_but_mean'],
+        choices=['none', 'per_type', 'all_but_mean'],
+        help="List of normalization types to test. Defaults to all if not provided."
+    )
+    
+    args = parser.parse_args()
+
+    # Post-parsing validation
+    if args.embedding_type == 'full' and not args.full_embeddings_dir:
+        parser.error("--embedding_type 'full' requires --full_embeddings_dir.")
+    if args.embedding_type == 'delta' and not args.delta_embeddings_dir:
+        parser.error("--embedding_type 'delta' requires --delta_embeddings_dir.")
+
+    return args
 
 def run_command(cmd: list[str], allow_failure=False):
     """Executes a command, optionally allowing failures."""
@@ -85,54 +105,95 @@ def get_data_dimensions(parquet_file):
 def main():
     args = parse_args()
     
+    # Determine K for K-Means and label mode based on filtering
+    k_clusters = "2" if args.filter_to_ec else "3"
+    label_mode = "EC" if args.filter_to_ec else "ECN"
+    
     if args.clean_output and args.output_dir.exists():
         print(f"Cleaning output directory: {args.output_dir}")
         shutil.rmtree(args.output_dir)
     
     args.output_dir.mkdir(parents=True, exist_ok=True)
     
-    # Find source embedding file
-    source_dir = args.base_data_dir / args.dataset_name / "embeddings"
-    source_file = source_dir / f"embeddings_{args.dataset_name}_layer_{args.layer_num}.parquet"
+    # Determine source path based on embedding type and provided directories
+    if args.embedding_type == 'full':
+        source_dir = args.full_embeddings_dir
+        source_file_prefix = f"embeddings_{args.dataset_name}"
+    
+    elif args.embedding_type == 'delta':
+        source_dir = args.delta_embeddings_dir
+        source_file_prefix = f"embeddings_{args.dataset_name}_delta"
+    
+    source_file = source_dir / f"{source_file_prefix}_layer_{args.layer_num}.parquet"
     
     if not source_file.exists():
         print(f"Source file not found: {source_file}")
         return
     
-    print(f"Using source file: {source_file}")
-    
+    print(f"Using initial source file: {source_file}")
+
+    # --- Optional Stage 0: Filter to Entailment/Contradiction ---
+    if args.filter_to_ec:
+        print(f"\n{'='*60}")
+        print("STAGE 0: Filtering to Entailment & Contradiction")
+        print(f"{'='*60}\n")
+        
+        filtered_dir = args.output_dir / "00_filtered_ec"
+        filtered_dir.mkdir(parents=True, exist_ok=True)
+        
+        filtered_file = filtered_dir / f"{source_file.stem}_ec_only.parquet"
+        
+        if not filtered_file.exists():
+            print(f"Filtering {source_file} to keep only labels 0 (E) and 2 (C)...")
+            try:
+                import cudf
+                gdf = cudf.read_parquet(source_file)
+                # Assuming 0=Entailment, 1=Neutral, 2=Contradiction
+                gdf_filtered = gdf[gdf['label'].isin([0, 2])]
+                gdf_filtered.to_parquet(filtered_file)
+                print(f"-> Filtered file saved to: {filtered_file}")
+                print(f"   Original count: {len(gdf):,}, Filtered count: {len(gdf_filtered):,}")
+            except Exception as e:
+                print(f"❌ Filtering failed: {e}")
+                raise e
+        
+        # The rest of the pipeline will use this new filtered file
+        source_file = filtered_file
+        print(f"\nUsing new filtered source file for all subsequent steps: {source_file}")
+
     # Test configurations (reduced for quick comparison)
-    normalization_types = ['per_type', 'all_but_mean']  # Re-added all_but_mean with fixed columns , ['none','standard','per_type','all_but_mean']
-    pca_components = [50,150]  # Single PCA config for quick comparison
-    slice_values = [0, 7]  # Test both unsliced and sliced
-    umap_neighbors = [15,100]  # Single neighbor config
+    normalization_types = args.normalization_types
+    pca_components = [50]  # Single PCA config for quick comparison
+    slice_values = [15,20,30]  # Test both unsliced and sliced
+    umap_neighbors = [15]  # Single neighbor config
     umap_metrics = ['euclidean', 'manhattan']  # Single metric
     
     print(f"\n{'='*60}")
     print(f"NORMALIZATION COMPARISON PIPELINE")
     print(f"Layer: {args.layer_num}")
+    print(f"Embedding Type: {args.embedding_type}")
     print(f"Normalization types: {normalization_types}")
     print(f"{'='*60}\n")
     
     # Run comparison for each normalization type
     for norm_type in normalization_types:
         print(f"\n{'~'*40}")
-        print(f"TESTING NORMALIZATION: {norm_type.upper()}")
+        print(f"TESTING NORMALIZATION: {norm_type.upper()} on {args.embedding_type.upper()} EMBEDDINGS")
         print(f"{'~'*40}")
         
         # Stage 1: Apply normalization
-        norm_dir = args.output_dir / f"01_normalized_{norm_type}"
+        norm_dir = args.output_dir / f"01_normalized_{args.embedding_type}_{norm_type}"
         norm_dir.mkdir(parents=True, exist_ok=True)
         
         if norm_type == 'none':
             # For 'none', just copy the original file
-            norm_file = norm_dir / f"embeddings_{args.dataset_name}_layer_{args.layer_num}_none.parquet"
+            norm_file = norm_dir / f"embeddings_{args.embedding_type}_{args.dataset_name}_layer_{args.layer_num}_none.parquet"
             if not norm_file.exists():
                 print(f"Copying original file (no normalization)")
                 shutil.copy2(source_file, norm_file)
         else:
             # Apply normalization
-            norm_file = norm_dir / f"embeddings_{args.dataset_name}_layer_{args.layer_num}_{norm_type}.parquet"
+            norm_file = norm_dir / f"embeddings_{args.embedding_type}_{args.dataset_name}_layer_{args.layer_num}_{norm_type}.parquet"
             if not norm_file.exists():
                 print(f"[STAGE 1] Applying {norm_type} normalization...")
                 result, success = run_command([
@@ -140,7 +201,7 @@ def main():
                     "--source_path", str(source_file),
                     "--out_path", str(norm_file),
                     "--normalization_type", norm_type,
-                    "--experiment_name", f"norm_comparison_{args.dataset_name}_{norm_type}",
+                    "--experiment_name", f"norm_comparison_{args.dataset_name}_{args.embedding_type}_{norm_type}",
                     "--layer_num", str(args.layer_num)
                 ], allow_failure=False)  # Stop on normalization errors
         
@@ -153,9 +214,9 @@ def main():
         # Stage 2-5: Run the rest of the pipeline for this normalization
         for n_comp in pca_components:
             # Stage 2: PCA
-            pca_dir = args.output_dir / f"02_pca_{norm_type}" / f"{n_comp}_components"
+            pca_dir = args.output_dir / f"02_pca_{args.embedding_type}_{norm_type}" / f"{n_comp}_components"
             pca_dir.mkdir(parents=True, exist_ok=True)
-            pca_file = pca_dir / f"{args.dataset_name}_layer{args.layer_num}_{norm_type}.parquet"
+            pca_file = pca_dir / f"{args.embedding_type}_{args.dataset_name}_layer{args.layer_num}_{norm_type}.parquet"
             
             if not pca_file.exists():
                 print(f"[STAGE 2] Running PCA (components: {n_comp})...")
@@ -164,7 +225,7 @@ def main():
                     "--source_path", str(norm_file),
                     "--out", str(pca_file),
                     "--n_components", str(n_comp),
-                    "--experiment_name", f"pca_comparison_{norm_type}",
+                    "--experiment_name", f"pca_comparison_{args.embedding_type}_{norm_type}",
                     "--dataset", args.dataset_name,
                     "--layer_num", str(args.layer_num),
                     "--chunk_size_mode", "medium"  # Intelligent chunk sizing
@@ -200,7 +261,7 @@ def main():
                     
                     # Stage 3: Slicing (if needed)
                     if skip_n > 0:
-                        slice_dir = args.output_dir / f"03_sliced_{norm_type}" / f"skip_{skip_n}"
+                        slice_dir = args.output_dir / f"03_sliced_{args.embedding_type}_{norm_type}" / f"skip_{skip_n}"
                         slice_dir.mkdir(parents=True, exist_ok=True)
                         slice_file = slice_dir / f"{pca_variant_file.stem}_skipped{skip_n}.parquet"
                         
@@ -226,10 +287,10 @@ def main():
                     # Stage 4: UMAP
                     for n_neighbors in umap_neighbors:
                         for metric in umap_metrics:
-                            umap_dir = args.output_dir / f"04_umap_{norm_type}" / f"layer_{args.layer_num}" / f"skip_{skip_n}" / reduction_type / f"components_{n_comp}" / f"neighbors_{n_neighbors}" / metric
+                            umap_dir = args.output_dir / f"04_umap_{args.embedding_type}_{norm_type}" / f"layer_{args.layer_num}" / f"skip_{skip_n}" / reduction_type / f"components_{n_comp}" / f"neighbors_{n_neighbors}" / metric
                             umap_dir.mkdir(parents=True, exist_ok=True)
                             
-                            umap_file = umap_dir / f"umap_{args.dataset_name}_l{args.layer_num}_s{skip_n}_{reduction_type}_c{n_comp}_n{n_neighbors}_{metric}_{norm_type}.parquet"
+                            umap_file = umap_dir / f"umap_{args.embedding_type}_{args.dataset_name}_l{args.layer_num}_s{skip_n}_{reduction_type}_c{n_comp}_n{n_neighbors}_{metric}_{norm_type}.parquet"
                             
                             if not umap_file.exists():
                                 print(f"[STAGE 4] UMAP (neighbors: {n_neighbors}, metric: {metric})...")
@@ -240,7 +301,7 @@ def main():
                                     "--n_neighbors", str(n_neighbors),
                                     "--metric", metric,
                                     "--dataset", args.dataset_name,
-                                    "--experiment_name", f"umap_comparison_{norm_type}",
+                                    "--experiment_name", f"umap_comparison_{args.embedding_type}_{norm_type}",
                                     "--reduction_type", reduction_type,
                                     "--layer_num", str(args.layer_num),
                                     "--input_n_components", str(n_comp - skip_n),
@@ -254,7 +315,7 @@ def main():
                                 continue
                             
                             # Stage 5: K-Means
-                            kmeans_dir = args.output_dir / f"05_kmeans_{norm_type}" / f"layer_{args.layer_num}" / f"skip_{skip_n}" / reduction_type / f"components_{n_comp}" / f"neighbors_{n_neighbors}" / metric
+                            kmeans_dir = args.output_dir / f"05_kmeans_{args.embedding_type}_{norm_type}" / f"layer_{args.layer_num}" / f"skip_{skip_n}" / reduction_type / f"components_{n_comp}" / f"neighbors_{n_neighbors}" / metric
                             kmeans_dir.mkdir(parents=True, exist_ok=True)
                             kmeans_file = kmeans_dir / "kmeans_results.json"
                             
@@ -262,8 +323,9 @@ def main():
                                 print(f"[STAGE 5] K-Means clustering...")
                                 
                                 provenance = {
+                                    "label_mode": label_mode,
                                     "normalization_type": norm_type,
-                                    "source_embedding": "full",
+                                    "source_embedding": args.embedding_type,
                                     "layer": args.layer_num,
                                     "pca_components_initial": n_comp,
                                     "dim_reduction_initial": reduction_type,
@@ -276,9 +338,9 @@ def main():
                                     "python", "experiments/03_kmeans.py",
                                     "--input_path", str(umap_file),
                                     "--out_path", str(kmeans_file),
-                                    "--k", "3",
+                                    "--k", k_clusters,
                                     "--dataset", args.dataset_name,
-                                    "--experiment_name", f"kmeans_comparison_{norm_type}",
+                                    "--experiment_name", f"kmeans_comparison_{args.embedding_type}_{norm_type}",
                                     "--provenance", json.dumps(provenance),
                                     "--reduction_type", "umap",
                                     "--layer_num", str(args.layer_num),
@@ -294,7 +356,7 @@ def main():
     print(f"Results saved in: {args.output_dir}")
     print("\nTo compare results, check the K-Means plots and metrics in:")
     for norm_type in normalization_types:
-        kmeans_dir = args.output_dir / f"05_kmeans_{norm_type}"
+        kmeans_dir = args.output_dir / f"05_kmeans_{args.embedding_type}_{norm_type}"
         if kmeans_dir.exists():
             print(f"  - {norm_type}: {kmeans_dir}")
     print(f"{'='*60}")

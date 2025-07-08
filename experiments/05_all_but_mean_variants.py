@@ -49,99 +49,130 @@ def log_scalar(key, value):
     mlflow.log_metric(key, value)
 
 def extract_embeddings(df):
-    """Extract premise, hypothesis, and delta embeddings from the composite dataframe"""
+    """
+    Extracts embeddings from the composite dataframe.
+    Handles both 'full' (premise, hypothesis, delta) and 'single' (e.g., delta-only) structures.
+    """
     try:
-        # Get column groups
-        premise_cols = [col for col in df.columns if col.startswith('premise_')]
-        hypothesis_cols = [col for col in df.columns if col.startswith('hypothesis_')]
+        # Get column groups, excluding ID columns from feature vectors
+        premise_cols = [col for col in df.columns if col.startswith('premise_') and col != 'premise_id']
+        hypothesis_cols = [col for col in df.columns if col.startswith('hypothesis_') and col != 'hypothesis_id']
         delta_cols = [col for col in df.columns if col.startswith('delta_')]
+
+        # Identify non-feature columns to keep
+        other_cols_to_keep = ['label']
+        if 'premise_id' in df.columns:
+            other_cols_to_keep.append('premise_id')
+        if 'hypothesis_id' in df.columns:
+            other_cols_to_keep.append('hypothesis_id')
         
-        if not all([premise_cols, hypothesis_cols, delta_cols]):
-            raise ValueError("Missing required embedding columns")
-        
-        print(f"Extracting embeddings: {len(premise_cols)} dimensions each")
-        
-        # Use cudf's values directly for efficiency
-        premise_emb = cp.asarray(df[premise_cols].values, dtype=cp.float32)
-        hypothesis_emb = cp.asarray(df[hypothesis_cols].values, dtype=cp.float32)
-        delta_emb = cp.asarray(df[delta_cols].values, dtype=cp.float32)
-        labels = df['label'].values
-        
-        return premise_emb, hypothesis_emb, delta_emb, labels
+        other_data = df[other_cols_to_keep]
+
+        # Check for full structure
+        if all([premise_cols, hypothesis_cols, delta_cols]):
+            print("Extracting 'full' embeddings (premise, hypothesis, delta)...")
+            premise_emb = cp.asarray(df[premise_cols].values, dtype=cp.float32)
+            hypothesis_emb = cp.asarray(df[hypothesis_cols].values, dtype=cp.float32)
+            delta_emb = cp.asarray(df[delta_cols].values, dtype=cp.float32)
+            return (premise_emb, hypothesis_emb, delta_emb), other_data, 'full'
+
+        # Check for single-vector structure (fallback)
+        else:
+            feature_cols = [col for col in df.columns if col not in other_cols_to_keep]
+            if not feature_cols:
+                 raise ValueError("No feature columns found in the dataframe.")
+            
+            print(f"Extracting 'single' vector type from {len(feature_cols)} feature columns...")
+            embeddings = cp.asarray(df[feature_cols].values, dtype=cp.float32)
+            return (embeddings,), other_data, 'single'
         
     except Exception as e:
         raise RuntimeError(f"Embedding extraction failed: {e}")
 
-def apply_normalization(premise_emb, hypothesis_emb, delta_emb, norm_type):
+def apply_normalization(embeddings_tuple, norm_type):
     """Apply the specified normalization strategy using GPU operations"""
     print(f"Applying '{norm_type}' normalization...")
     
+    is_full_structure = len(embeddings_tuple) == 3
+
     try:
-        if norm_type == 'all_but_mean':
-            # Global mean across all vectors
-            combined = cp.concatenate([premise_emb, hypothesis_emb, delta_emb], axis=0)
-            global_mean = cp.mean(combined, axis=0)
+        if is_full_structure:
+            premise_emb, hypothesis_emb, delta_emb = embeddings_tuple
             
-            norm_premise = premise_emb - global_mean
-            norm_hypothesis = hypothesis_emb - global_mean
-            norm_delta = delta_emb - global_mean
+            if norm_type == 'all_but_mean':
+                # Global mean across all vectors
+                combined = cp.concatenate([premise_emb, hypothesis_emb, delta_emb], axis=0)
+                global_mean = cp.mean(combined, axis=0)
+                
+                norm_premise = premise_emb - global_mean
+                norm_hypothesis = hypothesis_emb - global_mean
+                norm_delta = delta_emb - global_mean
+                del combined
+                
+            elif norm_type == 'per_type':
+                # Separate mean for each vector type
+                norm_premise = premise_emb - cp.mean(premise_emb, axis=0)
+                norm_hypothesis = hypothesis_emb - cp.mean(hypothesis_emb, axis=0)
+                norm_delta = delta_emb - cp.mean(delta_emb, axis=0)
             
-            del combined, global_mean
+            elif norm_type == 'standard':
+                # Standard scaling (mean=0, std=1)
+                premise_mean, premise_std = cp.mean(premise_emb, axis=0), cp.std(premise_emb, axis=0)
+                norm_premise = (premise_emb - premise_mean) / cp.where(premise_std < 1e-7, 1.0, premise_std)
+                
+                hypothesis_mean, hypothesis_std = cp.mean(hypothesis_emb, axis=0), cp.std(hypothesis_emb, axis=0)
+                norm_hypothesis = (hypothesis_emb - hypothesis_mean) / cp.where(hypothesis_std < 1e-7, 1.0, hypothesis_std)
+                
+                delta_mean, delta_std = cp.mean(delta_emb, axis=0), cp.std(delta_emb, axis=0)
+                norm_delta = (delta_emb - delta_mean) / cp.where(delta_std < 1e-7, 1.0, delta_std)
+                
+            elif norm_type == 'none':
+                norm_premise, norm_hypothesis, norm_delta = premise_emb.copy(), hypothesis_emb.copy(), delta_emb.copy()
             
-        elif norm_type == 'per_type':
-            # Separate mean for each vector type
-            norm_premise = premise_emb - cp.mean(premise_emb, axis=0)
-            norm_hypothesis = hypothesis_emb - cp.mean(hypothesis_emb, axis=0)
-            norm_delta = delta_emb - cp.mean(delta_emb, axis=0)
-        
-        elif norm_type == 'standard':
-            # Standard scaling (mean=0, std=1)
-            premise_mean = cp.mean(premise_emb, axis=0)
-            premise_std = cp.std(premise_emb, axis=0)
-            premise_std = cp.where(premise_std < 1e-7, 1.0, premise_std)
-            norm_premise = (premise_emb - premise_mean) / premise_std
+            else:
+                raise ValueError(f"Unknown normalization type: {norm_type}")
+
+            # Apply L2 normalization for relevant types
+            if norm_type in ['all_but_mean', 'per_type']:
+                for emb in [norm_premise, norm_hypothesis, norm_delta]:
+                    norms = cp.linalg.norm(emb, axis=1, keepdims=True)
+                    emb /= cp.where(norms < 1e-10, 1.0, norms)
+
+            # Validate and return
+            for emb in [norm_premise, norm_hypothesis, norm_delta]:
+                if cp.any(cp.isnan(emb)) or cp.any(cp.isinf(emb)):
+                    raise ValueError(f"Normalization produced NaN/Inf values")
             
-            hypothesis_mean = cp.mean(hypothesis_emb, axis=0)
-            hypothesis_std = cp.std(hypothesis_emb, axis=0)
-            hypothesis_std = cp.where(hypothesis_std < 1e-7, 1.0, hypothesis_std)
-            norm_hypothesis = (hypothesis_emb - hypothesis_mean) / hypothesis_std
-            
-            delta_mean = cp.mean(delta_emb, axis=0)
-            delta_std = cp.std(delta_emb, axis=0)
-            delta_std = cp.where(delta_std < 1e-7, 1.0, delta_std)
-            norm_delta = (delta_emb - delta_mean) / delta_std
-            
-        elif norm_type == 'none':
-            # Pass-through (no normalization)
-            norm_premise = premise_emb.copy()
-            norm_hypothesis = hypothesis_emb.copy()
-            norm_delta = delta_emb.copy()
-        
+            return (norm_premise, norm_hypothesis, norm_delta)
+
+        # --- SINGLE VECTOR LOGIC ---
         else:
-            raise ValueError(f"Unknown normalization type: {norm_type}")
-        
-        # Apply L2 normalization only to 'all_but_mean' and 'per_type'
-        if norm_type in ['all_but_mean', 'per_type']:
-            # L2 normalize each vector to unit length
-            premise_norms = cp.linalg.norm(norm_premise, axis=1, keepdims=True)
-            premise_norms = cp.where(premise_norms < 1e-10, 1.0, premise_norms)
-            norm_premise = norm_premise / premise_norms
+            embeddings, = embeddings_tuple
             
-            hypothesis_norms = cp.linalg.norm(norm_hypothesis, axis=1, keepdims=True)
-            hypothesis_norms = cp.where(hypothesis_norms < 1e-10, 1.0, hypothesis_norms)
-            norm_hypothesis = norm_hypothesis / hypothesis_norms
+            if norm_type == 'all_but_mean' or norm_type == 'per_type':
+                # For a single vector type, these are identical: just remove the mean
+                print("   (Note: 'all_but_mean' and 'per_type' are equivalent to mean removal for single vector inputs)")
+                norm_embeddings = embeddings - cp.mean(embeddings, axis=0)
+                # And apply L2 norm
+                norms = cp.linalg.norm(norm_embeddings, axis=1, keepdims=True)
+                norm_embeddings /= cp.where(norms < 1e-10, 1.0, norms)
+
+            elif norm_type == 'standard':
+                mean, std = cp.mean(embeddings, axis=0), cp.std(embeddings, axis=0)
+                norm_embeddings = (embeddings - mean) / cp.where(std < 1e-7, 1.0, std)
             
-            delta_norms = cp.linalg.norm(norm_delta, axis=1, keepdims=True)
-            delta_norms = cp.where(delta_norms < 1e-10, 1.0, delta_norms)
-            norm_delta = norm_delta / delta_norms
-        
-        # Validate outputs
-        for name, emb in [('premise', norm_premise), ('hypothesis', norm_hypothesis), ('delta', norm_delta)]:
-            if cp.any(cp.isnan(emb)) or cp.any(cp.isinf(emb)):
-                raise ValueError(f"Normalization produced NaN/Inf values in {name} embeddings")
-        
-        return norm_premise, norm_hypothesis, norm_delta
-            
+            elif norm_type == 'none':
+                norm_embeddings = embeddings.copy()
+
+            else:
+                raise ValueError(f"Unknown normalization type: {norm_type}")
+
+            # Validate and return
+            if cp.any(cp.isnan(norm_embeddings)) or cp.any(cp.isinf(norm_embeddings)):
+                raise ValueError(f"Normalization produced NaN/Inf values")
+                
+            return (norm_embeddings,)
+
     except Exception as e:
         raise RuntimeError(f"Normalization failed: {e}")
 
@@ -181,12 +212,25 @@ def compute_embedding_stats(embeddings, name):
         print(f"Warning: Failed to compute stats for {name}: {e}")
         return {}
 
-def save_normalized_embeddings(premise_emb, hypothesis_emb, delta_emb, labels, output_path, chunk_size=25000):
-    """Save normalized embeddings in chunks for memory efficiency"""
+def save_normalized_embeddings(embeddings_tuple, other_data_df, output_path, chunk_size=25000):
+    """Save normalized embeddings in chunks for memory efficiency, handling both full and single structures."""
     try:
-        total_samples = len(labels)
-        n_dims = premise_emb.shape[1]
+        total_samples = len(other_data_df)
+        is_full_structure = len(embeddings_tuple) == 3
         
+        if is_full_structure:
+            premise_emb, hypothesis_emb, delta_emb = embeddings_tuple
+            n_dims = premise_emb.shape[1]
+            # Create column names for full structure
+            premise_cols = [f'premise_{i}' for i in range(n_dims)]
+            hypothesis_cols = [f'hypothesis_{i}' for i in range(n_dims)]
+            delta_cols = [f'delta_{i}' for i in range(n_dims)]
+        else:
+            embeddings, = embeddings_tuple
+            n_dims = embeddings.shape[1]
+            # Create column names for single structure (assuming 'delta' for compatibility)
+            feature_cols = [f'delta_{i}' for i in range(n_dims)]
+
         # Calculate memory requirements and adjust chunk size for 10GB GPU
         estimated_memory_per_sample = n_dims * 3 * 4 / (1024**3)  # 3 embeddings, float32
         estimated_chunk_memory = chunk_size * estimated_memory_per_sample
@@ -201,52 +245,46 @@ def save_normalized_embeddings(premise_emb, hypothesis_emb, delta_emb, labels, o
         print(f"Saving {total_samples:,} samples in {total_chunks} chunks of {chunk_size:,}")
         print(f"Estimated memory per chunk: {chunk_size * estimated_memory_per_sample:.2f} GB")
         
-        # Create column names
-        premise_cols = [f'premise_{i}' for i in range(n_dims)]
-        hypothesis_cols = [f'hypothesis_{i}' for i in range(n_dims)]
-        delta_cols = [f'delta_{i}' for i in range(n_dims)]
-        
         # Ensure output directory exists
         output_path.parent.mkdir(parents=True, exist_ok=True)
-        
         chunk_files = []
         
         for chunk_idx in range(total_chunks):
             start_idx = chunk_idx * chunk_size
             end_idx = min(start_idx + chunk_size, total_samples)
             
-            # Extract chunk data
-            chunk_premise = premise_emb[start_idx:end_idx]
-            chunk_hypothesis = hypothesis_emb[start_idx:end_idx]
-            chunk_delta = delta_emb[start_idx:end_idx]
-            chunk_labels = labels[start_idx:end_idx]
-            
-            # Create DataFrame
             chunk_data = {}
+
+            if is_full_structure:
+                # Handle full structure
+                chunk_premise = premise_emb[start_idx:end_idx]
+                chunk_hypothesis = hypothesis_emb[start_idx:end_idx]
+                chunk_delta = delta_emb[start_idx:end_idx]
+                for i, col in enumerate(premise_cols): chunk_data[col] = cudf.Series(chunk_premise[:, i])
+                for i, col in enumerate(hypothesis_cols): chunk_data[col] = cudf.Series(chunk_hypothesis[:, i])
+                for i, col in enumerate(delta_cols): chunk_data[col] = cudf.Series(chunk_delta[:, i])
+            else:
+                # Handle single structure
+                chunk_embeddings = embeddings[start_idx:end_idx]
+                for i, col in enumerate(feature_cols): chunk_data[col] = cudf.Series(chunk_embeddings[:, i])
+
+            features_df = cudf.DataFrame(chunk_data)
             
-            # Add embeddings
-            for i, col in enumerate(premise_cols):
-                chunk_data[col] = cudf.Series(chunk_premise[:, i])
-            for i, col in enumerate(hypothesis_cols):
-                chunk_data[col] = cudf.Series(chunk_hypothesis[:, i])
-            for i, col in enumerate(delta_cols):
-                chunk_data[col] = cudf.Series(chunk_delta[:, i])
-            
-            chunk_data['label'] = cudf.Series(chunk_labels)
-            
-            chunk_df = cudf.DataFrame(chunk_data)
-            
-            # Save chunk
+            # Get the corresponding chunk of other data (labels, ids) and combine
+            other_data_chunk = other_data_df.iloc[start_idx:end_idx].reset_index(drop=True)
+            chunk_df = cudf.concat([features_df, other_data_chunk], axis=1)
+
             chunk_file = output_path.parent / f"{output_path.stem}_chunk_{chunk_idx:04d}.parquet"
             chunk_df.to_parquet(chunk_file)
             chunk_files.append(chunk_file)
             
-            # Progress update
             if (chunk_idx + 1) % 5 == 0 or chunk_idx == total_chunks - 1:
                 print(f"  Saved chunk {chunk_idx + 1}/{total_chunks}")
             
-            # Cleanup
-            del chunk_data, chunk_df, chunk_premise, chunk_hypothesis, chunk_delta
+            # Aggressive cleanup
+            del features_df, other_data_chunk, chunk_df, chunk_data
+            if is_full_structure: del chunk_premise, chunk_hypothesis, chunk_delta
+            else: del chunk_embeddings
             aggressive_cleanup()
         
         # Combine chunks into final file using streaming approach
@@ -316,56 +354,50 @@ def save_normalized_embeddings(premise_emb, hypothesis_emb, delta_emb, labels, o
         raise RuntimeError(f"Failed to save normalized embeddings: {e}")
 
 def process_normalization_gpu(source_path: Path, output_path: Path, normalization_type: str) -> dict:
-    """Main normalization processing function"""
-    print(f"Loading embeddings from {source_path}")
+    """Main GPU-based normalization process"""
+    start_time = time.time()
     
     # Load data
+    print(f"Loading embeddings from {source_path}")
     df = cudf.read_parquet(source_path)
-    if df.empty:
-        raise ValueError("Input data is empty")
-    
     print(f"Loaded {len(df):,} samples")
     
     # Extract embeddings
-    premise_emb, hypothesis_emb, delta_emb, labels = extract_embeddings(df)
+    embeddings_tuple, other_data, structure_type = extract_embeddings(df)
     
-    # Compute pre-normalization stats
-    print("Computing pre-normalization statistics...")
-    pre_stats = {}
-    pre_stats.update(compute_embedding_stats(premise_emb, "pre_premise"))
-    pre_stats.update(compute_embedding_stats(hypothesis_emb, "pre_hypothesis"))
-    pre_stats.update(compute_embedding_stats(delta_emb, "pre_delta"))
-    
+    # Compute stats for original embeddings
+    if structure_type == 'full':
+        original_stats = compute_embedding_stats(embeddings_tuple[0], "original_premise")
+        original_stats.update(compute_embedding_stats(embeddings_tuple[1], "original_hypothesis"))
+        original_stats.update(compute_embedding_stats(embeddings_tuple[2], "original_delta"))
+    else:
+        original_stats = compute_embedding_stats(embeddings_tuple[0], "original_vectors")
+
     # Apply normalization
-    norm_premise, norm_hypothesis, norm_delta = apply_normalization(
-        premise_emb, hypothesis_emb, delta_emb, normalization_type
-    )
+    norm_embeddings_tuple = apply_normalization(embeddings_tuple, normalization_type)
     
-    # Compute post-normalization stats
-    print("Computing post-normalization statistics...")
-    post_stats = {}
-    post_stats.update(compute_embedding_stats(norm_premise, "post_premise"))
-    post_stats.update(compute_embedding_stats(norm_hypothesis, "post_hypothesis"))
-    post_stats.update(compute_embedding_stats(norm_delta, "post_delta"))
+    # Compute stats for normalized embeddings
+    if structure_type == 'full':
+        normalized_stats = compute_embedding_stats(norm_embeddings_tuple[0], "normalized_premise")
+        normalized_stats.update(compute_embedding_stats(norm_embeddings_tuple[1], "normalized_hypothesis"))
+        normalized_stats.update(compute_embedding_stats(norm_embeddings_tuple[2], "normalized_delta"))
+    else:
+        normalized_stats = compute_embedding_stats(norm_embeddings_tuple[0], "normalized_vectors")
+
+    # Save results
+    save_normalized_embeddings(norm_embeddings_tuple, other_data, output_path)
     
-    # Save normalized embeddings
-    n_saved = save_normalized_embeddings(norm_premise, norm_hypothesis, norm_delta, labels, output_path)
-    
-    # Cleanup
-    del premise_emb, hypothesis_emb, delta_emb
-    del norm_premise, norm_hypothesis, norm_delta
+    # Final cleanup
+    del df, embeddings_tuple, norm_embeddings_tuple, other_data
     aggressive_cleanup()
     
-    # Combine results
-    results = {
-        'normalization_type': normalization_type,
-        'n_samples_processed': n_saved,
-        'n_dimensions': premise_emb.shape[1] if 'premise_emb' in locals() else 768,
-        **pre_stats,
-        **post_stats
-    }
+    end_time = time.time()
+    duration = end_time - start_time
+    print(f"✓ Normalization completed in {duration:.2f}s")
     
-    return results
+    # Combine stats for MLflow
+    all_stats = {**original_stats, **normalized_stats, 'duration_s': duration}
+    return all_stats
 
 def main():
     args = parse_args()

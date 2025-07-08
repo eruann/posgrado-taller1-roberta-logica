@@ -1,0 +1,76 @@
+SNLI Dataset Structure Analysis - 'train' split
+==================================================
+
+Summary Statistics:
+- Total premise instances: 540518
+- Total unique premises: 149303
+- Total hypothesis instances: 540518
+- Total unique hypotheses: 473985
+- Rows in duplicated (premise, hypothesis) pairs: 1123
+- Unique pairs with conflicting labels: 47
+- Premises appearing with multiple labels: 149233
+- Hypotheses appearing with multiple labels: 8859
+- Texts appearing as both premise and hypothesis: 0
+
+Cross-Contamination Matrix:
+             is_hypothesis  not_hypothesis  hypothesis
+is_premise             0.0             0.0         NaN
+not_premise            0.0             0.0    473985.0
+premise                NaN        149303.0         NaN
+
+==================================================
+Examples of Texts with Multiple Roles/Labels
+==================================================
+
+Premises with multiple labels (first 5 examples):
+- Premise: " "Cafe Express" sign covered in graffiti."
+  - Hypothesis: "A sign covered in graffiti." -> Label: entailment
+  - Hypothesis: "The sign is hard to read." -> Label: neutral
+  - Hypothesis: "the sign is brand new and clean." -> Label: contradiction
+
+- Premise: "# 6 tries her best to help her team to victory."
+  - Hypothesis: "A woman is playing basketball." -> Label: neutral
+  - Hypothesis: "A sports arena is empty." -> Label: contradiction
+  - Hypothesis: "A female person is playing a team sport." -> Label: entailment
+
+- Premise: "# 8 for Iowa State stiff arms a Texas AM player attempting to tackle him."
+  - Hypothesis: "A player for Texas AM gets stiff armed." -> Label: entailment
+  - Hypothesis: "The player dropped the baseball." -> Label: contradiction
+
+- Premise: "' The Herald' being sold and advertised at a mini-mart."
+  - Hypothesis: "'The Herald' is selling out everywhere except at this mini-mart." -> Label: neutral
+  - Hypothesis: "'The Daily News' at a local mall." -> Label: contradiction
+  - Hypothesis: "'The Herald' at a mini-mart." -> Label: entailment
+
+- Premise: "1 guys running with a white ball football in sand while another chases him."
+  - Hypothesis: "The boys are in grass." -> Label: contradiction
+  - Hypothesis: "The boys are outside." -> Label: entailment
+  - Hypothesis: "The boys are on a beach." -> Label: neutral
+
+Pairs with conflicting labels (first 5 examples):
+- Premise: "A baby gives a woman an opportunity to engage in its world."
+  Hypothesis: "A baby gives a woman an opportunity to engage in its world"
+  -> Found Label: entailment
+  -> Found Label: neutral
+
+- Premise: "A bird perches in an empty window frame."
+  Hypothesis: "The bird has legs."
+  -> Found Label: entailment
+  -> Found Label: neutral
+
+- Premise: "A brown dog shows his teeth."
+  Hypothesis: "A brown dog bares his teeth"
+  -> Found Label: entailment
+  -> Found Label: neutral
+
+- Premise: "A group of journalists are gathered in a conference room."
+  Hypothesis: "A bunch of writers are in a room."
+  -> Found Label: neutral
+  -> Found Label: entailment
+
+- Premise: "A group of people, some of whom are standing and using chopsticks, surround a table which is laden with plates of food."
+  Hypothesis: "A group of people are eating."
+  -> Found Label: entailment
+  -> Found Label: neutral
+
+Texts appearing as both premise and hypothesis (first 5 examples):

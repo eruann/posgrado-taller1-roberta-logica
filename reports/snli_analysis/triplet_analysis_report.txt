@@ -1,0 +1,58 @@
+SNLI Dataset Triplet Structure Analysis
+==================================================
+
+Total unique premises found: 149303
+
+Premise Distribution by Number of Associated Labels:
+- Premises with 1 label (not contrastive): 70 (0.05%)
+- Premises with 2 labels (partially contrastive): 5649 (3.78%)
+- Premises with 3 labels (complete triplets): 143584 (96.17%)
+
+Analysis of Complete Triplets:
+- Total complete triplets found: 143584
+- Percentage of premises forming complete triplets: 96.17%
+- Number of perfectly balanced triplets (e.g., 1-1-1 or 2-2-2 hypotheses): 142986
+- Average number of hypotheses per label within these triplets:
+  - Entailment: 1.22
+  - Neutral: 1.22
+  - Contradiction: 1.22
+
+==================================================
+5. Verification of the 'Systematic Triplet' Assumption
+==================================================
+
+The percentage of premises that allow for any contrastive analysis (having at least 2 different labels) is: 99.95%
+The percentage of premises that form a complete triplet (all 3 labels) is: 96.17%
+
+Conclusion: The 'systematic triplet' assumption appears to be LARGELY VALID.
+A significant majority of premises are paired with hypotheses covering all three inference types, making the dataset highly suitable for the proposed contrastive analysis.
+
+==================================================
+Examples of Complete Triplets (Top 5)
+==================================================
+
+Premise: " "Cafe Express" sign covered in graffiti."
+  - (entailment) Hypothesis: "A sign covered in graffiti."
+  - (neutral) Hypothesis: "The sign is hard to read."
+  - (contradiction) Hypothesis: "the sign is brand new and clean."
+
+Premise: "# 6 tries her best to help her team to victory."
+  - (neutral) Hypothesis: "A woman is playing basketball."
+  - (contradiction) Hypothesis: "A sports arena is empty."
+  - (entailment) Hypothesis: "A female person is playing a team sport."
+
+Premise: "' The Herald' being sold and advertised at a mini-mart."
+  - (neutral) Hypothesis: "'The Herald' is selling out everywhere except at this mini-mart."
+  - (contradiction) Hypothesis: "'The Daily News' at a local mall."
+  - (entailment) Hypothesis: "'The Herald' at a mini-mart."
+
+Premise: "1 guys running with a white ball football in sand while another chases him."
+  - (contradiction) Hypothesis: "The boys are in grass."
+  - (entailment) Hypothesis: "The boys are outside."
+  - (neutral) Hypothesis: "The boys are on a beach."
+
+Premise: "1 little boy wearing a pirate costume following closely behind a little girl wearing a blue dress carrying a orange pumpkin bucket and walking down the sidewalk."
+  - (neutral) Hypothesis: "A boy and girl trick or treating."
+  - (entailment) Hypothesis: "Boy in costume followed by a girl in costume."
+  - (contradiction) Hypothesis: "A boy in a clown costume followed by a girl."
+

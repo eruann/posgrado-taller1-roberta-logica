@@ -1,0 +1,1786 @@
+2025-07-06 02:28:03,861 - INFO - Reporte guardado en: /home/matias/datascience/tesis-llm-lpo/reports/verify_embeddings_report.txt
+2025-07-06 02:28:03,861 - INFO - Cargando embeddings desde: data/snli/embeddings/filtered/embeddings_snli_layer_9.parquet
+2025-07-06 02:28:45,319 - INFO - Cargando dataset original desde: data/snli/dataset/snli_filtered
+2025-07-06 02:28:46,272 - INFO - Tomando las primeras 1000 muestras para la verificación...
+2025-07-06 02:28:46,641 - INFO - 
+--- Iniciando Verificación ---
+2025-07-06 02:28:46,641 - INFO - Premisa nueva encontrada (idx 0): 'A person on a horse jumps over a broken down airpl...'
+2025-07-06 02:28:46,641 - INFO - Premisa repetida encontrada (idx 1): 'A person on a horse jumps over a broken down airpl...'
+2025-07-06 02:28:46,642 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,642 - INFO - Premisa repetida encontrada (idx 2): 'A person on a horse jumps over a broken down airpl...'
+2025-07-06 02:28:46,642 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,642 - INFO - Premisa nueva encontrada (idx 3): 'Children smiling and waving at camera...'
+2025-07-06 02:28:46,642 - INFO - Premisa repetida encontrada (idx 4): 'Children smiling and waving at camera...'
+2025-07-06 02:28:46,642 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,642 - INFO - Premisa repetida encontrada (idx 5): 'Children smiling and waving at camera...'
+2025-07-06 02:28:46,642 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,642 - INFO - Premisa nueva encontrada (idx 6): 'A boy is jumping on skateboard in the middle of a ...'
+2025-07-06 02:28:46,642 - INFO - Premisa repetida encontrada (idx 7): 'A boy is jumping on skateboard in the middle of a ...'
+2025-07-06 02:28:46,642 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,642 - INFO - Premisa repetida encontrada (idx 8): 'A boy is jumping on skateboard in the middle of a ...'
+2025-07-06 02:28:46,643 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,643 - INFO - Premisa nueva encontrada (idx 9): 'An older man sits with his orange juice at a small...'
+2025-07-06 02:28:46,643 - INFO - Premisa repetida encontrada (idx 10): 'An older man sits with his orange juice at a small...'
+2025-07-06 02:28:46,643 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,643 - INFO - Premisa repetida encontrada (idx 11): 'An older man sits with his orange juice at a small...'
+2025-07-06 02:28:46,643 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,643 - INFO - Premisa nueva encontrada (idx 12): 'Two blond women are hugging one another....'
+2025-07-06 02:28:46,643 - INFO - Premisa repetida encontrada (idx 13): 'Two blond women are hugging one another....'
+2025-07-06 02:28:46,643 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,643 - INFO - Premisa repetida encontrada (idx 14): 'Two blond women are hugging one another....'
+2025-07-06 02:28:46,643 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,643 - INFO - Premisa nueva encontrada (idx 15): 'A few people in a restaurant setting, one of them ...'
+2025-07-06 02:28:46,643 - INFO - Premisa repetida encontrada (idx 16): 'A few people in a restaurant setting, one of them ...'
+2025-07-06 02:28:46,643 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,643 - INFO - Premisa repetida encontrada (idx 17): 'A few people in a restaurant setting, one of them ...'
+2025-07-06 02:28:46,644 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,644 - INFO - Premisa nueva encontrada (idx 18): 'An older man is drinking orange juice at a restaur...'
+2025-07-06 02:28:46,644 - INFO - Premisa repetida encontrada (idx 19): 'An older man is drinking orange juice at a restaur...'
+2025-07-06 02:28:46,644 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,644 - INFO - Premisa repetida encontrada (idx 20): 'An older man is drinking orange juice at a restaur...'
+2025-07-06 02:28:46,644 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,644 - INFO - Premisa nueva encontrada (idx 21): 'A man with blond-hair, and a brown shirt drinking ...'
+2025-07-06 02:28:46,644 - INFO - Premisa repetida encontrada (idx 22): 'A man with blond-hair, and a brown shirt drinking ...'
+2025-07-06 02:28:46,644 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,644 - INFO - Premisa repetida encontrada (idx 23): 'A man with blond-hair, and a brown shirt drinking ...'
+2025-07-06 02:28:46,644 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,644 - INFO - Premisa nueva encontrada (idx 24): 'Two women who just had lunch hugging and saying go...'
+2025-07-06 02:28:46,644 - INFO - Premisa repetida encontrada (idx 25): 'Two women who just had lunch hugging and saying go...'
+2025-07-06 02:28:46,644 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,644 - INFO - Premisa repetida encontrada (idx 26): 'Two women who just had lunch hugging and saying go...'
+2025-07-06 02:28:46,645 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,645 - INFO - Premisa nueva encontrada (idx 27): 'Two women, holding food carryout containers, hug....'
+2025-07-06 02:28:46,645 - INFO - Premisa repetida encontrada (idx 28): 'Two women, holding food carryout containers, hug....'
+2025-07-06 02:28:46,645 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,645 - INFO - Premisa repetida encontrada (idx 29): 'Two women, holding food carryout containers, hug....'
+2025-07-06 02:28:46,645 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,645 - INFO - Premisa nueva encontrada (idx 30): 'A Little League team tries to catch a runner slidi...'
+2025-07-06 02:28:46,645 - INFO - Premisa repetida encontrada (idx 31): 'A Little League team tries to catch a runner slidi...'
+2025-07-06 02:28:46,645 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,645 - INFO - Premisa repetida encontrada (idx 32): 'A Little League team tries to catch a runner slidi...'
+2025-07-06 02:28:46,645 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,645 - INFO - Premisa nueva encontrada (idx 33): 'The school is having a special event in order to s...'
+2025-07-06 02:28:46,645 - INFO - Premisa repetida encontrada (idx 34): 'The school is having a special event in order to s...'
+2025-07-06 02:28:46,645 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,645 - INFO - Premisa repetida encontrada (idx 35): 'The school is having a special event in order to s...'
+2025-07-06 02:28:46,645 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,645 - INFO - Premisa nueva encontrada (idx 36): 'High fashion ladies wait outside a tram beside a c...'
+2025-07-06 02:28:46,646 - INFO - Premisa repetida encontrada (idx 37): 'High fashion ladies wait outside a tram beside a c...'
+2025-07-06 02:28:46,646 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,646 - INFO - Premisa repetida encontrada (idx 38): 'High fashion ladies wait outside a tram beside a c...'
+2025-07-06 02:28:46,646 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,646 - INFO - Premisa nueva encontrada (idx 39): 'A man, woman, and child enjoying themselves on a b...'
+2025-07-06 02:28:46,646 - INFO - Premisa repetida encontrada (idx 40): 'A man, woman, and child enjoying themselves on a b...'
+2025-07-06 02:28:46,646 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,646 - INFO - Premisa repetida encontrada (idx 41): 'A man, woman, and child enjoying themselves on a b...'
+2025-07-06 02:28:46,646 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,646 - INFO - Premisa nueva encontrada (idx 42): 'People waiting to get on a train or just getting o...'
+2025-07-06 02:28:46,646 - INFO - Premisa repetida encontrada (idx 43): 'People waiting to get on a train or just getting o...'
+2025-07-06 02:28:46,646 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,646 - INFO - Premisa repetida encontrada (idx 44): 'People waiting to get on a train or just getting o...'
+2025-07-06 02:28:46,646 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,646 - INFO - Premisa nueva encontrada (idx 45): 'A couple playing with a little boy on the beach....'
+2025-07-06 02:28:46,646 - INFO - Premisa repetida encontrada (idx 46): 'A couple playing with a little boy on the beach....'
+2025-07-06 02:28:46,647 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,647 - INFO - Premisa repetida encontrada (idx 47): 'A couple playing with a little boy on the beach....'
+2025-07-06 02:28:46,647 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,647 - INFO - Premisa nueva encontrada (idx 48): 'A couple play in the tide with their young son....'
+2025-07-06 02:28:46,647 - INFO - Premisa repetida encontrada (idx 49): 'A couple play in the tide with their young son....'
+2025-07-06 02:28:46,647 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,647 - INFO - Premisa repetida encontrada (idx 50): 'A couple play in the tide with their young son....'
+2025-07-06 02:28:46,647 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,647 - INFO - Premisa nueva encontrada (idx 51): 'A man and a woman cross the street in front of a p...'
+2025-07-06 02:28:46,647 - INFO - Premisa repetida encontrada (idx 52): 'A man and a woman cross the street in front of a p...'
+2025-07-06 02:28:46,647 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,647 - INFO - Premisa repetida encontrada (idx 53): 'A man and a woman cross the street in front of a p...'
+2025-07-06 02:28:46,647 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,647 - INFO - Premisa nueva encontrada (idx 54): 'A woman in a green jacket and hood over her head l...'
+2025-07-06 02:28:46,647 - INFO - Premisa repetida encontrada (idx 55): 'A woman in a green jacket and hood over her head l...'
+2025-07-06 02:28:46,647 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,648 - INFO - Premisa repetida encontrada (idx 56): 'A woman in a green jacket and hood over her head l...'
+2025-07-06 02:28:46,648 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,648 - INFO - Premisa nueva encontrada (idx 57): 'Woman in white in foreground and a man slightly be...'
+2025-07-06 02:28:46,648 - INFO - Premisa repetida encontrada (idx 58): 'Woman in white in foreground and a man slightly be...'
+2025-07-06 02:28:46,648 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,648 - INFO - Premisa repetida encontrada (idx 59): 'Woman in white in foreground and a man slightly be...'
+2025-07-06 02:28:46,648 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,648 - INFO - Premisa repetida encontrada (idx 60): 'Woman in white in foreground and a man slightly be...'
+2025-07-06 02:28:46,648 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,648 - INFO - Premisa repetida encontrada (idx 61): 'Woman in white in foreground and a man slightly be...'
+2025-07-06 02:28:46,648 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,648 - INFO - Premisa repetida encontrada (idx 62): 'Woman in white in foreground and a man slightly be...'
+2025-07-06 02:28:46,648 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,648 - INFO - Premisa repetida encontrada (idx 63): 'Woman in white in foreground and a man slightly be...'
+2025-07-06 02:28:46,648 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,649 - INFO - Premisa repetida encontrada (idx 64): 'Woman in white in foreground and a man slightly be...'
+2025-07-06 02:28:46,649 - WARNING -   [!] INCONSISTENCIA DETECTADA en el índice 64!
+2025-07-06 02:28:46,649 - WARNING -       - Norma de la diferencia: 0.000006
+2025-07-06 02:28:46,649 - INFO - Premisa repetida encontrada (idx 65): 'Woman in white in foreground and a man slightly be...'
+2025-07-06 02:28:46,649 - WARNING -   [!] INCONSISTENCIA DETECTADA en el índice 65!
+2025-07-06 02:28:46,649 - WARNING -       - Norma de la diferencia: 0.000006
+2025-07-06 02:28:46,649 - INFO - Premisa repetida encontrada (idx 66): 'Woman in white in foreground and a man slightly be...'
+2025-07-06 02:28:46,649 - WARNING -   [!] INCONSISTENCIA DETECTADA en el índice 66!
+2025-07-06 02:28:46,649 - WARNING -       - Norma de la diferencia: 0.000006
+2025-07-06 02:28:46,649 - INFO - Premisa repetida encontrada (idx 67): 'Woman in white in foreground and a man slightly be...'
+2025-07-06 02:28:46,649 - WARNING -   [!] INCONSISTENCIA DETECTADA en el índice 67!
+2025-07-06 02:28:46,649 - WARNING -       - Norma de la diferencia: 0.000006
+2025-07-06 02:28:46,649 - INFO - Premisa repetida encontrada (idx 68): 'Woman in white in foreground and a man slightly be...'
+2025-07-06 02:28:46,649 - WARNING -   [!] INCONSISTENCIA DETECTADA en el índice 68!
+2025-07-06 02:28:46,650 - WARNING -       - Norma de la diferencia: 0.000006
+2025-07-06 02:28:46,650 - INFO - Premisa repetida encontrada (idx 69): 'Woman in white in foreground and a man slightly be...'
+2025-07-06 02:28:46,650 - WARNING -   [!] INCONSISTENCIA DETECTADA en el índice 69!
+2025-07-06 02:28:46,650 - WARNING -       - Norma de la diferencia: 0.000006
+2025-07-06 02:28:46,650 - INFO - Premisa repetida encontrada (idx 70): 'Woman in white in foreground and a man slightly be...'
+2025-07-06 02:28:46,650 - WARNING -   [!] INCONSISTENCIA DETECTADA en el índice 70!
+2025-07-06 02:28:46,650 - WARNING -       - Norma de la diferencia: 0.000006
+2025-07-06 02:28:46,650 - INFO - Premisa repetida encontrada (idx 71): 'Woman in white in foreground and a man slightly be...'
+2025-07-06 02:28:46,650 - WARNING -   [!] INCONSISTENCIA DETECTADA en el índice 71!
+2025-07-06 02:28:46,650 - WARNING -       - Norma de la diferencia: 0.000006
+2025-07-06 02:28:46,650 - INFO - Premisa nueva encontrada (idx 72): 'Two adults, one female in white, with shades and o...'
+2025-07-06 02:28:46,650 - INFO - Premisa repetida encontrada (idx 73): 'Two adults, one female in white, with shades and o...'
+2025-07-06 02:28:46,650 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,650 - INFO - Premisa repetida encontrada (idx 74): 'Two adults, one female in white, with shades and o...'
+2025-07-06 02:28:46,650 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,650 - INFO - Premisa repetida encontrada (idx 75): 'Two adults, one female in white, with shades and o...'
+2025-07-06 02:28:46,651 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,651 - INFO - Premisa repetida encontrada (idx 76): 'Two adults, one female in white, with shades and o...'
+2025-07-06 02:28:46,651 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,651 - INFO - Premisa repetida encontrada (idx 77): 'Two adults, one female in white, with shades and o...'
+2025-07-06 02:28:46,651 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,651 - INFO - Premisa repetida encontrada (idx 78): 'Two adults, one female in white, with shades and o...'
+2025-07-06 02:28:46,651 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,651 - INFO - Premisa repetida encontrada (idx 79): 'Two adults, one female in white, with shades and o...'
+2025-07-06 02:28:46,651 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,651 - INFO - Premisa repetida encontrada (idx 80): 'Two adults, one female in white, with shades and o...'
+2025-07-06 02:28:46,651 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,651 - INFO - Premisa repetida encontrada (idx 81): 'Two adults, one female in white, with shades and o...'
+2025-07-06 02:28:46,651 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,651 - INFO - Premisa repetida encontrada (idx 82): 'Two adults, one female in white, with shades and o...'
+2025-07-06 02:28:46,651 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,652 - INFO - Premisa repetida encontrada (idx 83): 'Two adults, one female in white, with shades and o...'
+2025-07-06 02:28:46,652 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,652 - INFO - Premisa repetida encontrada (idx 84): 'Two adults, one female in white, with shades and o...'
+2025-07-06 02:28:46,652 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,652 - INFO - Premisa repetida encontrada (idx 85): 'Two adults, one female in white, with shades and o...'
+2025-07-06 02:28:46,652 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,652 - INFO - Premisa repetida encontrada (idx 86): 'Two adults, one female in white, with shades and o...'
+2025-07-06 02:28:46,652 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,652 - INFO - Premisa nueva encontrada (idx 87): 'A woman wearing all white and eating, walks next t...'
+2025-07-06 02:28:46,652 - INFO - Premisa repetida encontrada (idx 88): 'A woman wearing all white and eating, walks next t...'
+2025-07-06 02:28:46,652 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,652 - INFO - Premisa repetida encontrada (idx 89): 'A woman wearing all white and eating, walks next t...'
+2025-07-06 02:28:46,652 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,652 - INFO - Premisa nueva encontrada (idx 90): 'A woman is walking across the street eating a bana...'
+2025-07-06 02:28:46,652 - INFO - Premisa repetida encontrada (idx 91): 'A woman is walking across the street eating a bana...'
+2025-07-06 02:28:46,653 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,653 - INFO - Premisa repetida encontrada (idx 92): 'A woman is walking across the street eating a bana...'
+2025-07-06 02:28:46,653 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,653 - INFO - Premisa repetida encontrada (idx 93): 'A woman is walking across the street eating a bana...'
+2025-07-06 02:28:46,653 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,653 - INFO - Premisa repetida encontrada (idx 94): 'A woman is walking across the street eating a bana...'
+2025-07-06 02:28:46,653 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,653 - INFO - Premisa repetida encontrada (idx 95): 'A woman is walking across the street eating a bana...'
+2025-07-06 02:28:46,653 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,653 - INFO - Premisa repetida encontrada (idx 96): 'A woman is walking across the street eating a bana...'
+2025-07-06 02:28:46,653 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,653 - INFO - Premisa repetida encontrada (idx 97): 'A woman is walking across the street eating a bana...'
+2025-07-06 02:28:46,653 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,653 - INFO - Premisa repetida encontrada (idx 98): 'A woman is walking across the street eating a bana...'
+2025-07-06 02:28:46,653 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,654 - INFO - Premisa repetida encontrada (idx 99): 'A woman is walking across the street eating a bana...'
+2025-07-06 02:28:46,654 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,654 - INFO - Premisa repetida encontrada (idx 100): 'A woman is walking across the street eating a bana...'
+2025-07-06 02:28:46,654 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,654 - INFO - Premisa repetida encontrada (idx 101): 'A woman is walking across the street eating a bana...'
+2025-07-06 02:28:46,654 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,654 - INFO - Premisa repetida encontrada (idx 102): 'A woman is walking across the street eating a bana...'
+2025-07-06 02:28:46,654 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,654 - INFO - Premisa repetida encontrada (idx 103): 'A woman is walking across the street eating a bana...'
+2025-07-06 02:28:46,654 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,654 - INFO - Premisa repetida encontrada (idx 104): 'A woman is walking across the street eating a bana...'
+2025-07-06 02:28:46,654 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,654 - INFO - Premisa nueva encontrada (idx 105): 'A skier slides along a metal rail....'
+2025-07-06 02:28:46,654 - INFO - Premisa repetida encontrada (idx 106): 'A skier slides along a metal rail....'
+2025-07-06 02:28:46,655 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,655 - INFO - Premisa repetida encontrada (idx 107): 'A skier slides along a metal rail....'
+2025-07-06 02:28:46,655 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,655 - INFO - Premisa nueva encontrada (idx 108): 'A person on skis on a rail at night....'
+2025-07-06 02:28:46,655 - INFO - Premisa repetida encontrada (idx 109): 'A person on skis on a rail at night....'
+2025-07-06 02:28:46,655 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,655 - INFO - Premisa repetida encontrada (idx 110): 'A person on skis on a rail at night....'
+2025-07-06 02:28:46,655 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,655 - INFO - Premisa nueva encontrada (idx 111): 'A skier in electric green on the edge of a ramp ma...'
+2025-07-06 02:28:46,655 - INFO - Premisa repetida encontrada (idx 112): 'A skier in electric green on the edge of a ramp ma...'
+2025-07-06 02:28:46,655 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,655 - INFO - Premisa repetida encontrada (idx 113): 'A skier in electric green on the edge of a ramp ma...'
+2025-07-06 02:28:46,655 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,655 - INFO - Premisa nueva encontrada (idx 114): 'A yellow uniformed skier is performing a trick acr...'
+2025-07-06 02:28:46,655 - INFO - Premisa repetida encontrada (idx 115): 'A yellow uniformed skier is performing a trick acr...'
+2025-07-06 02:28:46,655 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,655 - INFO - Premisa repetida encontrada (idx 116): 'A yellow uniformed skier is performing a trick acr...'
+2025-07-06 02:28:46,656 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,656 - INFO - Premisa nueva encontrada (idx 117): 'A blond man is drinking from a public fountain....'
+2025-07-06 02:28:46,656 - INFO - Premisa repetida encontrada (idx 118): 'A blond man is drinking from a public fountain....'
+2025-07-06 02:28:46,656 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,656 - INFO - Premisa repetida encontrada (idx 119): 'A blond man is drinking from a public fountain....'
+2025-07-06 02:28:46,656 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,656 - INFO - Premisa nueva encontrada (idx 120): 'Wet brown dog swims towards camera....'
+2025-07-06 02:28:46,656 - INFO - Premisa repetida encontrada (idx 121): 'Wet brown dog swims towards camera....'
+2025-07-06 02:28:46,656 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,656 - INFO - Premisa nueva encontrada (idx 122): 'Closeup image of a dog swimming....'
+2025-07-06 02:28:46,656 - INFO - Premisa repetida encontrada (idx 123): 'Closeup image of a dog swimming....'
+2025-07-06 02:28:46,656 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,656 - INFO - Premisa repetida encontrada (idx 124): 'Closeup image of a dog swimming....'
+2025-07-06 02:28:46,656 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,656 - INFO - Premisa nueva encontrada (idx 125): 'The furry brown dog is swimming in the ocean....'
+2025-07-06 02:28:46,656 - INFO - Premisa repetida encontrada (idx 126): 'The furry brown dog is swimming in the ocean....'
+2025-07-06 02:28:46,657 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,657 - INFO - Premisa repetida encontrada (idx 127): 'The furry brown dog is swimming in the ocean....'
+2025-07-06 02:28:46,657 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,657 - INFO - Premisa nueva encontrada (idx 128): 'A big brown dog swims towards the camera....'
+2025-07-06 02:28:46,657 - INFO - Premisa repetida encontrada (idx 129): 'A big brown dog swims towards the camera....'
+2025-07-06 02:28:46,657 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,657 - INFO - Premisa repetida encontrada (idx 130): 'A big brown dog swims towards the camera....'
+2025-07-06 02:28:46,657 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,657 - INFO - Premisa nueva encontrada (idx 131): 'A man wearing black with a gray hat, holding a pit...'
+2025-07-06 02:28:46,657 - INFO - Premisa repetida encontrada (idx 132): 'A man wearing black with a gray hat, holding a pit...'
+2025-07-06 02:28:46,657 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,657 - INFO - Premisa repetida encontrada (idx 133): 'A man wearing black with a gray hat, holding a pit...'
+2025-07-06 02:28:46,657 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,657 - INFO - Premisa nueva encontrada (idx 134): 'A man is leading a Clydesdale up a hay road, withi...'
+2025-07-06 02:28:46,657 - INFO - Premisa repetida encontrada (idx 135): 'A man is leading a Clydesdale up a hay road, withi...'
+2025-07-06 02:28:46,657 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,657 - INFO - Premisa repetida encontrada (idx 136): 'A man is leading a Clydesdale up a hay road, withi...'
+2025-07-06 02:28:46,658 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,658 - INFO - Premisa nueva encontrada (idx 137): 'A farmer fertilizing his garden with manure with a...'
+2025-07-06 02:28:46,658 - INFO - Premisa repetida encontrada (idx 138): 'A farmer fertilizing his garden with manure with a...'
+2025-07-06 02:28:46,658 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,658 - INFO - Premisa repetida encontrada (idx 139): 'A farmer fertilizing his garden with manure with a...'
+2025-07-06 02:28:46,658 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,658 - INFO - Premisa nueva encontrada (idx 140): 'A white horse is pulling a cart while a man stands...'
+2025-07-06 02:28:46,658 - INFO - Premisa repetida encontrada (idx 141): 'A white horse is pulling a cart while a man stands...'
+2025-07-06 02:28:46,658 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,658 - INFO - Premisa repetida encontrada (idx 142): 'A white horse is pulling a cart while a man stands...'
+2025-07-06 02:28:46,658 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,658 - INFO - Premisa nueva encontrada (idx 143): 'A small group of church-goers watch a choir practi...'
+2025-07-06 02:28:46,658 - INFO - Premisa repetida encontrada (idx 144): 'A small group of church-goers watch a choir practi...'
+2025-07-06 02:28:46,658 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,658 - INFO - Premisa nueva encontrada (idx 145): 'A dog drops a red disc on a beach....'
+2025-07-06 02:28:46,659 - INFO - Premisa repetida encontrada (idx 146): 'A dog drops a red disc on a beach....'
+2025-07-06 02:28:46,659 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,659 - INFO - Premisa repetida encontrada (idx 147): 'A dog drops a red disc on a beach....'
+2025-07-06 02:28:46,659 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,659 - INFO - Premisa nueva encontrada (idx 148): 'A man and a woman are walking on a street at the t...'
+2025-07-06 02:28:46,659 - INFO - Premisa repetida encontrada (idx 149): 'A man and a woman are walking on a street at the t...'
+2025-07-06 02:28:46,659 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,659 - INFO - Premisa repetida encontrada (idx 150): 'A man and a woman are walking on a street at the t...'
+2025-07-06 02:28:46,659 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,659 - INFO - Premisa nueva encontrada (idx 151): 'An elderly man is drinking orange juice at a cafe....'
+2025-07-06 02:28:46,659 - INFO - Premisa repetida encontrada (idx 152): 'An elderly man is drinking orange juice at a cafe....'
+2025-07-06 02:28:46,659 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,659 - INFO - Premisa repetida encontrada (idx 153): 'An elderly man is drinking orange juice at a cafe....'
+2025-07-06 02:28:46,659 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,659 - INFO - Premisa nueva encontrada (idx 154): 'A couple holding hands walks down a street....'
+2025-07-06 02:28:46,659 - INFO - Premisa repetida encontrada (idx 155): 'A couple holding hands walks down a street....'
+2025-07-06 02:28:46,659 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,660 - INFO - Premisa repetida encontrada (idx 156): 'A couple holding hands walks down a street....'
+2025-07-06 02:28:46,660 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,660 - INFO - Premisa nueva encontrada (idx 157): 'A couple walk through a white brick town....'
+2025-07-06 02:28:46,660 - INFO - Premisa repetida encontrada (idx 158): 'A couple walk through a white brick town....'
+2025-07-06 02:28:46,660 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,660 - INFO - Premisa repetida encontrada (idx 159): 'A couple walk through a white brick town....'
+2025-07-06 02:28:46,660 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,660 - INFO - Premisa nueva encontrada (idx 160): 'Children going home from school....'
+2025-07-06 02:28:46,660 - INFO - Premisa repetida encontrada (idx 161): 'Children going home from school....'
+2025-07-06 02:28:46,660 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,660 - INFO - Premisa repetida encontrada (idx 162): 'Children going home from school....'
+2025-07-06 02:28:46,660 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,660 - INFO - Premisa nueva encontrada (idx 163): 'People listening to a choir in a Catholic church....'
+2025-07-06 02:28:46,660 - INFO - Premisa repetida encontrada (idx 164): 'People listening to a choir in a Catholic church....'
+2025-07-06 02:28:46,660 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,660 - INFO - Premisa repetida encontrada (idx 165): 'People listening to a choir in a Catholic church....'
+2025-07-06 02:28:46,661 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,661 - INFO - Premisa nueva encontrada (idx 166): 'Bicyclists waiting at an intersection....'
+2025-07-06 02:28:46,661 - INFO - Premisa repetida encontrada (idx 167): 'Bicyclists waiting at an intersection....'
+2025-07-06 02:28:46,661 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,661 - INFO - Premisa repetida encontrada (idx 168): 'Bicyclists waiting at an intersection....'
+2025-07-06 02:28:46,661 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,661 - INFO - Premisa repetida encontrada (idx 169): 'Bicyclists waiting at an intersection....'
+2025-07-06 02:28:46,661 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,661 - INFO - Premisa repetida encontrada (idx 170): 'Bicyclists waiting at an intersection....'
+2025-07-06 02:28:46,661 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,661 - INFO - Premisa repetida encontrada (idx 171): 'Bicyclists waiting at an intersection....'
+2025-07-06 02:28:46,661 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,661 - INFO - Premisa repetida encontrada (idx 172): 'Bicyclists waiting at an intersection....'
+2025-07-06 02:28:46,661 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,661 - INFO - Premisa repetida encontrada (idx 173): 'Bicyclists waiting at an intersection....'
+2025-07-06 02:28:46,662 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,662 - INFO - Premisa repetida encontrada (idx 174): 'Bicyclists waiting at an intersection....'
+2025-07-06 02:28:46,662 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,662 - INFO - Premisa repetida encontrada (idx 175): 'Bicyclists waiting at an intersection....'
+2025-07-06 02:28:46,662 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,662 - INFO - Premisa repetida encontrada (idx 176): 'Bicyclists waiting at an intersection....'
+2025-07-06 02:28:46,662 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,662 - INFO - Premisa repetida encontrada (idx 177): 'Bicyclists waiting at an intersection....'
+2025-07-06 02:28:46,662 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,662 - INFO - Premisa repetida encontrada (idx 178): 'Bicyclists waiting at an intersection....'
+2025-07-06 02:28:46,662 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,662 - INFO - Premisa repetida encontrada (idx 179): 'Bicyclists waiting at an intersection....'
+2025-07-06 02:28:46,662 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,662 - INFO - Premisa nueva encontrada (idx 180): 'People waiting at a light on bikes....'
+2025-07-06 02:28:46,662 - INFO - Premisa repetida encontrada (idx 181): 'People waiting at a light on bikes....'
+2025-07-06 02:28:46,663 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,663 - INFO - Premisa repetida encontrada (idx 182): 'People waiting at a light on bikes....'
+2025-07-06 02:28:46,663 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,663 - INFO - Premisa repetida encontrada (idx 183): 'People waiting at a light on bikes....'
+2025-07-06 02:28:46,663 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,663 - INFO - Premisa repetida encontrada (idx 184): 'People waiting at a light on bikes....'
+2025-07-06 02:28:46,663 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,663 - INFO - Premisa repetida encontrada (idx 185): 'People waiting at a light on bikes....'
+2025-07-06 02:28:46,663 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,663 - INFO - Premisa repetida encontrada (idx 186): 'People waiting at a light on bikes....'
+2025-07-06 02:28:46,663 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,663 - INFO - Premisa repetida encontrada (idx 187): 'People waiting at a light on bikes....'
+2025-07-06 02:28:46,663 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,663 - INFO - Premisa repetida encontrada (idx 188): 'People waiting at a light on bikes....'
+2025-07-06 02:28:46,663 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,664 - INFO - Premisa repetida encontrada (idx 189): 'People waiting at a light on bikes....'
+2025-07-06 02:28:46,664 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,664 - INFO - Premisa repetida encontrada (idx 190): 'People waiting at a light on bikes....'
+2025-07-06 02:28:46,664 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,664 - INFO - Premisa repetida encontrada (idx 191): 'People waiting at a light on bikes....'
+2025-07-06 02:28:46,664 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,664 - INFO - Premisa repetida encontrada (idx 192): 'People waiting at a light on bikes....'
+2025-07-06 02:28:46,664 - WARNING -   [!] INCONSISTENCIA DETECTADA en el índice 192!
+2025-07-06 02:28:46,664 - WARNING -       - Norma de la diferencia: 0.000005
+2025-07-06 02:28:46,664 - INFO - Premisa repetida encontrada (idx 193): 'People waiting at a light on bikes....'
+2025-07-06 02:28:46,664 - WARNING -   [!] INCONSISTENCIA DETECTADA en el índice 193!
+2025-07-06 02:28:46,664 - WARNING -       - Norma de la diferencia: 0.000005
+2025-07-06 02:28:46,664 - INFO - Premisa repetida encontrada (idx 194): 'People waiting at a light on bikes....'
+2025-07-06 02:28:46,664 - WARNING -   [!] INCONSISTENCIA DETECTADA en el índice 194!
+2025-07-06 02:28:46,665 - WARNING -       - Norma de la diferencia: 0.000005
+2025-07-06 02:28:46,665 - INFO - Premisa nueva encontrada (idx 195): 'People on bicycles waiting at an intersection....'
+2025-07-06 02:28:46,665 - INFO - Premisa repetida encontrada (idx 196): 'People on bicycles waiting at an intersection....'
+2025-07-06 02:28:46,665 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,665 - INFO - Premisa repetida encontrada (idx 197): 'People on bicycles waiting at an intersection....'
+2025-07-06 02:28:46,665 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,665 - INFO - Premisa repetida encontrada (idx 198): 'People on bicycles waiting at an intersection....'
+2025-07-06 02:28:46,665 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,665 - INFO - Premisa repetida encontrada (idx 199): 'People on bicycles waiting at an intersection....'
+2025-07-06 02:28:46,665 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,665 - INFO - Premisa repetida encontrada (idx 200): 'People on bicycles waiting at an intersection....'
+2025-07-06 02:28:46,665 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,665 - INFO - Premisa repetida encontrada (idx 201): 'People on bicycles waiting at an intersection....'
+2025-07-06 02:28:46,665 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,665 - INFO - Premisa repetida encontrada (idx 202): 'People on bicycles waiting at an intersection....'
+2025-07-06 02:28:46,666 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,666 - INFO - Premisa repetida encontrada (idx 203): 'People on bicycles waiting at an intersection....'
+2025-07-06 02:28:46,666 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,666 - INFO - Premisa repetida encontrada (idx 204): 'People on bicycles waiting at an intersection....'
+2025-07-06 02:28:46,666 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,666 - INFO - Premisa repetida encontrada (idx 205): 'People on bicycles waiting at an intersection....'
+2025-07-06 02:28:46,666 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,666 - INFO - Premisa repetida encontrada (idx 206): 'People on bicycles waiting at an intersection....'
+2025-07-06 02:28:46,666 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,666 - INFO - Premisa repetida encontrada (idx 207): 'People on bicycles waiting at an intersection....'
+2025-07-06 02:28:46,666 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,666 - INFO - Premisa repetida encontrada (idx 208): 'People on bicycles waiting at an intersection....'
+2025-07-06 02:28:46,666 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,666 - INFO - Premisa repetida encontrada (idx 209): 'People on bicycles waiting at an intersection....'
+2025-07-06 02:28:46,666 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,667 - INFO - Premisa nueva encontrada (idx 210): 'A man with a red shirt is watching another man who...'
+2025-07-06 02:28:46,667 - INFO - Premisa repetida encontrada (idx 211): 'A man with a red shirt is watching another man who...'
+2025-07-06 02:28:46,667 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,667 - INFO - Premisa repetida encontrada (idx 212): 'A man with a red shirt is watching another man who...'
+2025-07-06 02:28:46,667 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,667 - INFO - Premisa repetida encontrada (idx 213): 'A man with a red shirt is watching another man who...'
+2025-07-06 02:28:46,667 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,667 - INFO - Premisa repetida encontrada (idx 214): 'A man with a red shirt is watching another man who...'
+2025-07-06 02:28:46,667 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,667 - INFO - Premisa repetida encontrada (idx 215): 'A man with a red shirt is watching another man who...'
+2025-07-06 02:28:46,667 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,667 - INFO - Premisa repetida encontrada (idx 216): 'A man with a red shirt is watching another man who...'
+2025-07-06 02:28:46,667 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,667 - INFO - Premisa repetida encontrada (idx 217): 'A man with a red shirt is watching another man who...'
+2025-07-06 02:28:46,667 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,667 - INFO - Premisa repetida encontrada (idx 218): 'A man with a red shirt is watching another man who...'
+2025-07-06 02:28:46,668 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,668 - INFO - Premisa repetida encontrada (idx 219): 'A man with a red shirt is watching another man who...'
+2025-07-06 02:28:46,668 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,668 - INFO - Premisa repetida encontrada (idx 220): 'A man with a red shirt is watching another man who...'
+2025-07-06 02:28:46,668 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,668 - INFO - Premisa repetida encontrada (idx 221): 'A man with a red shirt is watching another man who...'
+2025-07-06 02:28:46,668 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,668 - INFO - Premisa repetida encontrada (idx 222): 'A man with a red shirt is watching another man who...'
+2025-07-06 02:28:46,668 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,668 - INFO - Premisa repetida encontrada (idx 223): 'A man with a red shirt is watching another man who...'
+2025-07-06 02:28:46,668 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,668 - INFO - Premisa repetida encontrada (idx 224): 'A man with a red shirt is watching another man who...'
+2025-07-06 02:28:46,668 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,669 - INFO - Premisa nueva encontrada (idx 225): 'A boy is drinking out of a water fountain shaped l...'
+2025-07-06 02:28:46,669 - INFO - Premisa repetida encontrada (idx 226): 'A boy is drinking out of a water fountain shaped l...'
+2025-07-06 02:28:46,669 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,669 - INFO - Premisa repetida encontrada (idx 227): 'A boy is drinking out of a water fountain shaped l...'
+2025-07-06 02:28:46,669 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,669 - INFO - Premisa nueva encontrada (idx 228): 'three bikers stop in town....'
+2025-07-06 02:28:46,669 - INFO - Premisa repetida encontrada (idx 229): 'three bikers stop in town....'
+2025-07-06 02:28:46,669 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,669 - INFO - Premisa repetida encontrada (idx 230): 'three bikers stop in town....'
+2025-07-06 02:28:46,669 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,669 - INFO - Premisa repetida encontrada (idx 231): 'three bikers stop in town....'
+2025-07-06 02:28:46,669 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,669 - INFO - Premisa repetida encontrada (idx 232): 'three bikers stop in town....'
+2025-07-06 02:28:46,669 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,669 - INFO - Premisa repetida encontrada (idx 233): 'three bikers stop in town....'
+2025-07-06 02:28:46,669 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,670 - INFO - Premisa repetida encontrada (idx 234): 'three bikers stop in town....'
+2025-07-06 02:28:46,670 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,670 - INFO - Premisa repetida encontrada (idx 235): 'three bikers stop in town....'
+2025-07-06 02:28:46,670 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,670 - INFO - Premisa repetida encontrada (idx 236): 'three bikers stop in town....'
+2025-07-06 02:28:46,670 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,670 - INFO - Premisa repetida encontrada (idx 237): 'three bikers stop in town....'
+2025-07-06 02:28:46,670 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,670 - INFO - Premisa repetida encontrada (idx 238): 'three bikers stop in town....'
+2025-07-06 02:28:46,670 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,670 - INFO - Premisa repetida encontrada (idx 239): 'three bikers stop in town....'
+2025-07-06 02:28:46,670 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,670 - INFO - Premisa repetida encontrada (idx 240): 'three bikers stop in town....'
+2025-07-06 02:28:46,670 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,670 - INFO - Premisa repetida encontrada (idx 241): 'three bikers stop in town....'
+2025-07-06 02:28:46,671 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,671 - INFO - Premisa repetida encontrada (idx 242): 'three bikers stop in town....'
+2025-07-06 02:28:46,671 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,671 - INFO - Premisa nueva encontrada (idx 243): 'Two people loading brush on a trailer attached to ...'
+2025-07-06 02:28:46,671 - INFO - Premisa repetida encontrada (idx 244): 'Two people loading brush on a trailer attached to ...'
+2025-07-06 02:28:46,671 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,671 - INFO - Premisa repetida encontrada (idx 245): 'Two people loading brush on a trailer attached to ...'
+2025-07-06 02:28:46,671 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,671 - INFO - Premisa nueva encontrada (idx 246): 'A man with a beard, wearing a red shirt with gray ...'
+2025-07-06 02:28:46,671 - INFO - Premisa repetida encontrada (idx 247): 'A man with a beard, wearing a red shirt with gray ...'
+2025-07-06 02:28:46,671 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,671 - INFO - Premisa repetida encontrada (idx 248): 'A man with a beard, wearing a red shirt with gray ...'
+2025-07-06 02:28:46,671 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,671 - INFO - Premisa repetida encontrada (idx 249): 'A man with a beard, wearing a red shirt with gray ...'
+2025-07-06 02:28:46,671 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,671 - INFO - Premisa repetida encontrada (idx 250): 'A man with a beard, wearing a red shirt with gray ...'
+2025-07-06 02:28:46,672 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,672 - INFO - Premisa repetida encontrada (idx 251): 'A man with a beard, wearing a red shirt with gray ...'
+2025-07-06 02:28:46,672 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,672 - INFO - Premisa repetida encontrada (idx 252): 'A man with a beard, wearing a red shirt with gray ...'
+2025-07-06 02:28:46,672 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,672 - INFO - Premisa repetida encontrada (idx 253): 'A man with a beard, wearing a red shirt with gray ...'
+2025-07-06 02:28:46,672 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,672 - INFO - Premisa repetida encontrada (idx 254): 'A man with a beard, wearing a red shirt with gray ...'
+2025-07-06 02:28:46,672 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,672 - INFO - Premisa repetida encontrada (idx 255): 'A man with a beard, wearing a red shirt with gray ...'
+2025-07-06 02:28:46,672 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,672 - INFO - Premisa repetida encontrada (idx 256): 'A man with a beard, wearing a red shirt with gray ...'
+2025-07-06 02:28:46,672 - WARNING -   [!] INCONSISTENCIA DETECTADA en el índice 256!
+2025-07-06 02:28:46,672 - WARNING -       - Norma de la diferencia: 0.000007
+2025-07-06 02:28:46,673 - INFO - Premisa repetida encontrada (idx 257): 'A man with a beard, wearing a red shirt with gray ...'
+2025-07-06 02:28:46,673 - WARNING -   [!] INCONSISTENCIA DETECTADA en el índice 257!
+2025-07-06 02:28:46,673 - WARNING -       - Norma de la diferencia: 0.000007
+2025-07-06 02:28:46,673 - INFO - Premisa repetida encontrada (idx 258): 'A man with a beard, wearing a red shirt with gray ...'
+2025-07-06 02:28:46,673 - WARNING -   [!] INCONSISTENCIA DETECTADA en el índice 258!
+2025-07-06 02:28:46,673 - WARNING -       - Norma de la diferencia: 0.000007
+2025-07-06 02:28:46,673 - INFO - Premisa repetida encontrada (idx 259): 'A man with a beard, wearing a red shirt with gray ...'
+2025-07-06 02:28:46,673 - WARNING -   [!] INCONSISTENCIA DETECTADA en el índice 259!
+2025-07-06 02:28:46,673 - WARNING -       - Norma de la diferencia: 0.000007
+2025-07-06 02:28:46,673 - INFO - Premisa repetida encontrada (idx 260): 'A man with a beard, wearing a red shirt with gray ...'
+2025-07-06 02:28:46,673 - WARNING -   [!] INCONSISTENCIA DETECTADA en el índice 260!
+2025-07-06 02:28:46,673 - WARNING -       - Norma de la diferencia: 0.000007
+2025-07-06 02:28:46,673 - INFO - Premisa nueva encontrada (idx 261): 'A man with facial hair and a red and gray shirt tu...'
+2025-07-06 02:28:46,673 - INFO - Premisa repetida encontrada (idx 262): 'A man with facial hair and a red and gray shirt tu...'
+2025-07-06 02:28:46,673 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,674 - INFO - Premisa repetida encontrada (idx 263): 'A man with facial hair and a red and gray shirt tu...'
+2025-07-06 02:28:46,674 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,674 - INFO - Premisa nueva encontrada (idx 264): 'A middle-aged oriental woman in a green headscarf ...'
+2025-07-06 02:28:46,674 - INFO - Premisa repetida encontrada (idx 265): 'A middle-aged oriental woman in a green headscarf ...'
+2025-07-06 02:28:46,674 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,674 - INFO - Premisa repetida encontrada (idx 266): 'A middle-aged oriental woman in a green headscarf ...'
+2025-07-06 02:28:46,674 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,674 - INFO - Premisa nueva encontrada (idx 267): 'An Asian woman in a blue top and green headscarf s...'
+2025-07-06 02:28:46,674 - INFO - Premisa repetida encontrada (idx 268): 'An Asian woman in a blue top and green headscarf s...'
+2025-07-06 02:28:46,674 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,674 - INFO - Premisa repetida encontrada (idx 269): 'An Asian woman in a blue top and green headscarf s...'
+2025-07-06 02:28:46,674 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,674 - INFO - Premisa nueva encontrada (idx 270): 'A boat worker securing line....'
+2025-07-06 02:28:46,674 - INFO - Premisa repetida encontrada (idx 271): 'A boat worker securing line....'
+2025-07-06 02:28:46,674 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,675 - INFO - Premisa repetida encontrada (idx 272): 'A boat worker securing line....'
+2025-07-06 02:28:46,675 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,675 - INFO - Premisa nueva encontrada (idx 273): 'A small girl with a necklace is swimming....'
+2025-07-06 02:28:46,675 - INFO - Premisa repetida encontrada (idx 274): 'A small girl with a necklace is swimming....'
+2025-07-06 02:28:46,675 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,675 - INFO - Premisa repetida encontrada (idx 275): 'A small girl with a necklace is swimming....'
+2025-07-06 02:28:46,675 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,675 - INFO - Premisa nueva encontrada (idx 276): 'a skateboarder skates in the pool....'
+2025-07-06 02:28:46,675 - INFO - Premisa repetida encontrada (idx 277): 'a skateboarder skates in the pool....'
+2025-07-06 02:28:46,675 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,675 - INFO - Premisa repetida encontrada (idx 278): 'a skateboarder skates in the pool....'
+2025-07-06 02:28:46,675 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,675 - INFO - Premisa nueva encontrada (idx 279): 'A couple, who appear to be Indian or Pakistani, wa...'
+2025-07-06 02:28:46,675 - INFO - Premisa repetida encontrada (idx 280): 'A couple, who appear to be Indian or Pakistani, wa...'
+2025-07-06 02:28:46,675 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,675 - INFO - Premisa repetida encontrada (idx 281): 'A couple, who appear to be Indian or Pakistani, wa...'
+2025-07-06 02:28:46,675 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,676 - INFO - Premisa nueva encontrada (idx 282): 'There is a woman holding a baby, along with a man ...'
+2025-07-06 02:28:46,676 - INFO - Premisa repetida encontrada (idx 283): 'There is a woman holding a baby, along with a man ...'
+2025-07-06 02:28:46,676 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,676 - INFO - Premisa repetida encontrada (idx 284): 'There is a woman holding a baby, along with a man ...'
+2025-07-06 02:28:46,676 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,676 - INFO - Premisa nueva encontrada (idx 285): 'A family with a baby, the father is wearing a save...'
+2025-07-06 02:28:46,676 - INFO - Premisa repetida encontrada (idx 286): 'A family with a baby, the father is wearing a save...'
+2025-07-06 02:28:46,676 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,676 - INFO - Premisa nueva encontrada (idx 287): 'A foreign family is walking along a dirt path next...'
+2025-07-06 02:28:46,676 - INFO - Premisa repetida encontrada (idx 288): 'A foreign family is walking along a dirt path next...'
+2025-07-06 02:28:46,676 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,676 - INFO - Premisa repetida encontrada (idx 289): 'A foreign family is walking along a dirt path next...'
+2025-07-06 02:28:46,676 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,676 - INFO - Premisa repetida encontrada (idx 290): 'A foreign family is walking along a dirt path next...'
+2025-07-06 02:28:46,676 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,676 - INFO - Premisa repetida encontrada (idx 291): 'A foreign family is walking along a dirt path next...'
+2025-07-06 02:28:46,677 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,677 - INFO - Premisa repetida encontrada (idx 292): 'A foreign family is walking along a dirt path next...'
+2025-07-06 02:28:46,677 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,677 - INFO - Premisa repetida encontrada (idx 293): 'A foreign family is walking along a dirt path next...'
+2025-07-06 02:28:46,677 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,677 - INFO - Premisa repetida encontrada (idx 294): 'A foreign family is walking along a dirt path next...'
+2025-07-06 02:28:46,677 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,677 - INFO - Premisa repetida encontrada (idx 295): 'A foreign family is walking along a dirt path next...'
+2025-07-06 02:28:46,677 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,677 - INFO - Premisa repetida encontrada (idx 296): 'A foreign family is walking along a dirt path next...'
+2025-07-06 02:28:46,677 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,677 - INFO - Premisa repetida encontrada (idx 297): 'A foreign family is walking along a dirt path next...'
+2025-07-06 02:28:46,677 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,677 - INFO - Premisa repetida encontrada (idx 298): 'A foreign family is walking along a dirt path next...'
+2025-07-06 02:28:46,677 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,677 - INFO - Premisa repetida encontrada (idx 299): 'A foreign family is walking along a dirt path next...'
+2025-07-06 02:28:46,677 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,678 - INFO - Premisa repetida encontrada (idx 300): 'A foreign family is walking along a dirt path next...'
+2025-07-06 02:28:46,678 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,678 - INFO - Premisa repetida encontrada (idx 301): 'A foreign family is walking along a dirt path next...'
+2025-07-06 02:28:46,678 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,678 - INFO - Premisa nueva encontrada (idx 302): 'A man and a woman are standing next to sculptures,...'
+2025-07-06 02:28:46,678 - INFO - Premisa repetida encontrada (idx 303): 'A man and a woman are standing next to sculptures,...'
+2025-07-06 02:28:46,678 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,678 - INFO - Premisa repetida encontrada (idx 304): 'A man and a woman are standing next to sculptures,...'
+2025-07-06 02:28:46,678 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,678 - INFO - Premisa repetida encontrada (idx 305): 'A man and a woman are standing next to sculptures,...'
+2025-07-06 02:28:46,678 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,678 - INFO - Premisa repetida encontrada (idx 306): 'A man and a woman are standing next to sculptures,...'
+2025-07-06 02:28:46,678 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,678 - INFO - Premisa repetida encontrada (idx 307): 'A man and a woman are standing next to sculptures,...'
+2025-07-06 02:28:46,678 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,679 - INFO - Premisa repetida encontrada (idx 308): 'A man and a woman are standing next to sculptures,...'
+2025-07-06 02:28:46,679 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,679 - INFO - Premisa repetida encontrada (idx 309): 'A man and a woman are standing next to sculptures,...'
+2025-07-06 02:28:46,679 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,679 - INFO - Premisa repetida encontrada (idx 310): 'A man and a woman are standing next to sculptures,...'
+2025-07-06 02:28:46,679 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,679 - INFO - Premisa repetida encontrada (idx 311): 'A man and a woman are standing next to sculptures,...'
+2025-07-06 02:28:46,679 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,679 - INFO - Premisa repetida encontrada (idx 312): 'A man and a woman are standing next to sculptures,...'
+2025-07-06 02:28:46,679 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,679 - INFO - Premisa repetida encontrada (idx 313): 'A man and a woman are standing next to sculptures,...'
+2025-07-06 02:28:46,679 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,679 - INFO - Premisa repetida encontrada (idx 314): 'A man and a woman are standing next to sculptures,...'
+2025-07-06 02:28:46,679 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,680 - INFO - Premisa repetida encontrada (idx 315): 'A man and a woman are standing next to sculptures,...'
+2025-07-06 02:28:46,680 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,680 - INFO - Premisa repetida encontrada (idx 316): 'A man and a woman are standing next to sculptures,...'
+2025-07-06 02:28:46,680 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,680 - INFO - Premisa nueva encontrada (idx 317): 'Group of young women in dresses strolling on the s...'
+2025-07-06 02:28:46,680 - INFO - Premisa repetida encontrada (idx 318): 'Group of young women in dresses strolling on the s...'
+2025-07-06 02:28:46,680 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,680 - INFO - Premisa repetida encontrada (idx 319): 'Group of young women in dresses strolling on the s...'
+2025-07-06 02:28:46,680 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,680 - INFO - Premisa nueva encontrada (idx 320): 'A man wearing a striped top and jeans does a skate...'
+2025-07-06 02:28:46,680 - INFO - Premisa repetida encontrada (idx 321): 'A man wearing a striped top and jeans does a skate...'
+2025-07-06 02:28:46,680 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,680 - INFO - Premisa repetida encontrada (idx 322): 'A man wearing a striped top and jeans does a skate...'
+2025-07-06 02:28:46,680 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,680 - INFO - Premisa nueva encontrada (idx 323): 'A man squatting in the foreground of a photograph ...'
+2025-07-06 02:28:46,680 - INFO - Premisa repetida encontrada (idx 324): 'A man squatting in the foreground of a photograph ...'
+2025-07-06 02:28:46,681 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,681 - INFO - Premisa repetida encontrada (idx 325): 'A man squatting in the foreground of a photograph ...'
+2025-07-06 02:28:46,681 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,681 - INFO - Premisa repetida encontrada (idx 326): 'A man squatting in the foreground of a photograph ...'
+2025-07-06 02:28:46,681 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,681 - INFO - Premisa repetida encontrada (idx 327): 'A man squatting in the foreground of a photograph ...'
+2025-07-06 02:28:46,681 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,681 - INFO - Premisa repetida encontrada (idx 328): 'A man squatting in the foreground of a photograph ...'
+2025-07-06 02:28:46,681 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,681 - INFO - Premisa repetida encontrada (idx 329): 'A man squatting in the foreground of a photograph ...'
+2025-07-06 02:28:46,681 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,681 - INFO - Premisa repetida encontrada (idx 330): 'A man squatting in the foreground of a photograph ...'
+2025-07-06 02:28:46,681 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,681 - INFO - Premisa repetida encontrada (idx 331): 'A man squatting in the foreground of a photograph ...'
+2025-07-06 02:28:46,681 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,682 - INFO - Premisa repetida encontrada (idx 332): 'A man squatting in the foreground of a photograph ...'
+2025-07-06 02:28:46,682 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,682 - INFO - Premisa repetida encontrada (idx 333): 'A man squatting in the foreground of a photograph ...'
+2025-07-06 02:28:46,682 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,682 - INFO - Premisa repetida encontrada (idx 334): 'A man squatting in the foreground of a photograph ...'
+2025-07-06 02:28:46,682 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,682 - INFO - Premisa repetida encontrada (idx 335): 'A man squatting in the foreground of a photograph ...'
+2025-07-06 02:28:46,682 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,682 - INFO - Premisa repetida encontrada (idx 336): 'A man squatting in the foreground of a photograph ...'
+2025-07-06 02:28:46,682 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,682 - INFO - Premisa repetida encontrada (idx 337): 'A man squatting in the foreground of a photograph ...'
+2025-07-06 02:28:46,682 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,682 - INFO - Premisa nueva encontrada (idx 338): 'One biker is running with their bike while another...'
+2025-07-06 02:28:46,682 - INFO - Premisa repetida encontrada (idx 339): 'One biker is running with their bike while another...'
+2025-07-06 02:28:46,682 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,683 - INFO - Premisa repetida encontrada (idx 340): 'One biker is running with their bike while another...'
+2025-07-06 02:28:46,683 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,683 - INFO - Premisa nueva encontrada (idx 341): 'Two people with bicycles, one in front running wit...'
+2025-07-06 02:28:46,683 - INFO - Premisa repetida encontrada (idx 342): 'Two people with bicycles, one in front running wit...'
+2025-07-06 02:28:46,683 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,683 - INFO - Premisa repetida encontrada (idx 343): 'Two people with bicycles, one in front running wit...'
+2025-07-06 02:28:46,683 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,683 - INFO - Premisa nueva encontrada (idx 344): 'A young man doing a trick on a skateboard down the...'
+2025-07-06 02:28:46,683 - INFO - Premisa repetida encontrada (idx 345): 'A young man doing a trick on a skateboard down the...'
+2025-07-06 02:28:46,683 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,683 - INFO - Premisa repetida encontrada (idx 346): 'A young man doing a trick on a skateboard down the...'
+2025-07-06 02:28:46,683 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,683 - INFO - Premisa nueva encontrada (idx 347): 'A lady in a black and white striped shirt and hold...'
+2025-07-06 02:28:46,683 - INFO - Premisa repetida encontrada (idx 348): 'A lady in a black and white striped shirt and hold...'
+2025-07-06 02:28:46,683 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,683 - INFO - Premisa repetida encontrada (idx 349): 'A lady in a black and white striped shirt and hold...'
+2025-07-06 02:28:46,684 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,684 - INFO - Premisa nueva encontrada (idx 350): 'A man walking proudly down the street....'
+2025-07-06 02:28:46,684 - INFO - Premisa repetida encontrada (idx 351): 'A man walking proudly down the street....'
+2025-07-06 02:28:46,684 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,684 - INFO - Premisa repetida encontrada (idx 352): 'A man walking proudly down the street....'
+2025-07-06 02:28:46,684 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,684 - INFO - Premisa nueva encontrada (idx 353): 'Four teenage boys are doing cannonballs into a swi...'
+2025-07-06 02:28:46,684 - INFO - Premisa repetida encontrada (idx 354): 'Four teenage boys are doing cannonballs into a swi...'
+2025-07-06 02:28:46,684 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,684 - INFO - Premisa repetida encontrada (idx 355): 'Four teenage boys are doing cannonballs into a swi...'
+2025-07-06 02:28:46,684 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,684 - INFO - Premisa nueva encontrada (idx 356): 'Three men standing on grass by the water looking a...'
+2025-07-06 02:28:46,684 - INFO - Premisa repetida encontrada (idx 357): 'Three men standing on grass by the water looking a...'
+2025-07-06 02:28:46,684 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,684 - INFO - Premisa repetida encontrada (idx 358): 'Three men standing on grass by the water looking a...'
+2025-07-06 02:28:46,684 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,685 - INFO - Premisa nueva encontrada (idx 359): 'A woman stands behind an outdoor grill with a blue...'
+2025-07-06 02:28:46,685 - INFO - Premisa repetida encontrada (idx 360): 'A woman stands behind an outdoor grill with a blue...'
+2025-07-06 02:28:46,685 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,685 - INFO - Premisa repetida encontrada (idx 361): 'A woman stands behind an outdoor grill with a blue...'
+2025-07-06 02:28:46,685 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,685 - INFO - Premisa nueva encontrada (idx 362): 'A Land Rover makes its way through a deep pond....'
+2025-07-06 02:28:46,685 - INFO - Premisa repetida encontrada (idx 363): 'A Land Rover makes its way through a deep pond....'
+2025-07-06 02:28:46,685 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,685 - INFO - Premisa repetida encontrada (idx 364): 'A Land Rover makes its way through a deep pond....'
+2025-07-06 02:28:46,685 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,685 - INFO - Premisa nueva encontrada (idx 365): 'many people relax in the yard....'
+2025-07-06 02:28:46,685 - INFO - Premisa repetida encontrada (idx 366): 'many people relax in the yard....'
+2025-07-06 02:28:46,685 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,685 - INFO - Premisa repetida encontrada (idx 367): 'many people relax in the yard....'
+2025-07-06 02:28:46,685 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,685 - INFO - Premisa nueva encontrada (idx 368): 'A car sinking in water....'
+2025-07-06 02:28:46,686 - INFO - Premisa repetida encontrada (idx 369): 'A car sinking in water....'
+2025-07-06 02:28:46,686 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,686 - INFO - Premisa repetida encontrada (idx 370): 'A car sinking in water....'
+2025-07-06 02:28:46,686 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,686 - INFO - Premisa nueva encontrada (idx 371): 'A man wearing black is playing an electric guitar ...'
+2025-07-06 02:28:46,686 - INFO - Premisa repetida encontrada (idx 372): 'A man wearing black is playing an electric guitar ...'
+2025-07-06 02:28:46,686 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,686 - INFO - Premisa repetida encontrada (idx 373): 'A man wearing black is playing an electric guitar ...'
+2025-07-06 02:28:46,686 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,686 - INFO - Premisa nueva encontrada (idx 374): 'A man with wild hair rocks a show playing a guitar...'
+2025-07-06 02:28:46,686 - INFO - Premisa repetida encontrada (idx 375): 'A man with wild hair rocks a show playing a guitar...'
+2025-07-06 02:28:46,686 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,686 - INFO - Premisa repetida encontrada (idx 376): 'A man with wild hair rocks a show playing a guitar...'
+2025-07-06 02:28:46,686 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,686 - INFO - Premisa nueva encontrada (idx 377): 'woman and child on trolley car labeled Powell and ...'
+2025-07-06 02:28:46,686 - INFO - Premisa repetida encontrada (idx 378): 'woman and child on trolley car labeled Powell and ...'
+2025-07-06 02:28:46,687 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,687 - INFO - Premisa repetida encontrada (idx 379): 'woman and child on trolley car labeled Powell and ...'
+2025-07-06 02:28:46,687 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,687 - INFO - Premisa nueva encontrada (idx 380): 'Two female medical professionals, one african amer...'
+2025-07-06 02:28:46,687 - INFO - Premisa repetida encontrada (idx 381): 'Two female medical professionals, one african amer...'
+2025-07-06 02:28:46,687 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,687 - INFO - Premisa repetida encontrada (idx 382): 'Two female medical professionals, one african amer...'
+2025-07-06 02:28:46,687 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,687 - INFO - Premisa nueva encontrada (idx 383): 'Two ladies are reading through binders....'
+2025-07-06 02:28:46,687 - INFO - Premisa repetida encontrada (idx 384): 'Two ladies are reading through binders....'
+2025-07-06 02:28:46,687 - WARNING -   [!] INCONSISTENCIA DETECTADA en el índice 384!
+2025-07-06 02:28:46,687 - WARNING -       - Norma de la diferencia: 0.000006
+2025-07-06 02:28:46,687 - INFO - Premisa repetida encontrada (idx 385): 'Two ladies are reading through binders....'
+2025-07-06 02:28:46,687 - WARNING -   [!] INCONSISTENCIA DETECTADA en el índice 385!
+2025-07-06 02:28:46,687 - WARNING -       - Norma de la diferencia: 0.000006
+2025-07-06 02:28:46,688 - INFO - Premisa nueva encontrada (idx 386): 'A man in the distance is walking past a brick wall...'
+2025-07-06 02:28:46,688 - INFO - Premisa repetida encontrada (idx 387): 'A man in the distance is walking past a brick wall...'
+2025-07-06 02:28:46,688 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,688 - INFO - Premisa repetida encontrada (idx 388): 'A man in the distance is walking past a brick wall...'
+2025-07-06 02:28:46,688 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,688 - INFO - Premisa nueva encontrada (idx 389): 'A woman and a child holding on to the railing whil...'
+2025-07-06 02:28:46,688 - INFO - Premisa repetida encontrada (idx 390): 'A woman and a child holding on to the railing whil...'
+2025-07-06 02:28:46,688 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,688 - INFO - Premisa repetida encontrada (idx 391): 'A woman and a child holding on to the railing whil...'
+2025-07-06 02:28:46,688 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,688 - INFO - Premisa nueva encontrada (idx 392): 'A man in a striped polo shirt is pointing and smil...'
+2025-07-06 02:28:46,688 - INFO - Premisa repetida encontrada (idx 393): 'A man in a striped polo shirt is pointing and smil...'
+2025-07-06 02:28:46,688 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,688 - INFO - Premisa repetida encontrada (idx 394): 'A man in a striped polo shirt is pointing and smil...'
+2025-07-06 02:28:46,688 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,688 - INFO - Premisa nueva encontrada (idx 395): 'A guy performing a bicycle jump trick for an audie...'
+2025-07-06 02:28:46,689 - INFO - Premisa repetida encontrada (idx 396): 'A guy performing a bicycle jump trick for an audie...'
+2025-07-06 02:28:46,689 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,689 - INFO - Premisa repetida encontrada (idx 397): 'A guy performing a bicycle jump trick for an audie...'
+2025-07-06 02:28:46,689 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,689 - INFO - Premisa nueva encontrada (idx 398): 'A gray-haired woman in a blue dress coat with snow...'
+2025-07-06 02:28:46,689 - INFO - Premisa repetida encontrada (idx 399): 'A gray-haired woman in a blue dress coat with snow...'
+2025-07-06 02:28:46,689 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,689 - INFO - Premisa repetida encontrada (idx 400): 'A gray-haired woman in a blue dress coat with snow...'
+2025-07-06 02:28:46,689 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,689 - INFO - Premisa nueva encontrada (idx 401): 'Two children play outside in a field....'
+2025-07-06 02:28:46,689 - INFO - Premisa repetida encontrada (idx 402): 'Two children play outside in a field....'
+2025-07-06 02:28:46,689 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,689 - INFO - Premisa repetida encontrada (idx 403): 'Two children play outside in a field....'
+2025-07-06 02:28:46,689 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,689 - INFO - Premisa nueva encontrada (idx 404): 'One man sits inside and plays the banjo, there are...'
+2025-07-06 02:28:46,689 - INFO - Premisa repetida encontrada (idx 405): 'One man sits inside and plays the banjo, there are...'
+2025-07-06 02:28:46,690 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,690 - INFO - Premisa repetida encontrada (idx 406): 'One man sits inside and plays the banjo, there are...'
+2025-07-06 02:28:46,690 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,690 - INFO - Premisa nueva encontrada (idx 407): 'Two children, in colorful outfits, playing in a fi...'
+2025-07-06 02:28:46,690 - INFO - Premisa repetida encontrada (idx 408): 'Two children, in colorful outfits, playing in a fi...'
+2025-07-06 02:28:46,690 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,690 - INFO - Premisa repetida encontrada (idx 409): 'Two children, in colorful outfits, playing in a fi...'
+2025-07-06 02:28:46,690 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,690 - INFO - Premisa nueva encontrada (idx 410): 'Two young girls are playing outside in a non-urban...'
+2025-07-06 02:28:46,690 - INFO - Premisa repetida encontrada (idx 411): 'Two young girls are playing outside in a non-urban...'
+2025-07-06 02:28:46,690 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,690 - INFO - Premisa repetida encontrada (idx 412): 'Two young girls are playing outside in a non-urban...'
+2025-07-06 02:28:46,690 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,690 - INFO - Premisa nueva encontrada (idx 413): 'Two children in hats play in an open, rocky field....'
+2025-07-06 02:28:46,690 - INFO - Premisa repetida encontrada (idx 414): 'Two children in hats play in an open, rocky field....'
+2025-07-06 02:28:46,690 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,691 - INFO - Premisa repetida encontrada (idx 415): 'Two children in hats play in an open, rocky field....'
+2025-07-06 02:28:46,691 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,691 - INFO - Premisa nueva encontrada (idx 416): 'A woman wearing a green and pink dress is dancing ...'
+2025-07-06 02:28:46,691 - INFO - Premisa repetida encontrada (idx 417): 'A woman wearing a green and pink dress is dancing ...'
+2025-07-06 02:28:46,691 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,691 - INFO - Premisa repetida encontrada (idx 418): 'A woman wearing a green and pink dress is dancing ...'
+2025-07-06 02:28:46,691 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,691 - INFO - Premisa nueva encontrada (idx 419): 'Man in gold pants looking at the camera....'
+2025-07-06 02:28:46,691 - INFO - Premisa repetida encontrada (idx 420): 'Man in gold pants looking at the camera....'
+2025-07-06 02:28:46,691 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,691 - INFO - Premisa repetida encontrada (idx 421): 'Man in gold pants looking at the camera....'
+2025-07-06 02:28:46,691 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,691 - INFO - Premisa nueva encontrada (idx 422): 'A man in a gold skirt sits in front of the compute...'
+2025-07-06 02:28:46,691 - INFO - Premisa repetida encontrada (idx 423): 'A man in a gold skirt sits in front of the compute...'
+2025-07-06 02:28:46,691 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,691 - INFO - Premisa repetida encontrada (idx 424): 'A man in a gold skirt sits in front of the compute...'
+2025-07-06 02:28:46,692 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,692 - INFO - Premisa nueva encontrada (idx 425): 'Man wearing black t-shirt sitting at a computer de...'
+2025-07-06 02:28:46,692 - INFO - Premisa repetida encontrada (idx 426): 'Man wearing black t-shirt sitting at a computer de...'
+2025-07-06 02:28:46,692 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,692 - INFO - Premisa repetida encontrada (idx 427): 'Man wearing black t-shirt sitting at a computer de...'
+2025-07-06 02:28:46,692 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,692 - INFO - Premisa nueva encontrada (idx 428): 'A bearded man in a black t-shirt sits in front of ...'
+2025-07-06 02:28:46,692 - INFO - Premisa repetida encontrada (idx 429): 'A bearded man in a black t-shirt sits in front of ...'
+2025-07-06 02:28:46,692 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,692 - INFO - Premisa repetida encontrada (idx 430): 'A bearded man in a black t-shirt sits in front of ...'
+2025-07-06 02:28:46,692 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,692 - INFO - Premisa nueva encontrada (idx 431): 'A man in a gold foils skirt, sitting at a computer...'
+2025-07-06 02:28:46,692 - INFO - Premisa repetida encontrada (idx 432): 'A man in a gold foils skirt, sitting at a computer...'
+2025-07-06 02:28:46,692 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,692 - INFO - Premisa repetida encontrada (idx 433): 'A man in a gold foils skirt, sitting at a computer...'
+2025-07-06 02:28:46,693 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,693 - INFO - Premisa nueva encontrada (idx 434): 'A young girl sitting at a table with a bowl on her...'
+2025-07-06 02:28:46,693 - INFO - Premisa repetida encontrada (idx 435): 'A young girl sitting at a table with a bowl on her...'
+2025-07-06 02:28:46,693 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,693 - INFO - Premisa repetida encontrada (idx 436): 'A young girl sitting at a table with a bowl on her...'
+2025-07-06 02:28:46,693 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,693 - INFO - Premisa nueva encontrada (idx 437): 'A man dances with a fire baton at night....'
+2025-07-06 02:28:46,693 - INFO - Premisa repetida encontrada (idx 438): 'A man dances with a fire baton at night....'
+2025-07-06 02:28:46,693 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,693 - INFO - Premisa repetida encontrada (idx 439): 'A man dances with a fire baton at night....'
+2025-07-06 02:28:46,693 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,693 - INFO - Premisa nueva encontrada (idx 440): 'A doctor checks the stomach of a toddler....'
+2025-07-06 02:28:46,693 - INFO - Premisa repetida encontrada (idx 441): 'A doctor checks the stomach of a toddler....'
+2025-07-06 02:28:46,693 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,693 - INFO - Premisa repetida encontrada (idx 442): 'A doctor checks the stomach of a toddler....'
+2025-07-06 02:28:46,693 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,694 - INFO - Premisa nueva encontrada (idx 443): 'Young blond woman putting her foot into a water fo...'
+2025-07-06 02:28:46,694 - INFO - Premisa repetida encontrada (idx 444): 'Young blond woman putting her foot into a water fo...'
+2025-07-06 02:28:46,694 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,694 - INFO - Premisa repetida encontrada (idx 445): 'Young blond woman putting her foot into a water fo...'
+2025-07-06 02:28:46,694 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,694 - INFO - Premisa nueva encontrada (idx 446): 'A young woman tries to stick her foot in a fountai...'
+2025-07-06 02:28:46,694 - INFO - Premisa repetida encontrada (idx 447): 'A young woman tries to stick her foot in a fountai...'
+2025-07-06 02:28:46,694 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,694 - INFO - Premisa repetida encontrada (idx 448): 'A young woman tries to stick her foot in a fountai...'
+2025-07-06 02:28:46,694 - WARNING -   [!] INCONSISTENCIA DETECTADA en el índice 448!
+2025-07-06 02:28:46,694 - WARNING -       - Norma de la diferencia: 0.000006
+2025-07-06 02:28:46,694 - INFO - Premisa nueva encontrada (idx 449): 'A woman in capri jeans crouches on the edge of a f...'
+2025-07-06 02:28:46,694 - INFO - Premisa repetida encontrada (idx 450): 'A woman in capri jeans crouches on the edge of a f...'
+2025-07-06 02:28:46,694 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,694 - INFO - Premisa repetida encontrada (idx 451): 'A woman in capri jeans crouches on the edge of a f...'
+2025-07-06 02:28:46,694 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,694 - INFO - Premisa nueva encontrada (idx 452): 'Woman balancing on edge of fountain while sticking...'
+2025-07-06 02:28:46,695 - INFO - Premisa repetida encontrada (idx 453): 'Woman balancing on edge of fountain while sticking...'
+2025-07-06 02:28:46,695 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,695 - INFO - Premisa repetida encontrada (idx 454): 'Woman balancing on edge of fountain while sticking...'
+2025-07-06 02:28:46,695 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,695 - INFO - Premisa nueva encontrada (idx 455): 'A couple strolls arm and arm and hand in hand down...'
+2025-07-06 02:28:46,695 - INFO - Premisa repetida encontrada (idx 456): 'A couple strolls arm and arm and hand in hand down...'
+2025-07-06 02:28:46,695 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,695 - INFO - Premisa repetida encontrada (idx 457): 'A couple strolls arm and arm and hand in hand down...'
+2025-07-06 02:28:46,695 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,695 - INFO - Premisa nueva encontrada (idx 458): 'A man stare at a passing couple while walking down...'
+2025-07-06 02:28:46,695 - INFO - Premisa repetida encontrada (idx 459): 'A man stare at a passing couple while walking down...'
+2025-07-06 02:28:46,695 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,695 - INFO - Premisa repetida encontrada (idx 460): 'A man stare at a passing couple while walking down...'
+2025-07-06 02:28:46,695 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,695 - INFO - Premisa nueva encontrada (idx 461): 'a couple are holding hands behind their backs whil...'
+2025-07-06 02:28:46,695 - INFO - Premisa repetida encontrada (idx 462): 'a couple are holding hands behind their backs whil...'
+2025-07-06 02:28:46,696 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,696 - INFO - Premisa repetida encontrada (idx 463): 'a couple are holding hands behind their backs whil...'
+2025-07-06 02:28:46,696 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,696 - INFO - Premisa nueva encontrada (idx 464): 'A man and a woman are holding hands as they walk a...'
+2025-07-06 02:28:46,696 - INFO - Premisa repetida encontrada (idx 465): 'A man and a woman are holding hands as they walk a...'
+2025-07-06 02:28:46,696 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,696 - INFO - Premisa repetida encontrada (idx 466): 'A man and a woman are holding hands as they walk a...'
+2025-07-06 02:28:46,696 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,696 - INFO - Premisa nueva encontrada (idx 467): 'a man in red stands with his child at the beach....'
+2025-07-06 02:28:46,696 - INFO - Premisa repetida encontrada (idx 468): 'a man in red stands with his child at the beach....'
+2025-07-06 02:28:46,696 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,696 - INFO - Premisa repetida encontrada (idx 469): 'a man in red stands with his child at the beach....'
+2025-07-06 02:28:46,696 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,696 - INFO - Premisa nueva encontrada (idx 470): 'New sport is being played to show appreciation to ...'
+2025-07-06 02:28:46,696 - INFO - Premisa repetida encontrada (idx 471): 'New sport is being played to show appreciation to ...'
+2025-07-06 02:28:46,697 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,697 - INFO - Premisa repetida encontrada (idx 472): 'New sport is being played to show appreciation to ...'
+2025-07-06 02:28:46,697 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,697 - INFO - Premisa nueva encontrada (idx 473): 'Two men in wheelchairs are reaching in the air for...'
+2025-07-06 02:28:46,697 - INFO - Premisa repetida encontrada (idx 474): 'Two men in wheelchairs are reaching in the air for...'
+2025-07-06 02:28:46,697 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,697 - INFO - Premisa repetida encontrada (idx 475): 'Two men in wheelchairs are reaching in the air for...'
+2025-07-06 02:28:46,697 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,697 - INFO - Premisa nueva encontrada (idx 476): 'Three wheelchair basketball players wearing team u...'
+2025-07-06 02:28:46,697 - INFO - Premisa repetida encontrada (idx 477): 'Three wheelchair basketball players wearing team u...'
+2025-07-06 02:28:46,697 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,697 - INFO - Premisa repetida encontrada (idx 478): 'Three wheelchair basketball players wearing team u...'
+2025-07-06 02:28:46,697 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,697 - INFO - Premisa nueva encontrada (idx 479): 'Four guys in wheelchairs on a basketball court two...'
+2025-07-06 02:28:46,697 - INFO - Premisa repetida encontrada (idx 480): 'Four guys in wheelchairs on a basketball court two...'
+2025-07-06 02:28:46,697 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,697 - INFO - Premisa repetida encontrada (idx 481): 'Four guys in wheelchairs on a basketball court two...'
+2025-07-06 02:28:46,698 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,698 - INFO - Premisa nueva encontrada (idx 482): 'Three dogs in different shades of brown and white ...'
+2025-07-06 02:28:46,698 - INFO - Premisa repetida encontrada (idx 483): 'Three dogs in different shades of brown and white ...'
+2025-07-06 02:28:46,698 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,698 - INFO - Premisa repetida encontrada (idx 484): 'Three dogs in different shades of brown and white ...'
+2025-07-06 02:28:46,698 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,698 - INFO - Premisa nueva encontrada (idx 485): 'Two dogs playfully bite a third dog, which has its...'
+2025-07-06 02:28:46,698 - INFO - Premisa repetida encontrada (idx 486): 'Two dogs playfully bite a third dog, which has its...'
+2025-07-06 02:28:46,698 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,698 - INFO - Premisa repetida encontrada (idx 487): 'Two dogs playfully bite a third dog, which has its...'
+2025-07-06 02:28:46,698 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,698 - INFO - Premisa nueva encontrada (idx 488): 'Three small puppies bite and play together in the ...'
+2025-07-06 02:28:46,698 - INFO - Premisa repetida encontrada (idx 489): 'Three small puppies bite and play together in the ...'
+2025-07-06 02:28:46,698 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,698 - INFO - Premisa repetida encontrada (idx 490): 'Three small puppies bite and play together in the ...'
+2025-07-06 02:28:46,698 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,699 - INFO - Premisa nueva encontrada (idx 491): 'Two dogs biting another dog in a field....'
+2025-07-06 02:28:46,699 - INFO - Premisa repetida encontrada (idx 492): 'Two dogs biting another dog in a field....'
+2025-07-06 02:28:46,699 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,699 - INFO - Premisa repetida encontrada (idx 493): 'Two dogs biting another dog in a field....'
+2025-07-06 02:28:46,699 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,699 - INFO - Premisa nueva encontrada (idx 494): 'Tourists waiting at a train stop....'
+2025-07-06 02:28:46,699 - INFO - Premisa repetida encontrada (idx 495): 'Tourists waiting at a train stop....'
+2025-07-06 02:28:46,699 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,699 - INFO - Premisa repetida encontrada (idx 496): 'Tourists waiting at a train stop....'
+2025-07-06 02:28:46,699 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,699 - INFO - Premisa nueva encontrada (idx 497): 'A doctor in blue scrubs is performing an operation...'
+2025-07-06 02:28:46,699 - INFO - Premisa repetida encontrada (idx 498): 'A doctor in blue scrubs is performing an operation...'
+2025-07-06 02:28:46,699 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,699 - INFO - Premisa repetida encontrada (idx 499): 'A doctor in blue scrubs is performing an operation...'
+2025-07-06 02:28:46,699 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,699 - INFO - Premisa nueva encontrada (idx 500): 'A woman with a black jacket walks past an outdoor ...'
+2025-07-06 02:28:46,700 - INFO - Premisa repetida encontrada (idx 501): 'A woman with a black jacket walks past an outdoor ...'
+2025-07-06 02:28:46,700 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,700 - INFO - Premisa repetida encontrada (idx 502): 'A woman with a black jacket walks past an outdoor ...'
+2025-07-06 02:28:46,700 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,700 - INFO - Premisa nueva encontrada (idx 503): 'A man in an elf hat holding a white umbrella is st...'
+2025-07-06 02:28:46,700 - INFO - Premisa repetida encontrada (idx 504): 'A man in an elf hat holding a white umbrella is st...'
+2025-07-06 02:28:46,700 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,700 - INFO - Premisa repetida encontrada (idx 505): 'A man in an elf hat holding a white umbrella is st...'
+2025-07-06 02:28:46,700 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,700 - INFO - Premisa nueva encontrada (idx 506): 'Indian lady and a guy in a blue suit dancing in th...'
+2025-07-06 02:28:46,700 - INFO - Premisa repetida encontrada (idx 507): 'Indian lady and a guy in a blue suit dancing in th...'
+2025-07-06 02:28:46,700 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,700 - INFO - Premisa repetida encontrada (idx 508): 'Indian lady and a guy in a blue suit dancing in th...'
+2025-07-06 02:28:46,700 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,700 - INFO - Premisa nueva encontrada (idx 509): 'A mountain biker jumping a slope outdoors in a for...'
+2025-07-06 02:28:46,700 - INFO - Premisa repetida encontrada (idx 510): 'A mountain biker jumping a slope outdoors in a for...'
+2025-07-06 02:28:46,701 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,701 - INFO - Premisa repetida encontrada (idx 511): 'A mountain biker jumping a slope outdoors in a for...'
+2025-07-06 02:28:46,701 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,701 - INFO - Premisa repetida encontrada (idx 512): 'A mountain biker jumping a slope outdoors in a for...'
+2025-07-06 02:28:46,701 - WARNING -   [!] INCONSISTENCIA DETECTADA en el índice 512!
+2025-07-06 02:28:46,701 - WARNING -       - Norma de la diferencia: 0.000007
+2025-07-06 02:28:46,701 - INFO - Premisa repetida encontrada (idx 513): 'A mountain biker jumping a slope outdoors in a for...'
+2025-07-06 02:28:46,701 - WARNING -   [!] INCONSISTENCIA DETECTADA en el índice 513!
+2025-07-06 02:28:46,701 - WARNING -       - Norma de la diferencia: 0.000007
+2025-07-06 02:28:46,701 - INFO - Premisa repetida encontrada (idx 514): 'A mountain biker jumping a slope outdoors in a for...'
+2025-07-06 02:28:46,701 - WARNING -   [!] INCONSISTENCIA DETECTADA en el índice 514!
+2025-07-06 02:28:46,701 - WARNING -       - Norma de la diferencia: 0.000007
+2025-07-06 02:28:46,701 - INFO - Premisa repetida encontrada (idx 515): 'A mountain biker jumping a slope outdoors in a for...'
+2025-07-06 02:28:46,701 - WARNING -   [!] INCONSISTENCIA DETECTADA en el índice 515!
+2025-07-06 02:28:46,702 - WARNING -       - Norma de la diferencia: 0.000007
+2025-07-06 02:28:46,702 - INFO - Premisa repetida encontrada (idx 516): 'A mountain biker jumping a slope outdoors in a for...'
+2025-07-06 02:28:46,702 - WARNING -   [!] INCONSISTENCIA DETECTADA en el índice 516!
+2025-07-06 02:28:46,702 - WARNING -       - Norma de la diferencia: 0.000007
+2025-07-06 02:28:46,702 - INFO - Premisa repetida encontrada (idx 517): 'A mountain biker jumping a slope outdoors in a for...'
+2025-07-06 02:28:46,702 - WARNING -   [!] INCONSISTENCIA DETECTADA en el índice 517!
+2025-07-06 02:28:46,702 - WARNING -       - Norma de la diferencia: 0.000007
+2025-07-06 02:28:46,702 - INFO - Premisa repetida encontrada (idx 518): 'A mountain biker jumping a slope outdoors in a for...'
+2025-07-06 02:28:46,702 - WARNING -   [!] INCONSISTENCIA DETECTADA en el índice 518!
+2025-07-06 02:28:46,702 - WARNING -       - Norma de la diferencia: 0.000007
+2025-07-06 02:28:46,702 - INFO - Premisa repetida encontrada (idx 519): 'A mountain biker jumping a slope outdoors in a for...'
+2025-07-06 02:28:46,702 - WARNING -   [!] INCONSISTENCIA DETECTADA en el índice 519!
+2025-07-06 02:28:46,702 - WARNING -       - Norma de la diferencia: 0.000007
+2025-07-06 02:28:46,702 - INFO - Premisa repetida encontrada (idx 520): 'A mountain biker jumping a slope outdoors in a for...'
+2025-07-06 02:28:46,703 - WARNING -   [!] INCONSISTENCIA DETECTADA en el índice 520!
+2025-07-06 02:28:46,703 - WARNING -       - Norma de la diferencia: 0.000007
+2025-07-06 02:28:46,703 - INFO - Premisa repetida encontrada (idx 521): 'A mountain biker jumping a slope outdoors in a for...'
+2025-07-06 02:28:46,703 - WARNING -   [!] INCONSISTENCIA DETECTADA en el índice 521!
+2025-07-06 02:28:46,703 - WARNING -       - Norma de la diferencia: 0.000007
+2025-07-06 02:28:46,703 - INFO - Premisa repetida encontrada (idx 522): 'A mountain biker jumping a slope outdoors in a for...'
+2025-07-06 02:28:46,703 - WARNING -   [!] INCONSISTENCIA DETECTADA en el índice 522!
+2025-07-06 02:28:46,703 - WARNING -       - Norma de la diferencia: 0.000007
+2025-07-06 02:28:46,703 - INFO - Premisa repetida encontrada (idx 523): 'A mountain biker jumping a slope outdoors in a for...'
+2025-07-06 02:28:46,703 - WARNING -   [!] INCONSISTENCIA DETECTADA en el índice 523!
+2025-07-06 02:28:46,703 - WARNING -       - Norma de la diferencia: 0.000007
+2025-07-06 02:28:46,703 - INFO - Premisa nueva encontrada (idx 524): 'Two older men in winter coats talking outside of a...'
+2025-07-06 02:28:46,703 - INFO - Premisa repetida encontrada (idx 525): 'Two older men in winter coats talking outside of a...'
+2025-07-06 02:28:46,703 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,703 - INFO - Premisa repetida encontrada (idx 526): 'Two older men in winter coats talking outside of a...'
+2025-07-06 02:28:46,703 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,704 - INFO - Premisa nueva encontrada (idx 527): 'Two elderly men having a conversation, snow covere...'
+2025-07-06 02:28:46,704 - INFO - Premisa repetida encontrada (idx 528): 'Two elderly men having a conversation, snow covere...'
+2025-07-06 02:28:46,704 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,704 - INFO - Premisa repetida encontrada (idx 529): 'Two elderly men having a conversation, snow covere...'
+2025-07-06 02:28:46,704 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,704 - INFO - Premisa nueva encontrada (idx 530): 'Two men are standing outside and snow is on the gr...'
+2025-07-06 02:28:46,704 - INFO - Premisa repetida encontrada (idx 531): 'Two men are standing outside and snow is on the gr...'
+2025-07-06 02:28:46,704 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,704 - INFO - Premisa repetida encontrada (idx 532): 'Two men are standing outside and snow is on the gr...'
+2025-07-06 02:28:46,704 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,704 - INFO - Premisa nueva encontrada (idx 533): 'Two older men in coats are standing outside....'
+2025-07-06 02:28:46,704 - INFO - Premisa repetida encontrada (idx 534): 'Two older men in coats are standing outside....'
+2025-07-06 02:28:46,704 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,704 - INFO - Premisa repetida encontrada (idx 535): 'Two older men in coats are standing outside....'
+2025-07-06 02:28:46,704 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,705 - INFO - Premisa nueva encontrada (idx 536): 'A gentleman in a purple scarf and hat is looking a...'
+2025-07-06 02:28:46,705 - INFO - Premisa repetida encontrada (idx 537): 'A gentleman in a purple scarf and hat is looking a...'
+2025-07-06 02:28:46,705 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,705 - INFO - Premisa repetida encontrada (idx 538): 'A gentleman in a purple scarf and hat is looking a...'
+2025-07-06 02:28:46,705 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,705 - INFO - Premisa nueva encontrada (idx 539): 'BMX biker jumps over a ravine....'
+2025-07-06 02:28:46,705 - INFO - Premisa repetida encontrada (idx 540): 'BMX biker jumps over a ravine....'
+2025-07-06 02:28:46,705 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,705 - INFO - Premisa repetida encontrada (idx 541): 'BMX biker jumps over a ravine....'
+2025-07-06 02:28:46,705 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,705 - INFO - Premisa nueva encontrada (idx 542): 'A white bike is tied to a street sign....'
+2025-07-06 02:28:46,705 - INFO - Premisa repetida encontrada (idx 543): 'A white bike is tied to a street sign....'
+2025-07-06 02:28:46,705 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,705 - INFO - Premisa repetida encontrada (idx 544): 'A white bike is tied to a street sign....'
+2025-07-06 02:28:46,705 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,705 - INFO - Premisa nueva encontrada (idx 545): 'A white bike is leaning against a post....'
+2025-07-06 02:28:46,706 - INFO - Premisa repetida encontrada (idx 546): 'A white bike is leaning against a post....'
+2025-07-06 02:28:46,706 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,706 - INFO - Premisa repetida encontrada (idx 547): 'A white bike is leaning against a post....'
+2025-07-06 02:28:46,706 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,706 - INFO - Premisa nueva encontrada (idx 548): 'The boy locked the cycle and went away....'
+2025-07-06 02:28:46,706 - INFO - Premisa repetida encontrada (idx 549): 'The boy locked the cycle and went away....'
+2025-07-06 02:28:46,706 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,706 - INFO - Premisa repetida encontrada (idx 550): 'The boy locked the cycle and went away....'
+2025-07-06 02:28:46,706 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,706 - INFO - Premisa nueva encontrada (idx 551): 'A crowded city during daytime....'
+2025-07-06 02:28:46,706 - INFO - Premisa repetida encontrada (idx 552): 'A crowded city during daytime....'
+2025-07-06 02:28:46,706 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,706 - INFO - Premisa repetida encontrada (idx 553): 'A crowded city during daytime....'
+2025-07-06 02:28:46,706 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,706 - INFO - Premisa nueva encontrada (idx 554): 'People walking around in a big city....'
+2025-07-06 02:28:46,706 - INFO - Premisa repetida encontrada (idx 555): 'People walking around in a big city....'
+2025-07-06 02:28:46,706 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,707 - INFO - Premisa repetida encontrada (idx 556): 'People walking around in a big city....'
+2025-07-06 02:28:46,707 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,707 - INFO - Premisa nueva encontrada (idx 557): 'A busy city that looks like New York City....'
+2025-07-06 02:28:46,707 - INFO - Premisa repetida encontrada (idx 558): 'A busy city that looks like New York City....'
+2025-07-06 02:28:46,707 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,707 - INFO - Premisa repetida encontrada (idx 559): 'A busy city that looks like New York City....'
+2025-07-06 02:28:46,707 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,707 - INFO - Premisa nueva encontrada (idx 560): 'A view of buildings and people walking across the ...'
+2025-07-06 02:28:46,707 - INFO - Premisa repetida encontrada (idx 561): 'A view of buildings and people walking across the ...'
+2025-07-06 02:28:46,707 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,707 - INFO - Premisa repetida encontrada (idx 562): 'A view of buildings and people walking across the ...'
+2025-07-06 02:28:46,707 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,707 - INFO - Premisa nueva encontrada (idx 563): 'A barber waiting for customers....'
+2025-07-06 02:28:46,707 - INFO - Premisa repetida encontrada (idx 564): 'A barber waiting for customers....'
+2025-07-06 02:28:46,707 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,707 - INFO - Premisa repetida encontrada (idx 565): 'A barber waiting for customers....'
+2025-07-06 02:28:46,708 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,708 - INFO - Premisa nueva encontrada (idx 566): 'A man sitting in a barber shop....'
+2025-07-06 02:28:46,708 - INFO - Premisa repetida encontrada (idx 567): 'A man sitting in a barber shop....'
+2025-07-06 02:28:46,708 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,708 - INFO - Premisa repetida encontrada (idx 568): 'A man sitting in a barber shop....'
+2025-07-06 02:28:46,708 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,708 - INFO - Premisa nueva encontrada (idx 569): 'A woman preparing to glaze a bowl....'
+2025-07-06 02:28:46,708 - INFO - Premisa repetida encontrada (idx 570): 'A woman preparing to glaze a bowl....'
+2025-07-06 02:28:46,708 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,708 - INFO - Premisa repetida encontrada (idx 571): 'A woman preparing to glaze a bowl....'
+2025-07-06 02:28:46,708 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,708 - INFO - Premisa nueva encontrada (idx 572): 'A woman wearing an apron inspects a large pot on a...'
+2025-07-06 02:28:46,708 - INFO - Premisa repetida encontrada (idx 573): 'A woman wearing an apron inspects a large pot on a...'
+2025-07-06 02:28:46,708 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,708 - INFO - Premisa repetida encontrada (idx 574): 'A woman wearing an apron inspects a large pot on a...'
+2025-07-06 02:28:46,709 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,709 - INFO - Premisa nueva encontrada (idx 575): 'A model posing to look as if she's a real female s...'
+2025-07-06 02:28:46,709 - INFO - Premisa repetida encontrada (idx 576): 'A model posing to look as if she's a real female s...'
+2025-07-06 02:28:46,709 - WARNING -   [!] INCONSISTENCIA DETECTADA en el índice 576!
+2025-07-06 02:28:46,709 - WARNING -       - Norma de la diferencia: 0.000005
+2025-07-06 02:28:46,709 - INFO - Premisa repetida encontrada (idx 577): 'A model posing to look as if she's a real female s...'
+2025-07-06 02:28:46,709 - WARNING -   [!] INCONSISTENCIA DETECTADA en el índice 577!
+2025-07-06 02:28:46,709 - WARNING -       - Norma de la diferencia: 0.000005
+2025-07-06 02:28:46,709 - INFO - Premisa nueva encontrada (idx 578): 'Firemen emerge from a subway station....'
+2025-07-06 02:28:46,709 - INFO - Premisa repetida encontrada (idx 579): 'Firemen emerge from a subway station....'
+2025-07-06 02:28:46,709 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,709 - INFO - Premisa repetida encontrada (idx 580): 'Firemen emerge from a subway station....'
+2025-07-06 02:28:46,709 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,709 - INFO - Premisa nueva encontrada (idx 581): 'Exhausted looking firemen are walking....'
+2025-07-06 02:28:46,709 - INFO - Premisa repetida encontrada (idx 582): 'Exhausted looking firemen are walking....'
+2025-07-06 02:28:46,709 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,709 - INFO - Premisa repetida encontrada (idx 583): 'Exhausted looking firemen are walking....'
+2025-07-06 02:28:46,710 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,710 - INFO - Premisa nueva encontrada (idx 584): 'Three firefighters, the nearest firefighter is hol...'
+2025-07-06 02:28:46,710 - INFO - Premisa repetida encontrada (idx 585): 'Three firefighters, the nearest firefighter is hol...'
+2025-07-06 02:28:46,710 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,710 - INFO - Premisa repetida encontrada (idx 586): 'Three firefighters, the nearest firefighter is hol...'
+2025-07-06 02:28:46,710 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,710 - INFO - Premisa nueva encontrada (idx 587): 'A man walking along side a clean up crew....'
+2025-07-06 02:28:46,710 - INFO - Premisa repetida encontrada (idx 588): 'A man walking along side a clean up crew....'
+2025-07-06 02:28:46,710 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,710 - INFO - Premisa repetida encontrada (idx 589): 'A man walking along side a clean up crew....'
+2025-07-06 02:28:46,710 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,710 - INFO - Premisa nueva encontrada (idx 590): 'A little boy swims underwater....'
+2025-07-06 02:28:46,710 - INFO - Premisa repetida encontrada (idx 591): 'A little boy swims underwater....'
+2025-07-06 02:28:46,710 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,710 - INFO - Premisa repetida encontrada (idx 592): 'A little boy swims underwater....'
+2025-07-06 02:28:46,710 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,710 - INFO - Premisa nueva encontrada (idx 593): 'A driver is racing his Ford vehicle on a gravel tr...'
+2025-07-06 02:28:46,711 - INFO - Premisa repetida encontrada (idx 594): 'A driver is racing his Ford vehicle on a gravel tr...'
+2025-07-06 02:28:46,711 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,711 - INFO - Premisa repetida encontrada (idx 595): 'A driver is racing his Ford vehicle on a gravel tr...'
+2025-07-06 02:28:46,711 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,711 - INFO - Premisa nueva encontrada (idx 596): 'Three guys and a girl are all jumping in a pool to...'
+2025-07-06 02:28:46,711 - INFO - Premisa repetida encontrada (idx 597): 'Three guys and a girl are all jumping in a pool to...'
+2025-07-06 02:28:46,711 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,711 - INFO - Premisa repetida encontrada (idx 598): 'Three guys and a girl are all jumping in a pool to...'
+2025-07-06 02:28:46,711 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,711 - INFO - Premisa nueva encontrada (idx 599): 'A little boy underwater in a pool, holding a plast...'
+2025-07-06 02:28:46,711 - INFO - Premisa repetida encontrada (idx 600): 'A little boy underwater in a pool, holding a plast...'
+2025-07-06 02:28:46,711 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,711 - INFO - Premisa repetida encontrada (idx 601): 'A little boy underwater in a pool, holding a plast...'
+2025-07-06 02:28:46,711 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,711 - INFO - Premisa nueva encontrada (idx 602): 'A little boy swimming underwater with a toy in his...'
+2025-07-06 02:28:46,711 - INFO - Premisa repetida encontrada (idx 603): 'A little boy swimming underwater with a toy in his...'
+2025-07-06 02:28:46,712 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,712 - INFO - Premisa repetida encontrada (idx 604): 'A little boy swimming underwater with a toy in his...'
+2025-07-06 02:28:46,712 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,712 - INFO - Premisa nueva encontrada (idx 605): 'A man wearing a white shire shirt and hate is ridi...'
+2025-07-06 02:28:46,712 - INFO - Premisa repetida encontrada (idx 606): 'A man wearing a white shire shirt and hate is ridi...'
+2025-07-06 02:28:46,712 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,712 - INFO - Premisa repetida encontrada (idx 607): 'A man wearing a white shire shirt and hate is ridi...'
+2025-07-06 02:28:46,712 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,712 - INFO - Premisa nueva encontrada (idx 608): 'A saddle bronc rider gets lifted out of the saddle...'
+2025-07-06 02:28:46,712 - INFO - Premisa repetida encontrada (idx 609): 'A saddle bronc rider gets lifted out of the saddle...'
+2025-07-06 02:28:46,712 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,712 - INFO - Premisa repetida encontrada (idx 610): 'A saddle bronc rider gets lifted out of the saddle...'
+2025-07-06 02:28:46,712 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,712 - INFO - Premisa nueva encontrada (idx 611): 'a woman with a straw hat working on a strange mach...'
+2025-07-06 02:28:46,712 - INFO - Premisa repetida encontrada (idx 612): 'a woman with a straw hat working on a strange mach...'
+2025-07-06 02:28:46,712 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,713 - INFO - Premisa repetida encontrada (idx 613): 'a woman with a straw hat working on a strange mach...'
+2025-07-06 02:28:46,713 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,713 - INFO - Premisa nueva encontrada (idx 614): 'A man wearing a rice hat is shucking corn using a ...'
+2025-07-06 02:28:46,713 - INFO - Premisa repetida encontrada (idx 615): 'A man wearing a rice hat is shucking corn using a ...'
+2025-07-06 02:28:46,713 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,713 - INFO - Premisa repetida encontrada (idx 616): 'A man wearing a rice hat is shucking corn using a ...'
+2025-07-06 02:28:46,713 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,713 - INFO - Premisa nueva encontrada (idx 617): 'a woman wearing a Chinese straw hat operating some...'
+2025-07-06 02:28:46,713 - INFO - Premisa repetida encontrada (idx 618): 'a woman wearing a Chinese straw hat operating some...'
+2025-07-06 02:28:46,713 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,713 - INFO - Premisa repetida encontrada (idx 619): 'a woman wearing a Chinese straw hat operating some...'
+2025-07-06 02:28:46,713 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,713 - INFO - Premisa nueva encontrada (idx 620): 'A woman on the side of a street is making food on ...'
+2025-07-06 02:28:46,713 - INFO - Premisa repetida encontrada (idx 621): 'A woman on the side of a street is making food on ...'
+2025-07-06 02:28:46,713 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,714 - INFO - Premisa repetida encontrada (idx 622): 'A woman on the side of a street is making food on ...'
+2025-07-06 02:28:46,714 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,714 - INFO - Premisa nueva encontrada (idx 623): 'A man in blue shorts and without a shirt is joggin...'
+2025-07-06 02:28:46,714 - INFO - Premisa repetida encontrada (idx 624): 'A man in blue shorts and without a shirt is joggin...'
+2025-07-06 02:28:46,714 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,714 - INFO - Premisa nueva encontrada (idx 625): 'Women exercising one woman has a green mat and bla...'
+2025-07-06 02:28:46,714 - INFO - Premisa repetida encontrada (idx 626): 'Women exercising one woman has a green mat and bla...'
+2025-07-06 02:28:46,714 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,714 - INFO - Premisa repetida encontrada (idx 627): 'Women exercising one woman has a green mat and bla...'
+2025-07-06 02:28:46,714 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,714 - INFO - Premisa nueva encontrada (idx 628): 'Students practicing yoga in a class setting....'
+2025-07-06 02:28:46,714 - INFO - Premisa repetida encontrada (idx 629): 'Students practicing yoga in a class setting....'
+2025-07-06 02:28:46,714 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,714 - INFO - Premisa repetida encontrada (idx 630): 'Students practicing yoga in a class setting....'
+2025-07-06 02:28:46,714 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,714 - INFO - Premisa nueva encontrada (idx 631): 'People are stretching on yoga mats....'
+2025-07-06 02:28:46,715 - INFO - Premisa repetida encontrada (idx 632): 'People are stretching on yoga mats....'
+2025-07-06 02:28:46,715 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,715 - INFO - Premisa repetida encontrada (idx 633): 'People are stretching on yoga mats....'
+2025-07-06 02:28:46,715 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,715 - INFO - Premisa nueva encontrada (idx 634): 'Motorcyclist performing while two men watch....'
+2025-07-06 02:28:46,715 - INFO - Premisa repetida encontrada (idx 635): 'Motorcyclist performing while two men watch....'
+2025-07-06 02:28:46,715 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,715 - INFO - Premisa repetida encontrada (idx 636): 'Motorcyclist performing while two men watch....'
+2025-07-06 02:28:46,715 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,715 - INFO - Premisa nueva encontrada (idx 637): 'The young man is waiting with others on the sidewa...'
+2025-07-06 02:28:46,715 - INFO - Premisa repetida encontrada (idx 638): 'The young man is waiting with others on the sidewa...'
+2025-07-06 02:28:46,715 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,715 - INFO - Premisa repetida encontrada (idx 639): 'The young man is waiting with others on the sidewa...'
+2025-07-06 02:28:46,715 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,715 - INFO - Premisa nueva encontrada (idx 640): 'Two people pose for the camera....'
+2025-07-06 02:28:46,716 - INFO - Premisa repetida encontrada (idx 641): 'Two people pose for the camera....'
+2025-07-06 02:28:46,716 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,716 - INFO - Premisa repetida encontrada (idx 642): 'Two people pose for the camera....'
+2025-07-06 02:28:46,716 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,716 - INFO - Premisa nueva encontrada (idx 643): 'A white and brown dog is leaping through the air....'
+2025-07-06 02:28:46,716 - INFO - Premisa repetida encontrada (idx 644): 'A white and brown dog is leaping through the air....'
+2025-07-06 02:28:46,716 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,716 - INFO - Premisa repetida encontrada (idx 645): 'A white and brown dog is leaping through the air....'
+2025-07-06 02:28:46,716 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,716 - INFO - Premisa nueva encontrada (idx 646): 'A row of legs and black boots with a boy sitting a...'
+2025-07-06 02:28:46,716 - INFO - Premisa repetida encontrada (idx 647): 'A row of legs and black boots with a boy sitting a...'
+2025-07-06 02:28:46,716 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,716 - INFO - Premisa repetida encontrada (idx 648): 'A row of legs and black boots with a boy sitting a...'
+2025-07-06 02:28:46,716 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,716 - INFO - Premisa nueva encontrada (idx 649): 'A man in blue lies on a mostly-barren patch of gra...'
+2025-07-06 02:28:46,717 - INFO - Premisa repetida encontrada (idx 650): 'A man in blue lies on a mostly-barren patch of gra...'
+2025-07-06 02:28:46,717 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,717 - INFO - Premisa repetida encontrada (idx 651): 'A man in blue lies on a mostly-barren patch of gra...'
+2025-07-06 02:28:46,717 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,717 - INFO - Premisa nueva encontrada (idx 652): 'Various people hanging around outside of a buildin...'
+2025-07-06 02:28:46,717 - INFO - Premisa repetida encontrada (idx 653): 'Various people hanging around outside of a buildin...'
+2025-07-06 02:28:46,717 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,717 - INFO - Premisa repetida encontrada (idx 654): 'Various people hanging around outside of a buildin...'
+2025-07-06 02:28:46,717 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,717 - INFO - Premisa nueva encontrada (idx 655): 'A little girl follows two guys with umbrellas down...'
+2025-07-06 02:28:46,717 - INFO - Premisa repetida encontrada (idx 656): 'A little girl follows two guys with umbrellas down...'
+2025-07-06 02:28:46,717 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,717 - INFO - Premisa repetida encontrada (idx 657): 'A little girl follows two guys with umbrellas down...'
+2025-07-06 02:28:46,717 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,717 - INFO - Premisa nueva encontrada (idx 658): 'A lady is on the floor packing a suitcase....'
+2025-07-06 02:28:46,717 - INFO - Premisa repetida encontrada (idx 659): 'A lady is on the floor packing a suitcase....'
+2025-07-06 02:28:46,718 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,718 - INFO - Premisa repetida encontrada (idx 660): 'A lady is on the floor packing a suitcase....'
+2025-07-06 02:28:46,718 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,718 - INFO - Premisa nueva encontrada (idx 661): 'Little girl in a blue and yellow plaid outfit and ...'
+2025-07-06 02:28:46,718 - INFO - Premisa repetida encontrada (idx 662): 'Little girl in a blue and yellow plaid outfit and ...'
+2025-07-06 02:28:46,718 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,718 - INFO - Premisa repetida encontrada (idx 663): 'Little girl in a blue and yellow plaid outfit and ...'
+2025-07-06 02:28:46,718 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,718 - INFO - Premisa nueva encontrada (idx 664): 'Little girl walking along a dirt, rock, and grass ...'
+2025-07-06 02:28:46,718 - INFO - Premisa repetida encontrada (idx 665): 'Little girl walking along a dirt, rock, and grass ...'
+2025-07-06 02:28:46,718 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,718 - INFO - Premisa repetida encontrada (idx 666): 'Little girl walking along a dirt, rock, and grass ...'
+2025-07-06 02:28:46,718 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,718 - INFO - Premisa nueva encontrada (idx 667): 'The blond woman is searching for medical supplies ...'
+2025-07-06 02:28:46,718 - INFO - Premisa repetida encontrada (idx 668): 'The blond woman is searching for medical supplies ...'
+2025-07-06 02:28:46,719 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,719 - INFO - Premisa repetida encontrada (idx 669): 'The blond woman is searching for medical supplies ...'
+2025-07-06 02:28:46,719 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,719 - INFO - Premisa nueva encontrada (idx 670): 'Stacks of neatly folded clothing cover most of thi...'
+2025-07-06 02:28:46,719 - INFO - Premisa repetida encontrada (idx 671): 'Stacks of neatly folded clothing cover most of thi...'
+2025-07-06 02:28:46,719 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,719 - INFO - Premisa repetida encontrada (idx 672): 'Stacks of neatly folded clothing cover most of thi...'
+2025-07-06 02:28:46,719 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,719 - INFO - Premisa nueva encontrada (idx 673): 'A young woman packs belongings into a black suitca...'
+2025-07-06 02:28:46,719 - INFO - Premisa repetida encontrada (idx 674): 'A young woman packs belongings into a black suitca...'
+2025-07-06 02:28:46,719 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,719 - INFO - Premisa repetida encontrada (idx 675): 'A young woman packs belongings into a black suitca...'
+2025-07-06 02:28:46,719 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,719 - INFO - Premisa nueva encontrada (idx 676): 'People going for a long walk to the mountains....'
+2025-07-06 02:28:46,719 - INFO - Premisa repetida encontrada (idx 677): 'People going for a long walk to the mountains....'
+2025-07-06 02:28:46,719 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,720 - INFO - Premisa repetida encontrada (idx 678): 'People going for a long walk to the mountains....'
+2025-07-06 02:28:46,720 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,720 - INFO - Premisa nueva encontrada (idx 679): 'A woman in costume is marching with a large drum....'
+2025-07-06 02:28:46,720 - INFO - Premisa repetida encontrada (idx 680): 'A woman in costume is marching with a large drum....'
+2025-07-06 02:28:46,720 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,720 - INFO - Premisa repetida encontrada (idx 681): 'A woman in costume is marching with a large drum....'
+2025-07-06 02:28:46,720 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,720 - INFO - Premisa nueva encontrada (idx 682): 'A man carrying a load of fresh direct boxes on car...'
+2025-07-06 02:28:46,720 - INFO - Premisa repetida encontrada (idx 683): 'A man carrying a load of fresh direct boxes on car...'
+2025-07-06 02:28:46,720 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,720 - INFO - Premisa repetida encontrada (idx 684): 'A man carrying a load of fresh direct boxes on car...'
+2025-07-06 02:28:46,720 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,720 - INFO - Premisa nueva encontrada (idx 685): 'a motorcyclist does a nose wheelie....'
+2025-07-06 02:28:46,720 - INFO - Premisa repetida encontrada (idx 686): 'a motorcyclist does a nose wheelie....'
+2025-07-06 02:28:46,720 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,720 - INFO - Premisa repetida encontrada (idx 687): 'a motorcyclist does a nose wheelie....'
+2025-07-06 02:28:46,721 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,721 - INFO - Premisa nueva encontrada (idx 688): 'A man sitting on a scooter on the curb....'
+2025-07-06 02:28:46,721 - INFO - Premisa repetida encontrada (idx 689): 'A man sitting on a scooter on the curb....'
+2025-07-06 02:28:46,721 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,721 - INFO - Premisa repetida encontrada (idx 690): 'A man sitting on a scooter on the curb....'
+2025-07-06 02:28:46,721 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,721 - INFO - Premisa nueva encontrada (idx 691): 'A man stopping on the sidewalk with his bike to ha...'
+2025-07-06 02:28:46,721 - INFO - Premisa repetida encontrada (idx 692): 'A man stopping on the sidewalk with his bike to ha...'
+2025-07-06 02:28:46,721 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,721 - INFO - Premisa repetida encontrada (idx 693): 'A man stopping on the sidewalk with his bike to ha...'
+2025-07-06 02:28:46,721 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,721 - INFO - Premisa nueva encontrada (idx 694): 'A man is sitting on a motorcycle on the sidewalk....'
+2025-07-06 02:28:46,721 - INFO - Premisa repetida encontrada (idx 695): 'A man is sitting on a motorcycle on the sidewalk....'
+2025-07-06 02:28:46,721 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,721 - INFO - Premisa repetida encontrada (idx 696): 'A man is sitting on a motorcycle on the sidewalk....'
+2025-07-06 02:28:46,722 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,722 - INFO - Premisa nueva encontrada (idx 697): 'Man smokes while sitting on a parked scooter....'
+2025-07-06 02:28:46,722 - INFO - Premisa repetida encontrada (idx 698): 'Man smokes while sitting on a parked scooter....'
+2025-07-06 02:28:46,722 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,722 - INFO - Premisa repetida encontrada (idx 699): 'Man smokes while sitting on a parked scooter....'
+2025-07-06 02:28:46,722 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,722 - INFO - Premisa nueva encontrada (idx 700): 'Man on the sidewalk sitting on a motorcycle....'
+2025-07-06 02:28:46,722 - INFO - Premisa repetida encontrada (idx 701): 'Man on the sidewalk sitting on a motorcycle....'
+2025-07-06 02:28:46,722 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,722 - INFO - Premisa repetida encontrada (idx 702): 'Man on the sidewalk sitting on a motorcycle....'
+2025-07-06 02:28:46,722 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,722 - INFO - Premisa nueva encontrada (idx 703): 'A couple, wearing black, burgundy, and white, danc...'
+2025-07-06 02:28:46,722 - INFO - Premisa repetida encontrada (idx 704): 'A couple, wearing black, burgundy, and white, danc...'
+2025-07-06 02:28:46,722 - WARNING -   [!] INCONSISTENCIA DETECTADA en el índice 704!
+2025-07-06 02:28:46,722 - WARNING -       - Norma de la diferencia: 0.000006
+2025-07-06 02:28:46,723 - INFO - Premisa repetida encontrada (idx 705): 'A couple, wearing black, burgundy, and white, danc...'
+2025-07-06 02:28:46,723 - WARNING -   [!] INCONSISTENCIA DETECTADA en el índice 705!
+2025-07-06 02:28:46,723 - WARNING -       - Norma de la diferencia: 0.000006
+2025-07-06 02:28:46,723 - INFO - Premisa nueva encontrada (idx 706): 'People in orange vests and blue pants with a yello...'
+2025-07-06 02:28:46,723 - INFO - Premisa repetida encontrada (idx 707): 'People in orange vests and blue pants with a yello...'
+2025-07-06 02:28:46,723 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,723 - INFO - Premisa repetida encontrada (idx 708): 'People in orange vests and blue pants with a yello...'
+2025-07-06 02:28:46,723 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,723 - INFO - Premisa repetida encontrada (idx 709): 'People in orange vests and blue pants with a yello...'
+2025-07-06 02:28:46,723 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,723 - INFO - Premisa repetida encontrada (idx 710): 'People in orange vests and blue pants with a yello...'
+2025-07-06 02:28:46,723 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,723 - INFO - Premisa repetida encontrada (idx 711): 'People in orange vests and blue pants with a yello...'
+2025-07-06 02:28:46,723 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,723 - INFO - Premisa repetida encontrada (idx 712): 'People in orange vests and blue pants with a yello...'
+2025-07-06 02:28:46,724 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,724 - INFO - Premisa repetida encontrada (idx 713): 'People in orange vests and blue pants with a yello...'
+2025-07-06 02:28:46,724 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,724 - INFO - Premisa repetida encontrada (idx 714): 'People in orange vests and blue pants with a yello...'
+2025-07-06 02:28:46,724 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,724 - INFO - Premisa repetida encontrada (idx 715): 'People in orange vests and blue pants with a yello...'
+2025-07-06 02:28:46,724 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,724 - INFO - Premisa repetida encontrada (idx 716): 'People in orange vests and blue pants with a yello...'
+2025-07-06 02:28:46,724 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,724 - INFO - Premisa repetida encontrada (idx 717): 'People in orange vests and blue pants with a yello...'
+2025-07-06 02:28:46,724 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,724 - INFO - Premisa repetida encontrada (idx 718): 'People in orange vests and blue pants with a yello...'
+2025-07-06 02:28:46,724 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,724 - INFO - Premisa repetida encontrada (idx 719): 'People in orange vests and blue pants with a yello...'
+2025-07-06 02:28:46,725 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,725 - INFO - Premisa repetida encontrada (idx 720): 'People in orange vests and blue pants with a yello...'
+2025-07-06 02:28:46,725 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,725 - INFO - Premisa nueva encontrada (idx 721): 'A young man and young lady dancing on a carpeted f...'
+2025-07-06 02:28:46,725 - INFO - Premisa repetida encontrada (idx 722): 'A young man and young lady dancing on a carpeted f...'
+2025-07-06 02:28:46,725 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,725 - INFO - Premisa repetida encontrada (idx 723): 'A young man and young lady dancing on a carpeted f...'
+2025-07-06 02:28:46,725 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,725 - INFO - Premisa nueva encontrada (idx 724): 'The skier is wearing a yellow jumpsuit and sliding...'
+2025-07-06 02:28:46,725 - INFO - Premisa repetida encontrada (idx 725): 'The skier is wearing a yellow jumpsuit and sliding...'
+2025-07-06 02:28:46,725 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,725 - INFO - Premisa repetida encontrada (idx 726): 'The skier is wearing a yellow jumpsuit and sliding...'
+2025-07-06 02:28:46,725 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,725 - INFO - Premisa nueva encontrada (idx 727): 'A track event held by J.P. Morgan Chase with secur...'
+2025-07-06 02:28:46,725 - INFO - Premisa repetida encontrada (idx 728): 'A track event held by J.P. Morgan Chase with secur...'
+2025-07-06 02:28:46,726 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,726 - INFO - Premisa repetida encontrada (idx 729): 'A track event held by J.P. Morgan Chase with secur...'
+2025-07-06 02:28:46,726 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,726 - INFO - Premisa nueva encontrada (idx 730): 'Two people dancing, wearing dance costumes....'
+2025-07-06 02:28:46,726 - INFO - Premisa repetida encontrada (idx 731): 'Two people dancing, wearing dance costumes....'
+2025-07-06 02:28:46,726 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,726 - INFO - Premisa repetida encontrada (idx 732): 'Two people dancing, wearing dance costumes....'
+2025-07-06 02:28:46,726 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,726 - INFO - Premisa nueva encontrada (idx 733): 'An english farmer with a horse pulled wagon....'
+2025-07-06 02:28:46,726 - INFO - Premisa repetida encontrada (idx 734): 'An english farmer with a horse pulled wagon....'
+2025-07-06 02:28:46,726 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,726 - INFO - Premisa repetida encontrada (idx 735): 'An english farmer with a horse pulled wagon....'
+2025-07-06 02:28:46,726 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,726 - INFO - Premisa nueva encontrada (idx 736): 'Children's soccer game being played while the sun ...'
+2025-07-06 02:28:46,726 - INFO - Premisa repetida encontrada (idx 737): 'Children's soccer game being played while the sun ...'
+2025-07-06 02:28:46,726 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,727 - INFO - Premisa repetida encontrada (idx 738): 'Children's soccer game being played while the sun ...'
+2025-07-06 02:28:46,727 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,727 - INFO - Premisa nueva encontrada (idx 739): 'A soccer game played by a blue team and a red team...'
+2025-07-06 02:28:46,727 - INFO - Premisa repetida encontrada (idx 740): 'A soccer game played by a blue team and a red team...'
+2025-07-06 02:28:46,727 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,727 - INFO - Premisa repetida encontrada (idx 741): 'A soccer game played by a blue team and a red team...'
+2025-07-06 02:28:46,727 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,727 - INFO - Premisa nueva encontrada (idx 742): 'Two soccer teams are competing on a soccer field....'
+2025-07-06 02:28:46,727 - INFO - Premisa repetida encontrada (idx 743): 'Two soccer teams are competing on a soccer field....'
+2025-07-06 02:28:46,727 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,727 - INFO - Premisa repetida encontrada (idx 744): 'Two soccer teams are competing on a soccer field....'
+2025-07-06 02:28:46,727 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,727 - INFO - Premisa nueva encontrada (idx 745): 'Soccer teams play on a field as the sun sets behin...'
+2025-07-06 02:28:46,727 - INFO - Premisa repetida encontrada (idx 746): 'Soccer teams play on a field as the sun sets behin...'
+2025-07-06 02:28:46,727 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,727 - INFO - Premisa repetida encontrada (idx 747): 'Soccer teams play on a field as the sun sets behin...'
+2025-07-06 02:28:46,727 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,727 - INFO - Premisa nueva encontrada (idx 748): 'two men serving preparing food....'
+2025-07-06 02:28:46,728 - INFO - Premisa repetida encontrada (idx 749): 'two men serving preparing food....'
+2025-07-06 02:28:46,728 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,728 - INFO - Premisa repetida encontrada (idx 750): 'two men serving preparing food....'
+2025-07-06 02:28:46,728 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,728 - INFO - Premisa nueva encontrada (idx 751): 'A soccer game occurring at sunset....'
+2025-07-06 02:28:46,728 - INFO - Premisa repetida encontrada (idx 752): 'A soccer game occurring at sunset....'
+2025-07-06 02:28:46,728 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,728 - INFO - Premisa repetida encontrada (idx 753): 'A soccer game occurring at sunset....'
+2025-07-06 02:28:46,728 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,728 - INFO - Premisa nueva encontrada (idx 754): 'White small child wearing a brown and gray striped...'
+2025-07-06 02:28:46,728 - INFO - Premisa repetida encontrada (idx 755): 'White small child wearing a brown and gray striped...'
+2025-07-06 02:28:46,728 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,728 - INFO - Premisa repetida encontrada (idx 756): 'White small child wearing a brown and gray striped...'
+2025-07-06 02:28:46,728 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,728 - INFO - Premisa nueva encontrada (idx 757): 'A little boy in brown pants is playing on ropes at...'
+2025-07-06 02:28:46,729 - INFO - Premisa repetida encontrada (idx 758): 'A little boy in brown pants is playing on ropes at...'
+2025-07-06 02:28:46,729 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,729 - INFO - Premisa repetida encontrada (idx 759): 'A little boy in brown pants is playing on ropes at...'
+2025-07-06 02:28:46,729 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,729 - INFO - Premisa nueva encontrada (idx 760): 'Toddler in striped sweatshirt plays on rope on pla...'
+2025-07-06 02:28:46,729 - INFO - Premisa repetida encontrada (idx 761): 'Toddler in striped sweatshirt plays on rope on pla...'
+2025-07-06 02:28:46,729 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,729 - INFO - Premisa repetida encontrada (idx 762): 'Toddler in striped sweatshirt plays on rope on pla...'
+2025-07-06 02:28:46,729 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,729 - INFO - Premisa nueva encontrada (idx 763): 'A woman wearing a pink hat is looking at a pink ca...'
+2025-07-06 02:28:46,729 - INFO - Premisa repetida encontrada (idx 764): 'A woman wearing a pink hat is looking at a pink ca...'
+2025-07-06 02:28:46,729 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,729 - INFO - Premisa nueva encontrada (idx 765): 'A man in a blue shirt is looking up....'
+2025-07-06 02:28:46,729 - INFO - Premisa repetida encontrada (idx 766): 'A man in a blue shirt is looking up....'
+2025-07-06 02:28:46,729 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,729 - INFO - Premisa repetida encontrada (idx 767): 'A man in a blue shirt is looking up....'
+2025-07-06 02:28:46,730 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,730 - INFO - Premisa nueva encontrada (idx 768): 'Three girls on an amusement ride enjoying themselv...'
+2025-07-06 02:28:46,730 - INFO - Premisa repetida encontrada (idx 769): 'Three girls on an amusement ride enjoying themselv...'
+2025-07-06 02:28:46,730 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,730 - INFO - Premisa repetida encontrada (idx 770): 'Three girls on an amusement ride enjoying themselv...'
+2025-07-06 02:28:46,730 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,730 - INFO - Premisa nueva encontrada (idx 771): 'Woman at Walmart check-out having her groceries ba...'
+2025-07-06 02:28:46,730 - INFO - Premisa repetida encontrada (idx 772): 'Woman at Walmart check-out having her groceries ba...'
+2025-07-06 02:28:46,730 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,730 - INFO - Premisa repetida encontrada (idx 773): 'Woman at Walmart check-out having her groceries ba...'
+2025-07-06 02:28:46,730 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,730 - INFO - Premisa nueva encontrada (idx 774): 'Brown dog treads through water....'
+2025-07-06 02:28:46,730 - INFO - Premisa repetida encontrada (idx 775): 'Brown dog treads through water....'
+2025-07-06 02:28:46,730 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,730 - INFO - Premisa repetida encontrada (idx 776): 'Brown dog treads through water....'
+2025-07-06 02:28:46,730 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,731 - INFO - Premisa nueva encontrada (idx 777): 'A woman is waiting with children as she is checked...'
+2025-07-06 02:28:46,731 - INFO - Premisa repetida encontrada (idx 778): 'A woman is waiting with children as she is checked...'
+2025-07-06 02:28:46,731 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,731 - INFO - Premisa repetida encontrada (idx 779): 'A woman is waiting with children as she is checked...'
+2025-07-06 02:28:46,731 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,731 - INFO - Premisa nueva encontrada (idx 780): 'A blond woman with two children is checking out at...'
+2025-07-06 02:28:46,731 - INFO - Premisa repetida encontrada (idx 781): 'A blond woman with two children is checking out at...'
+2025-07-06 02:28:46,731 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,731 - INFO - Premisa repetida encontrada (idx 782): 'A blond woman with two children is checking out at...'
+2025-07-06 02:28:46,731 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,731 - INFO - Premisa nueva encontrada (idx 783): 'A woman sitting in a laundromat looking at the cam...'
+2025-07-06 02:28:46,731 - INFO - Premisa repetida encontrada (idx 784): 'A woman sitting in a laundromat looking at the cam...'
+2025-07-06 02:28:46,731 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,731 - INFO - Premisa repetida encontrada (idx 785): 'A woman sitting in a laundromat looking at the cam...'
+2025-07-06 02:28:46,731 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,732 - INFO - Premisa nueva encontrada (idx 786): 'A young boy paddles across the water in a makeshif...'
+2025-07-06 02:28:46,732 - INFO - Premisa repetida encontrada (idx 787): 'A young boy paddles across the water in a makeshif...'
+2025-07-06 02:28:46,732 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,732 - INFO - Premisa repetida encontrada (idx 788): 'A young boy paddles across the water in a makeshif...'
+2025-07-06 02:28:46,732 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,732 - INFO - Premisa nueva encontrada (idx 789): 'A baseball player is about to throw a baseball....'
+2025-07-06 02:28:46,732 - INFO - Premisa repetida encontrada (idx 790): 'A baseball player is about to throw a baseball....'
+2025-07-06 02:28:46,732 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,732 - INFO - Premisa repetida encontrada (idx 791): 'A baseball player is about to throw a baseball....'
+2025-07-06 02:28:46,732 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,732 - INFO - Premisa nueva encontrada (idx 792): 'A dog zips along the beach....'
+2025-07-06 02:28:46,732 - INFO - Premisa repetida encontrada (idx 793): 'A dog zips along the beach....'
+2025-07-06 02:28:46,732 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,732 - INFO - Premisa repetida encontrada (idx 794): 'A dog zips along the beach....'
+2025-07-06 02:28:46,732 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,733 - INFO - Premisa nueva encontrada (idx 795): 'A white dog runs along a rocky shoreline....'
+2025-07-06 02:28:46,733 - INFO - Premisa repetida encontrada (idx 796): 'A white dog runs along a rocky shoreline....'
+2025-07-06 02:28:46,733 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,733 - INFO - Premisa repetida encontrada (idx 797): 'A white dog runs along a rocky shoreline....'
+2025-07-06 02:28:46,733 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,733 - INFO - Premisa nueva encontrada (idx 798): 'A fuzzy white lap dog runs along a rocky beach....'
+2025-07-06 02:28:46,733 - INFO - Premisa repetida encontrada (idx 799): 'A fuzzy white lap dog runs along a rocky beach....'
+2025-07-06 02:28:46,733 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,733 - INFO - Premisa repetida encontrada (idx 800): 'A fuzzy white lap dog runs along a rocky beach....'
+2025-07-06 02:28:46,733 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,733 - INFO - Premisa nueva encontrada (idx 801): 'A small white dog running on a pebble covered beac...'
+2025-07-06 02:28:46,733 - INFO - Premisa repetida encontrada (idx 802): 'A small white dog running on a pebble covered beac...'
+2025-07-06 02:28:46,733 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,733 - INFO - Premisa repetida encontrada (idx 803): 'A small white dog running on a pebble covered beac...'
+2025-07-06 02:28:46,733 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,734 - INFO - Premisa nueva encontrada (idx 804): 'A baseball player is putting all his might in to t...'
+2025-07-06 02:28:46,734 - INFO - Premisa repetida encontrada (idx 805): 'A baseball player is putting all his might in to t...'
+2025-07-06 02:28:46,734 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,734 - INFO - Premisa repetida encontrada (idx 806): 'A baseball player is putting all his might in to t...'
+2025-07-06 02:28:46,734 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,734 - INFO - Premisa nueva encontrada (idx 807): 'Cheerleaders are on the field cheering....'
+2025-07-06 02:28:46,734 - INFO - Premisa repetida encontrada (idx 808): 'Cheerleaders are on the field cheering....'
+2025-07-06 02:28:46,734 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,734 - INFO - Premisa repetida encontrada (idx 809): 'Cheerleaders are on the field cheering....'
+2025-07-06 02:28:46,734 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,734 - INFO - Premisa repetida encontrada (idx 810): 'Cheerleaders are on the field cheering....'
+2025-07-06 02:28:46,734 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,734 - INFO - Premisa repetida encontrada (idx 811): 'Cheerleaders are on the field cheering....'
+2025-07-06 02:28:46,734 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,734 - INFO - Premisa repetida encontrada (idx 812): 'Cheerleaders are on the field cheering....'
+2025-07-06 02:28:46,735 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,735 - INFO - Premisa repetida encontrada (idx 813): 'Cheerleaders are on the field cheering....'
+2025-07-06 02:28:46,735 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,735 - INFO - Premisa repetida encontrada (idx 814): 'Cheerleaders are on the field cheering....'
+2025-07-06 02:28:46,735 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,735 - INFO - Premisa repetida encontrada (idx 815): 'Cheerleaders are on the field cheering....'
+2025-07-06 02:28:46,735 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,735 - INFO - Premisa repetida encontrada (idx 816): 'Cheerleaders are on the field cheering....'
+2025-07-06 02:28:46,735 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,735 - INFO - Premisa repetida encontrada (idx 817): 'Cheerleaders are on the field cheering....'
+2025-07-06 02:28:46,735 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,735 - INFO - Premisa repetida encontrada (idx 818): 'Cheerleaders are on the field cheering....'
+2025-07-06 02:28:46,735 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,735 - INFO - Premisa repetida encontrada (idx 819): 'Cheerleaders are on the field cheering....'
+2025-07-06 02:28:46,735 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,736 - INFO - Premisa repetida encontrada (idx 820): 'Cheerleaders are on the field cheering....'
+2025-07-06 02:28:46,736 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,736 - INFO - Premisa repetida encontrada (idx 821): 'Cheerleaders are on the field cheering....'
+2025-07-06 02:28:46,736 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,736 - INFO - Premisa nueva encontrada (idx 822): 'A woman holding a boombox....'
+2025-07-06 02:28:46,736 - INFO - Premisa repetida encontrada (idx 823): 'A woman holding a boombox....'
+2025-07-06 02:28:46,736 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,736 - INFO - Premisa repetida encontrada (idx 824): 'A woman holding a boombox....'
+2025-07-06 02:28:46,736 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,736 - INFO - Premisa nueva encontrada (idx 825): 'A woman in a blue shirt and green hat looks up at ...'
+2025-07-06 02:28:46,736 - INFO - Premisa repetida encontrada (idx 826): 'A woman in a blue shirt and green hat looks up at ...'
+2025-07-06 02:28:46,736 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,736 - INFO - Premisa repetida encontrada (idx 827): 'A woman in a blue shirt and green hat looks up at ...'
+2025-07-06 02:28:46,736 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,736 - INFO - Premisa nueva encontrada (idx 828): 'Cheerleaders are doing a cheer at a football field...'
+2025-07-06 02:28:46,736 - INFO - Premisa repetida encontrada (idx 829): 'Cheerleaders are doing a cheer at a football field...'
+2025-07-06 02:28:46,737 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,737 - INFO - Premisa repetida encontrada (idx 830): 'Cheerleaders are doing a cheer at a football field...'
+2025-07-06 02:28:46,737 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,737 - INFO - Premisa nueva encontrada (idx 831): 'An excited, smiling woman stands at a red railing ...'
+2025-07-06 02:28:46,737 - INFO - Premisa repetida encontrada (idx 832): 'An excited, smiling woman stands at a red railing ...'
+2025-07-06 02:28:46,737 - WARNING -   [!] INCONSISTENCIA DETECTADA en el índice 832!
+2025-07-06 02:28:46,737 - WARNING -       - Norma de la diferencia: 0.000005
+2025-07-06 02:28:46,737 - INFO - Premisa repetida encontrada (idx 833): 'An excited, smiling woman stands at a red railing ...'
+2025-07-06 02:28:46,737 - WARNING -   [!] INCONSISTENCIA DETECTADA en el índice 833!
+2025-07-06 02:28:46,737 - WARNING -       - Norma de la diferencia: 0.000005
+2025-07-06 02:28:46,737 - INFO - Premisa nueva encontrada (idx 834): 'A lady is kneeling wearing a blue shirt....'
+2025-07-06 02:28:46,737 - INFO - Premisa repetida encontrada (idx 835): 'A lady is kneeling wearing a blue shirt....'
+2025-07-06 02:28:46,737 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,737 - INFO - Premisa repetida encontrada (idx 836): 'A lady is kneeling wearing a blue shirt....'
+2025-07-06 02:28:46,737 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,737 - INFO - Premisa nueva encontrada (idx 837): 'The silhouette of three people in front of a wall....'
+2025-07-06 02:28:46,738 - INFO - Premisa repetida encontrada (idx 838): 'The silhouette of three people in front of a wall....'
+2025-07-06 02:28:46,738 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,738 - INFO - Premisa repetida encontrada (idx 839): 'The silhouette of three people in front of a wall....'
+2025-07-06 02:28:46,738 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,738 - INFO - Premisa nueva encontrada (idx 840): 'Two people wearing blue clothing are making hand g...'
+2025-07-06 02:28:46,738 - INFO - Premisa repetida encontrada (idx 841): 'Two people wearing blue clothing are making hand g...'
+2025-07-06 02:28:46,738 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,738 - INFO - Premisa repetida encontrada (idx 842): 'Two people wearing blue clothing are making hand g...'
+2025-07-06 02:28:46,738 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,738 - INFO - Premisa nueva encontrada (idx 843): 'A spotted black and white dog splashes in the wate...'
+2025-07-06 02:28:46,738 - INFO - Premisa repetida encontrada (idx 844): 'A spotted black and white dog splashes in the wate...'
+2025-07-06 02:28:46,738 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,738 - INFO - Premisa repetida encontrada (idx 845): 'A spotted black and white dog splashes in the wate...'
+2025-07-06 02:28:46,738 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,738 - INFO - Premisa nueva encontrada (idx 846): 'A large group, wearing pink shirts, waves to onloo...'
+2025-07-06 02:28:46,738 - INFO - Premisa repetida encontrada (idx 847): 'A large group, wearing pink shirts, waves to onloo...'
+2025-07-06 02:28:46,738 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,739 - INFO - Premisa repetida encontrada (idx 848): 'A large group, wearing pink shirts, waves to onloo...'
+2025-07-06 02:28:46,739 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,739 - INFO - Premisa nueva encontrada (idx 849): 'A baby is playing with a strand of beads....'
+2025-07-06 02:28:46,739 - INFO - Premisa repetida encontrada (idx 850): 'A baby is playing with a strand of beads....'
+2025-07-06 02:28:46,739 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,739 - INFO - Premisa repetida encontrada (idx 851): 'A baby is playing with a strand of beads....'
+2025-07-06 02:28:46,739 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,739 - INFO - Premisa nueva encontrada (idx 852): 'A woman is running a marathon in a park....'
+2025-07-06 02:28:46,739 - INFO - Premisa repetida encontrada (idx 853): 'A woman is running a marathon in a park....'
+2025-07-06 02:28:46,739 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,739 - INFO - Premisa repetida encontrada (idx 854): 'A woman is running a marathon in a park....'
+2025-07-06 02:28:46,739 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,739 - INFO - Premisa nueva encontrada (idx 855): 'A group of people point forwards while performing ...'
+2025-07-06 02:28:46,739 - INFO - Premisa repetida encontrada (idx 856): 'A group of people point forwards while performing ...'
+2025-07-06 02:28:46,739 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,739 - INFO - Premisa repetida encontrada (idx 857): 'A group of people point forwards while performing ...'
+2025-07-06 02:28:46,739 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,740 - INFO - Premisa nueva encontrada (idx 858): 'Several people are dancing together in sync....'
+2025-07-06 02:28:46,740 - INFO - Premisa repetida encontrada (idx 859): 'Several people are dancing together in sync....'
+2025-07-06 02:28:46,740 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,740 - INFO - Premisa repetida encontrada (idx 860): 'Several people are dancing together in sync....'
+2025-07-06 02:28:46,740 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,740 - INFO - Premisa nueva encontrada (idx 861): 'Group of people dancing...'
+2025-07-06 02:28:46,740 - INFO - Premisa repetida encontrada (idx 862): 'Group of people dancing...'
+2025-07-06 02:28:46,740 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,740 - INFO - Premisa repetida encontrada (idx 863): 'Group of people dancing...'
+2025-07-06 02:28:46,740 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,740 - INFO - Premisa nueva encontrada (idx 864): 'An adult couple enjoys time in a hot tub....'
+2025-07-06 02:28:46,740 - INFO - Premisa repetida encontrada (idx 865): 'An adult couple enjoys time in a hot tub....'
+2025-07-06 02:28:46,740 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,740 - INFO - Premisa repetida encontrada (idx 866): 'An adult couple enjoys time in a hot tub....'
+2025-07-06 02:28:46,740 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,741 - INFO - Premisa nueva encontrada (idx 867): 'An average looking man is playing the guitar....'
+2025-07-06 02:28:46,741 - INFO - Premisa repetida encontrada (idx 868): 'An average looking man is playing the guitar....'
+2025-07-06 02:28:46,741 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,741 - INFO - Premisa repetida encontrada (idx 869): 'An average looking man is playing the guitar....'
+2025-07-06 02:28:46,741 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,741 - INFO - Premisa nueva encontrada (idx 870): 'Two tan and white dogs and one tan dog racing down...'
+2025-07-06 02:28:46,741 - INFO - Premisa repetida encontrada (idx 871): 'Two tan and white dogs and one tan dog racing down...'
+2025-07-06 02:28:46,741 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,741 - INFO - Premisa repetida encontrada (idx 872): 'Two tan and white dogs and one tan dog racing down...'
+2025-07-06 02:28:46,741 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,741 - INFO - Premisa nueva encontrada (idx 873): 'A man and woman are walking down the street holdin...'
+2025-07-06 02:28:46,741 - INFO - Premisa repetida encontrada (idx 874): 'A man and woman are walking down the street holdin...'
+2025-07-06 02:28:46,741 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,741 - INFO - Premisa repetida encontrada (idx 875): 'A man and woman are walking down the street holdin...'
+2025-07-06 02:28:46,741 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,741 - INFO - Premisa nueva encontrada (idx 876): 'A man is using his computer while seated at a desk...'
+2025-07-06 02:28:46,741 - INFO - Premisa repetida encontrada (idx 877): 'A man is using his computer while seated at a desk...'
+2025-07-06 02:28:46,742 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,742 - INFO - Premisa repetida encontrada (idx 878): 'A man is using his computer while seated at a desk...'
+2025-07-06 02:28:46,742 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,742 - INFO - Premisa nueva encontrada (idx 879): 'A camera crew is filming two women in formal dress...'
+2025-07-06 02:28:46,742 - INFO - Premisa repetida encontrada (idx 880): 'A camera crew is filming two women in formal dress...'
+2025-07-06 02:28:46,742 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,742 - INFO - Premisa repetida encontrada (idx 881): 'A camera crew is filming two women in formal dress...'
+2025-07-06 02:28:46,742 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,742 - INFO - Premisa nueva encontrada (idx 882): 'man sitting down playing a game of chess alone...'
+2025-07-06 02:28:46,742 - INFO - Premisa repetida encontrada (idx 883): 'man sitting down playing a game of chess alone...'
+2025-07-06 02:28:46,742 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,742 - INFO - Premisa repetida encontrada (idx 884): 'man sitting down playing a game of chess alone...'
+2025-07-06 02:28:46,742 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,742 - INFO - Premisa nueva encontrada (idx 885): 'Young woman running as two guys in the back try to...'
+2025-07-06 02:28:46,742 - INFO - Premisa repetida encontrada (idx 886): 'Young woman running as two guys in the back try to...'
+2025-07-06 02:28:46,742 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,743 - INFO - Premisa repetida encontrada (idx 887): 'Young woman running as two guys in the back try to...'
+2025-07-06 02:28:46,743 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,743 - INFO - Premisa nueva encontrada (idx 888): 'A man in a blue shirt sits outside alone with a ch...'
+2025-07-06 02:28:46,743 - INFO - Premisa repetida encontrada (idx 889): 'A man in a blue shirt sits outside alone with a ch...'
+2025-07-06 02:28:46,743 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,743 - INFO - Premisa repetida encontrada (idx 890): 'A man in a blue shirt sits outside alone with a ch...'
+2025-07-06 02:28:46,743 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,743 - INFO - Premisa nueva encontrada (idx 891): 'A man dressed in blue shirt and shorts sits at a t...'
+2025-07-06 02:28:46,743 - INFO - Premisa repetida encontrada (idx 892): 'A man dressed in blue shirt and shorts sits at a t...'
+2025-07-06 02:28:46,743 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,743 - INFO - Premisa repetida encontrada (idx 893): 'A man dressed in blue shirt and shorts sits at a t...'
+2025-07-06 02:28:46,743 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,743 - INFO - Premisa nueva encontrada (idx 894): 'A young man in a blue blazer and shorts sits alone...'
+2025-07-06 02:28:46,743 - INFO - Premisa repetida encontrada (idx 895): 'A young man in a blue blazer and shorts sits alone...'
+2025-07-06 02:28:46,743 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,743 - INFO - Premisa repetida encontrada (idx 896): 'A young man in a blue blazer and shorts sits alone...'
+2025-07-06 02:28:46,744 - WARNING -   [!] INCONSISTENCIA DETECTADA en el índice 896!
+2025-07-06 02:28:46,744 - WARNING -       - Norma de la diferencia: 0.000004
+2025-07-06 02:28:46,744 - INFO - Premisa nueva encontrada (idx 897): 'A young Asian man sits behind a set chessboard wai...'
+2025-07-06 02:28:46,744 - INFO - Premisa repetida encontrada (idx 898): 'A young Asian man sits behind a set chessboard wai...'
+2025-07-06 02:28:46,744 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,744 - INFO - Premisa repetida encontrada (idx 899): 'A young Asian man sits behind a set chessboard wai...'
+2025-07-06 02:28:46,744 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,744 - INFO - Premisa nueva encontrada (idx 900): 'Two young men drink beer, leaning on a graffitied ...'
+2025-07-06 02:28:46,744 - INFO - Premisa repetida encontrada (idx 901): 'Two young men drink beer, leaning on a graffitied ...'
+2025-07-06 02:28:46,744 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,744 - INFO - Premisa repetida encontrada (idx 902): 'Two young men drink beer, leaning on a graffitied ...'
+2025-07-06 02:28:46,744 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,744 - INFO - Premisa nueva encontrada (idx 903): 'A man being airlifted to safety after being in dan...'
+2025-07-06 02:28:46,744 - INFO - Premisa repetida encontrada (idx 904): 'A man being airlifted to safety after being in dan...'
+2025-07-06 02:28:46,744 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,744 - INFO - Premisa repetida encontrada (idx 905): 'A man being airlifted to safety after being in dan...'
+2025-07-06 02:28:46,744 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,745 - INFO - Premisa nueva encontrada (idx 906): 'People in a meeting setting paying attention to a ...'
+2025-07-06 02:28:46,745 - INFO - Premisa repetida encontrada (idx 907): 'People in a meeting setting paying attention to a ...'
+2025-07-06 02:28:46,745 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,745 - INFO - Premisa repetida encontrada (idx 908): 'People in a meeting setting paying attention to a ...'
+2025-07-06 02:28:46,745 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,745 - INFO - Premisa nueva encontrada (idx 909): 'A meeting of young people sitting at a conference ...'
+2025-07-06 02:28:46,745 - INFO - Premisa repetida encontrada (idx 910): 'A meeting of young people sitting at a conference ...'
+2025-07-06 02:28:46,745 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,745 - INFO - Premisa repetida encontrada (idx 911): 'A meeting of young people sitting at a conference ...'
+2025-07-06 02:28:46,745 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,745 - INFO - Premisa nueva encontrada (idx 912): 'A woman in a red shirt is speaking at a table in a...'
+2025-07-06 02:28:46,745 - INFO - Premisa repetida encontrada (idx 913): 'A woman in a red shirt is speaking at a table in a...'
+2025-07-06 02:28:46,745 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,745 - INFO - Premisa repetida encontrada (idx 914): 'A woman in a red shirt is speaking at a table in a...'
+2025-07-06 02:28:46,745 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,745 - INFO - Premisa nueva encontrada (idx 915): 'A woman talks to two other women and a man with no...'
+2025-07-06 02:28:46,746 - INFO - Premisa repetida encontrada (idx 916): 'A woman talks to two other women and a man with no...'
+2025-07-06 02:28:46,746 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,746 - INFO - Premisa repetida encontrada (idx 917): 'A woman talks to two other women and a man with no...'
+2025-07-06 02:28:46,746 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,746 - INFO - Premisa repetida encontrada (idx 918): 'A woman talks to two other women and a man with no...'
+2025-07-06 02:28:46,746 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,746 - INFO - Premisa repetida encontrada (idx 919): 'A woman talks to two other women and a man with no...'
+2025-07-06 02:28:46,746 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,746 - INFO - Premisa repetida encontrada (idx 920): 'A woman talks to two other women and a man with no...'
+2025-07-06 02:28:46,746 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,746 - INFO - Premisa repetida encontrada (idx 921): 'A woman talks to two other women and a man with no...'
+2025-07-06 02:28:46,746 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,746 - INFO - Premisa repetida encontrada (idx 922): 'A woman talks to two other women and a man with no...'
+2025-07-06 02:28:46,746 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,746 - INFO - Premisa repetida encontrada (idx 923): 'A woman talks to two other women and a man with no...'
+2025-07-06 02:28:46,746 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,747 - INFO - Premisa repetida encontrada (idx 924): 'A woman talks to two other women and a man with no...'
+2025-07-06 02:28:46,747 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,747 - INFO - Premisa repetida encontrada (idx 925): 'A woman talks to two other women and a man with no...'
+2025-07-06 02:28:46,747 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,747 - INFO - Premisa repetida encontrada (idx 926): 'A woman talks to two other women and a man with no...'
+2025-07-06 02:28:46,747 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,747 - INFO - Premisa repetida encontrada (idx 927): 'A woman talks to two other women and a man with no...'
+2025-07-06 02:28:46,747 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,747 - INFO - Premisa repetida encontrada (idx 928): 'A woman talks to two other women and a man with no...'
+2025-07-06 02:28:46,747 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,747 - INFO - Premisa repetida encontrada (idx 929): 'A woman talks to two other women and a man with no...'
+2025-07-06 02:28:46,747 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,747 - INFO - Premisa nueva encontrada (idx 930): 'A classroom of students discussing lecture....'
+2025-07-06 02:28:46,747 - INFO - Premisa repetida encontrada (idx 931): 'A classroom of students discussing lecture....'
+2025-07-06 02:28:46,748 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,748 - INFO - Premisa repetida encontrada (idx 932): 'A classroom of students discussing lecture....'
+2025-07-06 02:28:46,748 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,748 - INFO - Premisa nueva encontrada (idx 933): 'A man holds a clipboard and a pen as a woman looks...'
+2025-07-06 02:28:46,748 - INFO - Premisa repetida encontrada (idx 934): 'A man holds a clipboard and a pen as a woman looks...'
+2025-07-06 02:28:46,748 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,748 - INFO - Premisa repetida encontrada (idx 935): 'A man holds a clipboard and a pen as a woman looks...'
+2025-07-06 02:28:46,748 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,748 - INFO - Premisa nueva encontrada (idx 936): 'A man with a bright green shirt is talking to a wo...'
+2025-07-06 02:28:46,748 - INFO - Premisa repetida encontrada (idx 937): 'A man with a bright green shirt is talking to a wo...'
+2025-07-06 02:28:46,748 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,748 - INFO - Premisa repetida encontrada (idx 938): 'A man with a bright green shirt is talking to a wo...'
+2025-07-06 02:28:46,748 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,748 - INFO - Premisa nueva encontrada (idx 939): 'A man in a green shirt holds out a clipboard for a...'
+2025-07-06 02:28:46,748 - INFO - Premisa repetida encontrada (idx 940): 'A man in a green shirt holds out a clipboard for a...'
+2025-07-06 02:28:46,748 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,748 - INFO - Premisa repetida encontrada (idx 941): 'A man in a green shirt holds out a clipboard for a...'
+2025-07-06 02:28:46,749 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,749 - INFO - Premisa nueva encontrada (idx 942): 'A man in a bright green shirt shows a woman in a b...'
+2025-07-06 02:28:46,749 - INFO - Premisa repetida encontrada (idx 943): 'A man in a bright green shirt shows a woman in a b...'
+2025-07-06 02:28:46,749 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,749 - INFO - Premisa repetida encontrada (idx 944): 'A man in a bright green shirt shows a woman in a b...'
+2025-07-06 02:28:46,749 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,749 - INFO - Premisa repetida encontrada (idx 945): 'A man in a bright green shirt shows a woman in a b...'
+2025-07-06 02:28:46,749 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,749 - INFO - Premisa repetida encontrada (idx 946): 'A man in a bright green shirt shows a woman in a b...'
+2025-07-06 02:28:46,749 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,749 - INFO - Premisa repetida encontrada (idx 947): 'A man in a bright green shirt shows a woman in a b...'
+2025-07-06 02:28:46,749 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,749 - INFO - Premisa repetida encontrada (idx 948): 'A man in a bright green shirt shows a woman in a b...'
+2025-07-06 02:28:46,749 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,750 - INFO - Premisa repetida encontrada (idx 949): 'A man in a bright green shirt shows a woman in a b...'
+2025-07-06 02:28:46,750 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,750 - INFO - Premisa repetida encontrada (idx 950): 'A man in a bright green shirt shows a woman in a b...'
+2025-07-06 02:28:46,750 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,750 - INFO - Premisa repetida encontrada (idx 951): 'A man in a bright green shirt shows a woman in a b...'
+2025-07-06 02:28:46,750 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,750 - INFO - Premisa repetida encontrada (idx 952): 'A man in a bright green shirt shows a woman in a b...'
+2025-07-06 02:28:46,750 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,750 - INFO - Premisa repetida encontrada (idx 953): 'A man in a bright green shirt shows a woman in a b...'
+2025-07-06 02:28:46,750 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,750 - INFO - Premisa repetida encontrada (idx 954): 'A man in a bright green shirt shows a woman in a b...'
+2025-07-06 02:28:46,750 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,750 - INFO - Premisa repetida encontrada (idx 955): 'A man in a bright green shirt shows a woman in a b...'
+2025-07-06 02:28:46,750 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,750 - INFO - Premisa repetida encontrada (idx 956): 'A man in a bright green shirt shows a woman in a b...'
+2025-07-06 02:28:46,751 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,751 - INFO - Premisa nueva encontrada (idx 957): 'A man on a street in a bright t-shirt holds some s...'
+2025-07-06 02:28:46,751 - INFO - Premisa repetida encontrada (idx 958): 'A man on a street in a bright t-shirt holds some s...'
+2025-07-06 02:28:46,751 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,751 - INFO - Premisa repetida encontrada (idx 959): 'A man on a street in a bright t-shirt holds some s...'
+2025-07-06 02:28:46,751 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,751 - INFO - Premisa repetida encontrada (idx 960): 'A man on a street in a bright t-shirt holds some s...'
+2025-07-06 02:28:46,751 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,751 - INFO - Premisa repetida encontrada (idx 961): 'A man on a street in a bright t-shirt holds some s...'
+2025-07-06 02:28:46,751 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,751 - INFO - Premisa repetida encontrada (idx 962): 'A man on a street in a bright t-shirt holds some s...'
+2025-07-06 02:28:46,751 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,751 - INFO - Premisa repetida encontrada (idx 963): 'A man on a street in a bright t-shirt holds some s...'
+2025-07-06 02:28:46,751 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,751 - INFO - Premisa repetida encontrada (idx 964): 'A man on a street in a bright t-shirt holds some s...'
+2025-07-06 02:28:46,752 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,752 - INFO - Premisa repetida encontrada (idx 965): 'A man on a street in a bright t-shirt holds some s...'
+2025-07-06 02:28:46,752 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,752 - INFO - Premisa repetida encontrada (idx 966): 'A man on a street in a bright t-shirt holds some s...'
+2025-07-06 02:28:46,752 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,752 - INFO - Premisa repetida encontrada (idx 967): 'A man on a street in a bright t-shirt holds some s...'
+2025-07-06 02:28:46,752 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,752 - INFO - Premisa repetida encontrada (idx 968): 'A man on a street in a bright t-shirt holds some s...'
+2025-07-06 02:28:46,752 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,752 - INFO - Premisa repetida encontrada (idx 969): 'A man on a street in a bright t-shirt holds some s...'
+2025-07-06 02:28:46,752 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,752 - INFO - Premisa repetida encontrada (idx 970): 'A man on a street in a bright t-shirt holds some s...'
+2025-07-06 02:28:46,752 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,752 - INFO - Premisa repetida encontrada (idx 971): 'A man on a street in a bright t-shirt holds some s...'
+2025-07-06 02:28:46,753 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,753 - INFO - Premisa nueva encontrada (idx 972): 'A child with a yellow cup and milk all over his fa...'
+2025-07-06 02:28:46,753 - INFO - Premisa repetida encontrada (idx 973): 'A child with a yellow cup and milk all over his fa...'
+2025-07-06 02:28:46,753 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,753 - INFO - Premisa repetida encontrada (idx 974): 'A child with a yellow cup and milk all over his fa...'
+2025-07-06 02:28:46,753 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,753 - INFO - Premisa nueva encontrada (idx 975): 'Two barefoot men are playing on a green lawn outsi...'
+2025-07-06 02:28:46,753 - INFO - Premisa repetida encontrada (idx 976): 'Two barefoot men are playing on a green lawn outsi...'
+2025-07-06 02:28:46,753 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,753 - INFO - Premisa repetida encontrada (idx 977): 'Two barefoot men are playing on a green lawn outsi...'
+2025-07-06 02:28:46,753 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,753 - INFO - Premisa nueva encontrada (idx 978): 'Small laughing child with blond-hair sitting at a ...'
+2025-07-06 02:28:46,753 - INFO - Premisa repetida encontrada (idx 979): 'Small laughing child with blond-hair sitting at a ...'
+2025-07-06 02:28:46,753 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,753 - INFO - Premisa repetida encontrada (idx 980): 'Small laughing child with blond-hair sitting at a ...'
+2025-07-06 02:28:46,753 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,754 - INFO - Premisa nueva encontrada (idx 981): 'A little boy drinks milk and gets milk all over hi...'
+2025-07-06 02:28:46,754 - INFO - Premisa repetida encontrada (idx 982): 'A little boy drinks milk and gets milk all over hi...'
+2025-07-06 02:28:46,754 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,754 - INFO - Premisa repetida encontrada (idx 983): 'A little boy drinks milk and gets milk all over hi...'
+2025-07-06 02:28:46,754 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,754 - INFO - Premisa nueva encontrada (idx 984): 'Two pre-teen girls listening to music on an MP3 pl...'
+2025-07-06 02:28:46,754 - INFO - Premisa repetida encontrada (idx 985): 'Two pre-teen girls listening to music on an MP3 pl...'
+2025-07-06 02:28:46,754 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,754 - INFO - Premisa repetida encontrada (idx 986): 'Two pre-teen girls listening to music on an MP3 pl...'
+2025-07-06 02:28:46,754 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,754 - INFO - Premisa nueva encontrada (idx 987): 'A man is running behind a dogsled being pulled by ...'
+2025-07-06 02:28:46,754 - INFO - Premisa repetida encontrada (idx 988): 'A man is running behind a dogsled being pulled by ...'
+2025-07-06 02:28:46,754 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,754 - INFO - Premisa repetida encontrada (idx 989): 'A man is running behind a dogsled being pulled by ...'
+2025-07-06 02:28:46,754 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,754 - INFO - Premisa nueva encontrada (idx 990): 'Toddler with milk around his mouth....'
+2025-07-06 02:28:46,755 - INFO - Premisa repetida encontrada (idx 991): 'Toddler with milk around his mouth....'
+2025-07-06 02:28:46,755 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,755 - INFO - Premisa repetida encontrada (idx 992): 'Toddler with milk around his mouth....'
+2025-07-06 02:28:46,755 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,755 - INFO - Premisa repetida encontrada (idx 993): 'Toddler with milk around his mouth....'
+2025-07-06 02:28:46,755 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,755 - INFO - Premisa repetida encontrada (idx 994): 'Toddler with milk around his mouth....'
+2025-07-06 02:28:46,755 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,755 - INFO - Premisa repetida encontrada (idx 995): 'Toddler with milk around his mouth....'
+2025-07-06 02:28:46,755 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,755 - INFO - Premisa repetida encontrada (idx 996): 'Toddler with milk around his mouth....'
+2025-07-06 02:28:46,755 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,755 - INFO - Premisa repetida encontrada (idx 997): 'Toddler with milk around his mouth....'
+2025-07-06 02:28:46,755 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,755 - INFO - Premisa repetida encontrada (idx 998): 'Toddler with milk around his mouth....'
+2025-07-06 02:28:46,756 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,756 - INFO - Premisa repetida encontrada (idx 999): 'Toddler with milk around his mouth....'
+2025-07-06 02:28:46,756 - INFO -   [✓] Consistente: El embedding es idéntico al anterior.
+2025-07-06 02:28:46,756 - INFO - 
+--- Resultados de la Verificación ---
+2025-07-06 02:28:46,756 - ERROR - ❌ Fallo: Se encontraron 38 inconsistencias.
