@@ -1,17 +1,20 @@
 #!/usr/bin/env python
 """
-scripts/run_decision_tree_probe.py
-==================================
-Main pipeline script to run a decision tree probe experiment.
-This script orchestrates the training, analysis, and visualization of a
-decision tree classifier to probe for informative dimensions in embeddings.
+Runs a decision tree probe on a given set of embeddings.
 """
+
+import sys
+from pathlib import Path
+
+# Add the project root to the Python path
+project_root = Path(__file__).resolve().parents[1]
+sys.path.append(str(project_root))
+
 import argparse
 import json
 import pickle
-from pathlib import Path
-
 import mlflow
+import pandas as pd
 from experiments.probes.probe_utils import train_decision_tree_probe
 from experiments.probes.analysis_utils import (
     get_classification_metrics,
@@ -21,38 +24,50 @@ from experiments.probes.analysis_utils import (
 from experiments.probes.visualization_utils import plot_tree_to_file
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Run a Decision Tree Probe on embeddings.")
-    parser.add_argument("--input_path", type=Path, required=True, help="Path to the input Parquet file with embeddings.")
-    parser.add_argument("--output_dir", type=Path, required=True, help="Directory to save results and artifacts.")
-    parser.add_argument("--experiment_name", type=str, default="DecisionTree_Probe", help="Name for the MLflow experiment.")
-    parser.add_argument("--embedding_type", type=str, required=True, help="Type of embedding (e.g., 'full', 'delta', 'pca_full').")
-    parser.add_argument("--layer_num", type=int, required=True, help="RoBERTa layer number for the embeddings.")
-    parser.add_argument("--max_depth", type=int, default=10, help="Max depth of the decision tree.")
+    """Parse command-line arguments."""
+    parser = argparse.ArgumentParser(description="Run a decision tree probe.")
+    parser.add_argument("--input_path", type=Path, required=True, help="Path to the input Parquet file.")
+    parser.add_argument("--output_dir", type=Path, required=True, help="Directory to save the output files.")
+    parser.add_argument("--experiment_name", type=str, default="decision_tree_probe", help="Name for the MLflow experiment.")
+    parser.add_argument("--dataset_name", type=str, default="unknown", help="Name of the dataset being processed (e.g., 'folio', 'snli').")
+    parser.add_argument("--embedding_type", type=str, required=True, help="Type of embedding (e.g., 'full', 'delta').")
+    parser.add_argument("--layer_num", type=int, required=True, help="Layer number of the embeddings.")
+    parser.add_argument("--max_depth", type=int, default=4, help="Maximum depth of the decision tree.")
     parser.add_argument("--min_samples_split", type=int, default=50, help="Min samples to split a node.")
     parser.add_argument("--scale_features", action='store_true', help="Apply StandardScaler to features before training.")
     parser.add_argument("--provenance", type=str, default="{}", help="JSON string with provenance info from previous steps.")
     return parser.parse_args()
 
 def main():
+    """Main execution function."""
     args = parse_args()
     
-    # Create output directory
     args.output_dir.mkdir(parents=True, exist_ok=True)
     
-    # --- MLflow Setup ---
     mlflow.set_experiment(args.experiment_name)
-    run_name = f"probe_{args.embedding_type}_layer{args.layer_num}_depth{args.max_depth}"
-    
+    run_name = f"probe_{args.dataset_name}_{args.embedding_type}_layer{args.layer_num}"
+
     with mlflow.start_run(run_name=run_name) as run:
         print(f"--- Starting MLflow Run: {run.info.run_name} ---")
+
+        # --- Provenance Information ---
+        provenance = {
+            "source_file": str(args.input_path.name),
+            "dataset": args.dataset_name,
+            "embedding_type": args.embedding_type,
+            "layer": args.layer_num,
+            "max_depth": args.max_depth,
+            "min_samples_split": args.min_samples_split,
+            "features_scaled": args.scale_features
+        }
+        if args.provenance:
+            try:
+                existing_prov = json.loads(args.provenance)
+                provenance.update(existing_prov)
+            except json.JSONDecodeError:
+                print("Warning: Could not parse existing provenance string.")
         
-        # Log parameters
-        mlflow.log_params(vars(args))
-        try:
-            provenance = json.loads(args.provenance)
-            mlflow.log_params({f"prov_{k}": v for k, v in provenance.items()})
-        except json.JSONDecodeError:
-            print("Warning: Could not parse provenance string.")
+        mlflow.log_params(provenance)
 
         # --- Train Probe ---
         probe_results = train_decision_tree_probe(
@@ -72,29 +87,24 @@ def main():
             probe_results["feature_names"]
         )
         
-        # Define the human-readable class names for reporting.
-        # This corrects the internal [0, 1] remapping back to meaningful labels.
         display_class_names = ["Entailment", "Contradiction"]
 
         tree_rules = get_printable_rules(
             probe_results["model"],
             probe_results["feature_names"],
-            display_class_names, # Use corrected names
+            display_class_names,
             max_depth=3
         )
         
         # --- Display Summary ---
         print("\n--- PROBE RESULTS SUMMARY ---")
         print(f"Accuracy: {all_metrics['accuracy']:.4f}")
-        print(f"Precision: {all_metrics['precision']:.4f}")
-        print(f"Recall: {all_metrics['recall']:.4f}")
         print("\nTop 10 Most Informative Dimensions:")
         print(top_features_df.to_string(index=False))
         print("\n" + tree_rules)
         print("---------------------------\n")
 
         # --- Save Artifacts ---
-        # 1. Save metrics and results to a JSON file
         results_path = args.output_dir / "probe_summary.json"
         summary_data = {
             "metrics": all_metrics,
@@ -103,29 +113,25 @@ def main():
         with open(results_path, 'w') as f:
             json.dump(summary_data, f, indent=4)
         
-        # 2. Save tree rules to a text file
         rules_path = args.output_dir / "tree_rules.txt"
         with open(rules_path, 'w') as f:
             f.write(tree_rules)
             
-        # 3. Save the trained model
         model_path = args.output_dir / "decision_tree_model.pkl"
         with open(model_path, 'wb') as f:
             pickle.dump(probe_results["model"], f)
             
-        # 4. Generate and save the tree visualization
         plot_path = plot_tree_to_file(
             model=probe_results["model"],
             feature_names=probe_results["feature_names"],
-            class_names=display_class_names, # Use corrected names
+            class_names=display_class_names,
             output_dir=args.output_dir,
             filename_prefix=run_name
         )
 
         # --- Log Artifacts to MLflow ---
-        # Separate scalar metrics for logging from complex artifacts like the confusion matrix
-        scalar_metrics = {k: v for k, v in all_metrics.items() if not isinstance(v, list)}
-
+        scalar_metrics = {k: v for k, v in all_metrics.items() if isinstance(v, (int, float))}
+        
         print("--- Logging artifacts to MLflow ---")
         mlflow.log_metrics(scalar_metrics)
         mlflow.log_artifact(str(results_path))

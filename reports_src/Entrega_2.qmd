@@ -1,0 +1,577 @@
+---
+title: "Taller de Tesis I – Entrega II"
+author: "Matias Marcelo Rodríguez Matus (G1)"
+format:
+  pdf:
+    papersize: a4
+    margin-left: 2cm
+    margin-right: 2cm
+    margin-top: 2cm
+    margin-bottom: 2cm
+    toc: false
+execute:
+  echo: false        # oculta el código salvo que lo cambies
+  warning: false     # oculta advertencias
+  message: false     # oculta mensajes de librerías
+---
+
+## 1 · Pregunta y objetivos revisados {#pregunta}
+
+¿Codifican los espacios vectoriales de un LLM general (RoBERTa‑base, sin fine‑tuning) reglas de inferencia de la Lógica de Primer Orden (LPO)?
+
+Feedback de la entrega 1:
+
+* Se elimina el dataset **MALLS** para reducir la complejidad del experimento.
+* **SNLI** se usa como línea base porque:
+    * Es ampliamente utilizado para evaluar *entailment* en lenguaje natural.
+    * Ya existen estudios previos con RoBERTa y BERT.
+
+* **FOLIO**, generado a partir de LPO, es el foco principal del análisis: Permite explorar inferencia lógica con estructura formal explícita. Es ideal para estudiar si los embeddings codifican reglas lógicas profundas.
+
+* El **LPO** posee mayor capacidad para capturar propiedades y relaciones del lenguaje natural; se espera que esto facilite la identificación de *estructuras inferenciales* que la lógica proposicional no permite observar por sí sola.
+
+## 2 · Editor a usar
+
+Se usara Vscode + Quarto. Quarto es una herramienta *open-source* que convierte documentos que combinan Markdown + código en pdf. Como alternativa se usara Vscode + LaTex si se descubre que el trabajo en Quarto trae alguna complejidad o problemas.
+
+## 3 · Metodología
+
+Para averiguar si los embeddings de un modelo **RoBERTa-base** sin *fine-tuning* codifican inferencias lógicas, partimos de dos corpus complementarios. SNLI actúa como línea base: refleja inferencia informal del lenguaje cotidiano y está profundamente estudiado en la literatura, lo que facilita contrastes. FOLIO, en cambio, fue construido a partir de fórmulas de Lógica de Primer Orden (LPO); su sintaxis expresa cuantificadores y relaciones explícitas, lo que lo convierte en el terreno ideal para rastrear regularidades lógicas profundas. 
+
+El procedimento se divide en seis pasos: 
+
+#. Se genera un *embedding* por enunciado y se combinan (concatenación y diferencia) las representaciones vectoriales de premisa e hipótesis de modo que captemos tanto las características individuales como las discrepancias semánticas. 
+#. Se aplica **PCA** para reducir la dimensionalidad de 768 dimensiones a un numero menor, 50 dimensiones por ejemplo, a fin de poder compactar el espacio vectorial y reducir coste computacional 
+#. Se aplica **UMAP** para proyectar en dos dimensiones, de modo que la estructura geométrica sea visualizable.
+#. Sobre ese plano reducido se ejecuta **K-Means** con *k = 3*; la hipótesis es que, si el espacio vectorial codifica inferencia, los clústeres tenderán a alinearse con las etiquetas originales (entailment, contradiction, neutral / true, false, uncertain).
+#. Entrenamos un **árbol de decisión** limitado en principio a cuatro niveles: buscamos obtener una medida de cuán separables son las clases y, al mismo tiempo, revelar qué ejes del embedding concentran información lógica. 
+#. Repetimos todo el proceso en FOLIO y comparamos patrones con SNLI. 
+#. Adicionalmente, incorporariamos un *probing* específico: regresión logística dirigida a cuantificadores universales y existenciales para verificar si esos rasgos son recuperables directamente de los vectores. 
+
+Para los clústeres, calculamos **purity** y **NMI** frente a las etiquetas; para el árbol, **accuracy** y analizamos las reglas de decisión con mayor información. Este enfoque pretende medir cuánto de la estructura lógica subyace en la geometría aprendida.
+
+## 4 · Marco teórico
+
+Se proponen los siguientes papers para el desarrollo del trabajo:
+
+1. Chen & Gao (2022) – *Probing Linguistic Information for Logical Inference in PLMs*.  
+   ‣ Muestran, vía probes lineales, qué tan bien los LLMs distinguen operadores lógicos y reglas de inferencia.
+
+2. Coenen et al. (2019) – *Visualizing & Measuring the Geometry of BERT*.  
+   ‣ Proponen métricas y técnicas de visualización que revelan la estructura de clústeres y ejes semánticos en embeddings BERT.
+
+3. Cai et al. (2021) – *Isotropy in the Contextual Embedding Space*.  
+   ‣ Demuestran que los embeddings contextualizados son anisotrópicos y ofrecen medidas para cuantificar ese sesgo geométrico.
+
+
+## 5 · EDA
+
+```{python echo=false, message=false}
+# Carga de librerías y datasets
+import numpy as np
+from datasets import load_dataset
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from langdetect import detect
+from langdetect.lang_detect_exception import LangDetectException
+from transformers import pipeline
+import fasttext
+import os
+import requests
+from tqdm import tqdm
+from IPython.display import display as ipython_display, HTML
+from collections import Counter
+
+# Cargar datasets desde archivos arrow locales
+# print("Cargando datasets desde archivos arrow locales...")
+# snli = load_dataset('arrow', data_files={'train': '../data/snli/dataset/data-00000-of-00001.arrow'})
+# folio = load_dataset('arrow', data_files={'train': '../data/folio/dataset/data-00000-of-00001.arrow'})
+
+# Cargar datasets completos desde el Hugging Face Hub para asegurar todos los splits
+snli = load_dataset('stanfordnlp/snli')
+folio = load_dataset('yale-nlp/folio')
+
+```
+
+
+```{python echo=false, message=false}
+# Configure pandas display options for better PDF output
+pd.set_option('display.max_columns', None)
+pd.set_option('display.max_colwidth', 50)  # Limit column width to prevent overflow
+pd.set_option('display.width', 100)  # Limit overall display width
+pd.set_option('display.precision', 2)  # Limit decimal places
+pd.set_option('display.max_rows', 10)  # Limit number of rows displayed
+
+# Set figure size and style for better PDF output
+plt.rcParams['figure.figsize'] = (6, 4)  # Default figure size that fits in A4 with margins
+plt.rcParams['figure.dpi'] = 150  # Higher DPI for better quality
+plt.rcParams['savefig.dpi'] = 150
+plt.rcParams['font.size'] = 10  # Slightly smaller font size
+plt.style.use('seaborn-v0_8-whitegrid')  # Use a clean style
+
+# Custom display function to ensure dataframes are properly contained
+def safe_display(df,indexOption=False):
+    """Wrap dataframe in a container with overflow handling for better PDF output"""
+    html = df.to_html(index=indexOption)
+    wrapped_html = f'<div class="dataframe-container">{html}</div>'
+    ipython_display(HTML(wrapped_html))
+```
+
+### ¿Cuál es la estructura general de los datasets?
+
+```{python echo=false, message=false}
+pd.set_option('display.max_columns', None)
+# We're using a limited colwidth instead of None to prevent table overflow
+pd.set_option('display.max_colwidth', 50)  
+
+summary = pd.DataFrame({
+    'Dataset': ['SNLI', 'FOLIO'],
+    'Train size': [len(snli['train']), len(folio['train'])],
+    'Validation size': [len(snli['validation']), len(folio['validation'])],
+    'Test size': [len(snli['test']), 'N/A'],
+    'Columns': [snli['train'].column_names, folio['train'].column_names]
+})
+safe_display(summary.T,indexOption=True)
+
+```
+
+### ¿Cómo se distribuyen las clases en cada dataset?
+
+```{python echo=false, message=false}
+# --- preparar dataframes ---
+df_snli = pd.DataFrame(snli['train'])
+# Filtrar ejemplos con label -1 (no etiquetados)
+df_snli = df_snli[df_snli['label'] != -1].copy()
+label_map_snli = {0: 'entailment', 1: 'neutral', 2: 'contradiction'}
+df_snli['label_str'] = df_snli['label'].map(label_map_snli)
+
+df_folio = pd.DataFrame(folio['train'])
+
+# --- figura con dos ejes lado a lado ---
+fig, axes = plt.subplots(ncols=2, figsize=(7, 2.5), sharey=False)
+
+# ---------- SNLI ----------
+ax = sns.countplot(x='label_str', data=df_snli, ax=axes[0])
+total = len(df_snli)
+for p in ax.patches:
+    pct = p.get_height() / total * 100
+    ax.annotate(f'{pct:.1f} %',
+                (p.get_x() + p.get_width()/2, p.get_height()),
+                xytext=(0, -12), textcoords='offset points',
+                ha='center', va='top', fontsize=8, color='white')
+ax.set_title('Distribución de clases SNLI', pad=6)
+ax.set_xlabel('')
+ax.set_ylabel('count')
+ax.tick_params(axis='x', rotation=45)
+
+# ---------- FOLIO ----------
+ax = sns.countplot(x='label', data=df_folio, ax=axes[1])
+total = len(df_folio)
+for p in ax.patches:
+    pct = p.get_height() / total * 100
+    ax.annotate(f'{pct:.1f} %',
+                (p.get_x() + p.get_width()/2, p.get_height()),
+                xytext=(0, -12), textcoords='offset points',
+                ha='center', va='top', fontsize=8, color='white')
+ax.set_title('Distribución de clases FOLIO', pad=6)
+ax.set_xlabel('')
+ax.set_ylabel('')
+ax.tick_params(axis='x', rotation=45)
+
+plt.tight_layout()
+plt.show()
+
+```
+
+ 
+### Ejemplos aleatorios de cada dataset
+```{python echo=false, message=false}
+print('Ejemplo SNLI:')
+safe_display(df_snli.sample(1, random_state=1)[['premise', 'hypothesis', 'label_str']])
+print('\nEjemplo FOLIO lenguaje natural:')
+safe_display(df_folio.sample(1, random_state=1)[['premises', 'conclusion', 'label']])
+print('\nEjemplo FOLIO LPO:')
+safe_display(df_folio.sample(1, random_state=1)[['premises-FOL', 'conclusion-FOL', 'label']])
+
+```
+
+### ¿Cuál es la longitud de los textos en cada dataset?
+
+```{python echo=false, message=false}
+df_snli['premise_len'] = df_snli['premise'].str.len()
+df_snli['hypothesis_len'] = df_snli['hypothesis'].str.len()
+df_folio['premises_len'] = df_folio['premises'].str.len()
+df_folio['conclusion_len'] = df_folio['conclusion'].str.len()
+
+
+plt.figure(figsize=(6,2.5))
+plt.subplot(1,2,1)
+sns.histplot(df_snli['premise_len'], bins=20, kde=True)
+plt.title('Distribución de longitud de premisas- SNLI')
+plt.subplot(1,2,2)
+sns.histplot(df_folio['premises_len'], bins=20, kde=True)
+plt.title('Distribución de longitud de premisas - FOLIO')
+plt.tight_layout()
+plt.show()
+
+print('Longitud promedio premise SNLI:', df_snli['premise_len'].mean())
+print('Longitud promedio premises FOLIO:', df_folio['premises_len'].mean())
+print('Longitud promedio hypothesis SNLI:', df_snli['hypothesis_len'].mean())
+print('Longitud promedio conclusion FOLIO:', df_folio['conclusion_len'].mean())
+
+```
+
+### ¿Existen valores nulos o duplicados?
+
+```{python echo=false, message=false}
+def resumen_col_null_dup(df, nombre, exclude_cols=None):
+    """
+    Retorna un DataFrame con columnas:
+    - dataset: nombre del conjunto
+    - column: nombre de la columna
+    - nulos: cantidad de valores nulos en esa columna
+    - duplicados: número de entradas duplicadas (misma cadena/valor) en esa columna
+    """
+    exclude_cols = exclude_cols or []
+    rows = []
+    for col in df.columns:
+        if col in exclude_cols:
+            continue
+        n_nulos = df[col].isnull().sum()
+        # .duplicated() marca como True todas las filas que repiten un valor anterior
+        n_dups  = df[col].duplicated().sum()
+        rows.append({
+            "dataset":   nombre,
+            "column":    col,
+            "nulos":     int(n_nulos),
+            "duplicados":int(n_dups)
+        })
+    return pd.DataFrame(rows)
+
+# Aplica a cada dataset, excluyendo las columnas de etiqueta:
+res_snli  = resumen_col_null_dup(df_snli,  "SNLI",  exclude_cols=["label","label_str","premise_len","hypothesis_len"])
+res_folio = resumen_col_null_dup(df_folio, "FOLIO", exclude_cols=["label","story_id","example_id","premises_len","conclusion_len"])
+
+# Combina y muestra en Markdown:
+resumen = pd.concat([res_snli, res_folio], ignore_index=True)
+safe_display(resumen)
+```
+
+### ¿Todo el texto está en inglés? ¿Hay ruido de otros idiomas?
+
+Para confirmar que los corpous estén  en inglés, tomamos una muestra aleatoria de 1000 enunciados por columna y aplicamos fastText. Calculamos la proporción de entradas marcadas como "en" y listamos cuántas oraciones quedaron etiquetadas como otro idioma o "unknown". Se revisaron los ejemplos marcados como en otro idioma y se encontro que eran errores de etiquetado. Los datasets estan 100% en inglés.
+
+```{python echo=false, message=false}
+def download_model():
+    model_path = 'lid.176.bin'
+    if not os.path.exists(model_path):
+        print("Downloading language detection model...")
+        url = "https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.bin"
+        response = requests.get(url, stream=True)
+        total_size = int(response.headers.get('content-length', 0))
+        
+        with open(model_path, 'wb') as file, tqdm(
+            desc=model_path,
+            total=total_size,
+            unit='iB',
+            unit_scale=True,
+            unit_divisor=1024,
+        ) as pbar:
+            for data in response.iter_content(chunk_size=1024):
+                size = file.write(data)
+                pbar.update(size)
+    return model_path
+
+# Descargar el modelo si no existe
+model_path = download_model()
+ft_model = fasttext.load_model(model_path)
+
+def idioma_fasttext(text):
+    """
+    Devuelve el idioma con mayor confianza entre todas las líneas no vacías
+    de un texto.  Si el texto está vacío → 'empty'; si ninguna línea es
+    procesable → 'unknown'.
+    """
+    lines = [ln.strip() for ln in text.split("\n") if ln.strip()]
+    if not lines:
+        return "empty"
+
+    best_lang, best_conf = "unknown", 0.0
+    for ln in lines:
+        try:
+            lab, conf = ft_model.predict(ln, k=1)
+            lang = lab[0].replace("__label__", "")
+            if conf[0] > best_conf:
+                best_lang, best_conf = lang, conf[0]
+        except Exception:
+            pass  # ignora líneas que causen error
+
+    return best_lang
+
+def resumen_idioma(df, col, sample_size=1000):
+    sample = df[col].sample(min(sample_size, len(df)),
+                            random_state=42).fillna("").astype(str)
+    langs = [idioma_fasttext(txt) for txt in sample]
+
+    vc = pd.Series(langs).value_counts()
+    processable = len(sample) - vc.get("empty", 0)
+    en_pct = vc.get("en", 0) / processable * 100 if processable else 0
+    other   = processable - vc.get("en", 0)
+
+    return {
+        "col": col,
+        "sample": len(sample),
+        "% english": f"{en_pct:.1f}",
+        "other_langs": other
+    }
+
+summary = pd.DataFrame([
+    resumen_idioma(df_snli,  'premise'),
+    resumen_idioma(df_snli,  'hypothesis'),
+    resumen_idioma(df_folio, 'premises'),
+    resumen_idioma(df_folio, 'conclusion')
+])
+
+safe_display(summary)
+
+```
+
+### Análisis de Cross-Contamination
+
+```{python echo=false, message=false}
+def analyze_cross_contamination(df, dataset_name):
+    """
+    Analiza la cross-contamination entre premisas e hipótesis/conclusiones
+    """
+    # Extraer textos únicos
+    if 'premise' in df.columns:  # SNLI
+        premises = set(df['premise'])
+        hypotheses = set(df['hypothesis'])
+        text_cols = ['premise', 'hypothesis']
+    else:  # FOLIO
+        premises = set(df['premises'])
+        hypotheses = set(df['conclusion'])
+        text_cols = ['premises', 'conclusion']
+    
+    # Calcular overlap
+    overlap = premises.intersection(hypotheses)
+    
+    # Matriz de contaminación
+    is_premise = {text: True for text in premises}
+    is_hypothesis = {text: True for text in hypotheses}
+    all_texts = premises.union(hypotheses)
+    
+    contamination_counts = Counter()
+    for text in all_texts:
+        role = ("premise" if text in is_premise else "not_premise",
+                "hypothesis" if text in is_hypothesis else "not_hypothesis")
+        contamination_counts[role] += 1
+    
+    # Crear matriz
+    contamination_matrix = pd.DataFrame(0, 
+                                      index=['is_premise', 'not_premise'], 
+                                      columns=['is_hypothesis', 'not_hypothesis'])
+    for (p_role, h_role), count in contamination_counts.items():
+        contamination_matrix.loc[p_role, h_role] = count
+    
+    return {
+        'overlap_count': len(overlap),
+        'total_premises': len(premises),
+        'total_hypotheses': len(hypotheses),
+        'contamination_matrix': contamination_matrix,
+        'overlap_examples': list(overlap)[:5] if overlap else []
+    }
+
+# Analizar cross-contamination para ambos datasets
+print("Analizando cross-contamination...")
+snli_contamination = analyze_cross_contamination(df_snli, 'SNLI')
+folio_contamination = analyze_cross_contamination(df_folio, 'FOLIO')
+
+# Mostrar resultados
+print("\n=== Cross-Contamination Analysis ===")
+print(f"SNLI:")
+print(f"  - Premisas únicas: {snli_contamination['total_premises']}")
+print(f"  - Hipótesis únicas: {len(set(df_snli['hypothesis']))}")
+print(f"  - Textos que aparecen en ambos roles: {snli_contamination['overlap_count']}")
+print(f"  - Porcentaje de overlap: {snli_contamination['overlap_count']/snli_contamination['total_premises']*100:.2f}%")
+
+print(f"\nFOLIO:")
+print(f"  - Premisas únicas: {folio_contamination['total_premises']}")
+print(f"  - Conclusiones únicas: {len(set(df_folio['conclusion']))}")
+print(f"  - Textos que aparecen en ambos roles: {folio_contamination['overlap_count']}")
+print(f"  - Porcentaje de overlap: {folio_contamination['overlap_count']/folio_contamination['total_premises']*100:.2f}%")
+
+# Visualizar matrices de contaminación
+fig, axes = plt.subplots(1, 2, figsize=(10, 4))
+
+# SNLI
+sns.heatmap(snli_contamination['contamination_matrix'], 
+            annot=True, fmt='.0f', cmap='viridis', ax=axes[0])
+axes[0].set_title('Cross-Contamination SNLI')
+axes[0].set_xlabel('Rol')
+axes[0].set_ylabel('Rol')
+
+# FOLIO
+sns.heatmap(folio_contamination['contamination_matrix'], 
+            annot=True, fmt='.0f', cmap='viridis', ax=axes[1])
+axes[1].set_title('Cross-Contamination FOLIO')
+axes[1].set_xlabel('Rol')
+axes[1].set_ylabel('Rol')
+
+plt.tight_layout()
+plt.show()
+
+# Mostrar ejemplos de overlap
+if snli_contamination['overlap_examples']:
+    print("\nEjemplos de textos que aparecen como premisa e hipótesis en SNLI:")
+    for i, text in enumerate(snli_contamination['overlap_examples'], 1):
+        print(f"{i}. \"{text[:100]}{'...' if len(text) > 100 else ''}\"")
+
+if folio_contamination['overlap_examples']:
+    print("\nEjemplos de textos que aparecen como premisa y conclusión en FOLIO:")
+    for i, text in enumerate(folio_contamination['overlap_examples'], 1):
+        print(f"{i}. \"{text[:100]}{'...' if len(text) > 100 else ''}\"")
+```
+
+### Análisis de Estructura de Triplets
+
+```{python echo=false, message=false}
+def analyze_triplet_structure(df, dataset_name):
+    """
+    Analiza si cada premisa tiene ejemplos para todas las clases (triplets completos)
+    """
+    if 'premise' in df.columns:  # SNLI
+        premise_col = 'premise'
+        hypothesis_col = 'hypothesis'
+        label_col = 'label'
+        label_map = {0: 'entailment', 1: 'neutral', 2: 'contradiction'}
+    else:  # FOLIO
+        premise_col = 'premises'
+        hypothesis_col = 'conclusion'
+        label_col = 'label'
+        label_map = {'True': 'true', 'False': 'false', 'Uncertain': 'uncertain'}
+    
+    # Agregar nombres de etiquetas
+    df_analysis = df.copy()
+    df_analysis['label_name'] = df_analysis[label_col].map(label_map)
+    
+    # Contar etiquetas únicas por premisa
+    premise_label_counts = df_analysis.groupby(premise_col)['label_name'].nunique()
+    total_premises = len(premise_label_counts)
+    
+    # Distribución de premisas por número de etiquetas
+    label_distribution = premise_label_counts.value_counts().sort_index()
+    
+    # Contar triplets completos
+    if 'premise' in df.columns:  # SNLI
+        complete_triplets = label_distribution.get(3, 0)  # entailment, neutral, contradiction
+    else:  # FOLIO
+        complete_triplets = label_distribution.get(3, 0)  # true, false, uncertain
+    
+    # Análisis de balance en triplets completos
+    if complete_triplets > 0:
+        if 'premise' in df.columns:
+            triplet_premises = premise_label_counts[premise_label_counts == 3].index
+        else:
+            triplet_premises = premise_label_counts[premise_label_counts == 3].index
+        
+        triplet_df = df_analysis[df_analysis[premise_col].isin(triplet_premises)]
+        hypotheses_per_label = triplet_df.groupby([premise_col, 'label_name']).size().unstack(fill_value=0)
+        
+        # Verificar balance perfecto (1-1-1)
+        if 'premise' in df.columns:
+            balanced_triplets = hypotheses_per_label[
+                (hypotheses_per_label['entailment'] == hypotheses_per_label['contradiction']) &
+                (hypotheses_per_label['entailment'] == hypotheses_per_label['neutral'])
+            ]
+        else:
+            balanced_triplets = hypotheses_per_label[
+                (hypotheses_per_label['true'] == hypotheses_per_label['false']) &
+                (hypotheses_per_label['true'] == hypotheses_per_label['uncertain'])
+            ]
+        
+        num_perfectly_balanced = len(balanced_triplets)
+        avg_hypotheses_per_label = hypotheses_per_label.mean()
+    else:
+        num_perfectly_balanced = 0
+        avg_hypotheses_per_label = pd.Series([0,0,0], 
+                                           index=['entailment', 'neutral', 'contradiction'] if 'premise' in df.columns 
+                                           else ['true', 'false', 'uncertain'])
+    
+    return {
+        'total_premises': total_premises,
+        'complete_triplets': complete_triplets,
+        'label_distribution': label_distribution,
+        'perfectly_balanced': num_perfectly_balanced,
+        'avg_hypotheses_per_label': avg_hypotheses_per_label,
+        'percentage_triplets': complete_triplets / total_premises * 100 if total_premises > 0 else 0
+    }
+
+# Analizar estructura de triplets
+print("\n=== Análisis de Estructura de Triplets ===")
+snli_triplets = analyze_triplet_structure(df_snli, 'SNLI')
+folio_triplets = analyze_triplet_structure(df_folio, 'FOLIO')
+
+# Mostrar resultados
+print(f"\nSNLI:")
+print(f"  - Premisas totales: {snli_triplets['total_premises']}")
+print(f"  - Triplets completos: {snli_triplets['complete_triplets']}")
+print(f"  - Porcentaje de triplets: {snli_triplets['percentage_triplets']:.2f}%")
+print(f"  - Triplets perfectamente balanceados: {snli_triplets['perfectly_balanced']}")
+
+print(f"\nFOLIO:")
+print(f"  - Premisas totales: {folio_triplets['total_premises']}")
+print(f"  - Triplets completos: {folio_triplets['complete_triplets']}")
+print(f"  - Porcentaje de triplets: {folio_triplets['percentage_triplets']:.2f}%")
+print(f"  - Triplets perfectamente balanceados: {folio_triplets['perfectly_balanced']}")
+
+# Visualizar distribución de etiquetas por premisa
+fig, axes = plt.subplots(1, 2, figsize=(10, 4))
+
+# SNLI
+snli_dist = snli_triplets['label_distribution']
+axes[0].bar(snli_dist.index, snli_dist.values)
+axes[0].set_title('Distribución de etiquetas por premisa - SNLI')
+axes[0].set_xlabel('Número de etiquetas únicas')
+axes[0].set_ylabel('Número de premisas')
+
+# FOLIO
+folio_dist = folio_triplets['label_distribution']
+axes[1].bar(folio_dist.index, folio_dist.values)
+axes[1].set_title('Distribución de etiquetas por premisa - FOLIO')
+axes[1].set_xlabel('Número de etiquetas únicas')
+axes[1].set_ylabel('Número de premisas')
+
+plt.tight_layout()
+plt.show()
+
+# Evaluar validez de la suposición de triplets sistemáticos
+print("\n=== Evaluación de Suposición de Triplets Sistemáticos ===")
+print(f"SNLI: {snli_triplets['percentage_triplets']:.2f}% de premisas forman triplets completos")
+print(f"FOLIO: {folio_triplets['percentage_triplets']:.2f}% de premisas forman triplets completos")
+
+if snli_triplets['percentage_triplets'] > 50:
+    print("SNLI: La suposición de triplets sistemáticos es VÁLIDA")
+elif snli_triplets['percentage_triplets'] > 10:
+    print("SNLI: La suposición de triplets sistemáticos es PARCIALMENTE VÁLIDA")
+else:
+    print("SNLI: La suposición de triplets sistemáticos es INVÁLIDA")
+
+if folio_triplets['percentage_triplets'] > 50:
+    print("FOLIO: La suposición de triplets sistemáticos es VÁLIDA")
+elif folio_triplets['percentage_triplets'] > 10:
+    print("FOLIO: La suposición de triplets sistemáticos es PARCIALMENTE VÁLIDA")
+else:
+    print("FOLIO: La suposición de triplets sistemáticos es INVÁLIDA")
+```
+
+### Conclusiones del EDA
+
+- **Escala y enfoque.** SNLI (≈550 000 ejemplos) aporta volumen para explorar la geometría del embedding a gran escala; FOLIO (≈1 000 casos) aporta la complejidad formal de la LPO, por lo que procesamos reducción y entrenamiento por separado, con ajuste de clases en FOLIO.
+- **Balance de clases.** SNLI está casi perfectamente balanceado (~33 % por etiqueta) mientras que FOLIO muestra un sesgo hacia "True" (38.8 %) y "False" queda en 28.9 %. Este desbalance debe considerarse al entrenar.
+- **Longitud y formalidad.** Las premisas de FOLIO son cinco veces más largas que las de SNLI (345 vs. 66 car.). Esto podria generar embeddings con magnitudes mayores. Se debera evaluar la aplicacion de tecnicas de normalización. 
+- **Calidad y duplicados.** No hay valores nulos. Aunque ciertas premisas o conclusiones se repiten, nunca se duplica la combinación completa de premisa e hipótesis/conclusión. Como el embedding vectorial se genera sobre cada registro completo, esas repeticiones parciales no afectan la consistencia del espacio y pueden conservarse sin problemas.
+- **Sin ruido de idioma.** Ambos corpus están esencialmente 100 % en inglés, así que no se requiere filtrado lingüístico adicional.
+- **Cross-contamination.** Se identificó que existe cierta superposición entre premisas e hipótesis/conclusiones, lo que podría afectar la interpretación de los embeddings. Se recomienda considerar técnicas de filtrado para eliminar esta contaminación.
+- **Estructura de triplets.** El análisis revela que no todos los datasets tienen una estructura sistemática de triplets completos. Esto sugiere que el análisis contrastivo deberá adaptarse a la estructura real de cada dataset.

@@ -25,6 +25,7 @@ import subprocess
 import shutil
 import json
 from pathlib import Path
+import mlflow
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Compare normalization strategies")
@@ -43,6 +44,7 @@ def parse_args():
         choices=['none', 'per_type', 'all_but_mean'],
         help="List of normalization types to test. Defaults to all if not provided."
     )
+    parser.add_argument("--experiment_name", type=str, default="normalization_comparison", help="Name for the MLflow experiment.")
     
     args = parser.parse_args()
 
@@ -116,21 +118,34 @@ def main():
     args.output_dir.mkdir(parents=True, exist_ok=True)
     
     # Determine source path based on embedding type and provided directories
-    if args.embedding_type == 'full':
-        source_dir = args.full_embeddings_dir
-        source_file_prefix = f"embeddings_{args.dataset_name}"
+    if args.embedding_type == "full":
+        source_dir = Path(args.full_embeddings_dir)
+    elif args.embedding_type == "delta":
+        source_dir = Path(args.delta_embeddings_dir)
+    else:
+        raise ValueError(f"Unknown embedding type: {args.embedding_type}")
+
+    # Find the source file more flexibly but also more accurately
+    all_files = list(source_dir.glob(f"*{args.layer_num}*.parquet"))
     
-    elif args.embedding_type == 'delta':
-        source_dir = args.delta_embeddings_dir
-        source_file_prefix = f"embeddings_{args.dataset_name}_delta"
+    if args.embedding_type == "full":
+        source_files = [f for f in all_files if 'delta' not in f.name]
+    elif args.embedding_type == "delta":
+        source_files = [f for f in all_files if 'delta' in f.name]
+    else:
+        source_files = all_files # Should not happen with check above
+
+    if not source_files:
+        print(f"Source file not found in: {source_dir} for type '{args.embedding_type}' matching pattern *{args.layer_num}*.parquet")
+        return # Exit gracefully if no file is found
     
-    source_file = source_dir / f"{source_file_prefix}_layer_{args.layer_num}.parquet"
-    
-    if not source_file.exists():
-        print(f"Source file not found: {source_file}")
-        return
-    
+    source_file = source_files[0]
+    if len(source_files) > 1:
+        print(f"Warning: Multiple source files found for type '{args.embedding_type}', using the first one: {source_file}")
+
     print(f"Using initial source file: {source_file}")
+    
+    mlflow.set_experiment(args.experiment_name)
 
     # --- Optional Stage 0: Filter to Entailment/Contradiction ---
     if args.filter_to_ec:
@@ -340,7 +355,7 @@ def main():
                                     "--out_path", str(kmeans_file),
                                     "--k", k_clusters,
                                     "--dataset", args.dataset_name,
-                                    "--experiment_name", f"kmeans_comparison_{args.embedding_type}_{norm_type}",
+                                    "--experiment_name", f"kmeans_comparison_{args.dataset_name}_{args.embedding_type}_{norm_type}",
                                     "--provenance", json.dumps(provenance),
                                     "--reduction_type", "umap",
                                     "--layer_num", str(args.layer_num),

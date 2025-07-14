@@ -1,0 +1,130 @@
+/* Basic styles for pagedjs rendering */
+@page {
+  size: A4;
+  margin: 2cm;
+}
+
+body {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  line-height: 1.5;
+}
+
+.dataframe-container {
+  overflow-x: auto;
+  max-width: 100%;
+  margin-bottom: 1em;
+}
+
+table.dataframe {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.85em;
+}
+
+table.dataframe th, table.dataframe td {
+  padding: 0.4em;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+table.dataframe th {
+  background-color: #f2f2f2;
+}
+
+/* Handle page breaks */
+h1, h2, h3, h4, h5, h6 {
+  page-break-after: avoid;
+}
+
+pre, blockquote, table {
+  page-break-inside: avoid;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Fix for matplotlib figures */
+.matplotlib {
+  max-width: 100%;
+  page-break-inside: avoid;
+}
+
+/* Make Pandas tables fill—but never exceed—the page width */
+table.dataframe {
+  width: 100% !important;
+  max-width: 100% !important;
+  table-layout: fixed !important;
+  border-collapse: collapse !important;
+  page-break-inside: avoid !important;
+  overflow-x: hidden !important;
+  font-size: 0.85em !important;
+}
+
+table.dataframe th,
+table.dataframe td {
+  padding: 0.25em 0.5em !important;
+  overflow-wrap: break-word !important;
+  word-wrap: break-word !important;
+  word-break: break-word !important;
+  hyphens: auto !important;
+  max-width: 100% !important;
+  white-space: normal !important;
+}
+
+/* For very long content, enable text truncation */
+table.dataframe td .dataframe-cell-content {
+  max-width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+/* Ensure images are properly contained */
+td img, th img {
+  max-width: 100% !important;
+  height: auto !important;
+}
+
+/* Adjust display for DataFrames */
+.dataframe-container {
+  overflow-x: auto;
+  max-width: 100%;
+  margin-bottom: 1em;
+}
+
+/* Ensure print styling for dataframes */
+@media print {
+  .dataframe {
+    font-size: 0.8em !important;
+    break-inside: avoid !important;
+  }
+  
+  /* Force wrapped content */
+  .dataframe th, .dataframe td {
+    white-space: normal !important;
+  }
+}
+
+p {
+  margin-top: 0.3em;
+  margin-bottom: 0.3em;
+}
+
+/* Adjust spacing for lists */
+ul, ol {
+  line-height: 1.5;
+  margin-top: 0.3em;
+  margin-bottom: 0.3em;
+}
+
+li {
+  margin-bottom: 0.2em;
+}
+
+/* Adjust spacing for headings */
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 0.8em;
+  margin-bottom: 0.4em;
+  line-height: 1.5;
+}

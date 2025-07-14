@@ -152,18 +152,41 @@ def process_pca_gpu(input_path: str, output_path: str, n_components: int, chunk_
     if df.empty:
         raise ValueError("Input data is empty")
     
-    feature_cols = [col for col in df.columns if col != 'label']
-    n_samples, n_features = len(df), len(feature_cols)
-    
-    print(f"Data shape: {n_samples:,} samples × {n_features:,} features")
-    print(f"Target components: {n_components}")
+    # Identify embedding columns dynamically
+    embedding_cols = [col for col in df.columns if 'embedding' in col]
+    if not embedding_cols:
+        # Fallback for older formats or delta embeddings
+        # Assumes all columns except IDs and labels are feature columns
+        non_feature_cols = ['label', 'premise_id', 'hypothesis_id']
+        feature_cols = [col for col in df.columns if col not in non_feature_cols]
+        print("-> Could not find 'embedding' columns, using fallback features.")
+    else:
+        feature_cols = embedding_cols
+        print(f"-> Found {len(feature_cols)} embedding columns.")
+
+    if not feature_cols:
+        raise ValueError("Could not determine feature columns for PCA.")
+
+    X_features = df[feature_cols]
+
+    # Check for non-numeric dtypes before PCA
+    if X_features.select_dtypes(include=['object', 'category']).shape[1] > 0:
+        print("✗ PCA failed: Non-numeric columns found in feature set.", file=sys.stderr)
+        sys.exit(1)
+
+    print(f"Data shape: {X_features.shape[0]} samples × {X_features.shape[1]} features")
+
+    if n_components >= X_features.shape[1]:
+        print(f"Warning: n_components ({n_components}) is greater than or equal to the number of features ({X_features.shape[1]}). Setting n_components to {X_features.shape[1] - 1}.")
+        n_components = X_features.shape[1] - 1
+        print(f"New n_components: {n_components}")
     
     # Use intelligent chunk sizing
     gpu_memory_gb = get_gpu_memory_gb()
-    chunk_size = calculate_optimal_chunk_size(n_features, gpu_memory_gb, chunk_size_mode)
+    chunk_size = calculate_optimal_chunk_size(X_features.shape[1], gpu_memory_gb, chunk_size_mode)
     
     # Memory estimation
-    memory_needed_gb = (n_samples * n_features * 4) / (1024**3)  # float32
+    memory_needed_gb = (X_features.shape[0] * X_features.shape[1] * 4) / (1024**3)  # float32
     print(f"Estimated memory needed: {memory_needed_gb:.2f} GB")
     
     # Use incremental PCA for datasets > 3GB (conservative for 10GB GPU)

@@ -78,6 +78,11 @@ COLUMN_MAPPINGS = {
         "src_cols": ["premise", "hypothesis", "label"],
         "tgt_cols": ["premise", "conclusion", "label"],
         "rename_map": {"hypothesis": "conclusion"}
+    },
+    "folio": {
+        "src_cols": ["premises", "conclusion", "label"],
+        "tgt_cols": ["premise", "conclusion", "label"],
+        "rename_map": {"premises": "premise"}
     }
     # Add more dataset mappings here as needed
 }
