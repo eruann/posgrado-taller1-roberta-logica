@@ -1,0 +1,9 @@
+/*
+  This file prevents Quarto's built-in section numbering
+  (from number-sections: true) from appearing, which is necessary
+  to avoid duplicated numbers when a custom CSS counter is used
+  for styling in paged media (PDF).
+*/
+.header-section-number {
+  display: none !important;
+}

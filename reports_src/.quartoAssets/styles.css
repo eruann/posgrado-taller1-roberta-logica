@@ -128,3 +128,59 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 0.4em;
   line-height: 1.5;
 }
+
+/* === Section Numbering === */
+/*
+  The rules below generate section numbers for headings (h1, h2, etc.).
+  This version excludes the main document title and the TOC title by
+  applying numbering globally and then specifically disabling it for those elements.
+*/
+
+/* 1. Hide Quarto's default number span to prevent duplication */
+.header-section-number {
+  display: none !important;
+}
+
+/* 2. Set up the counters on the body */
+body {
+  counter-reset: h1;
+}
+h1 { counter-reset: h2; }
+h2 { counter-reset: h3; }
+h3 { counter-reset: h4; }
+h4 { counter-reset: h5; }
+h5 { counter-reset: h6; }
+
+/* 3. Selectively un-number the main document title and the TOC title */
+header h1::before, /* Catches title in the <header> block */
+.quarto-title-block h1::before, /* Catches title in a <div> title block */
+#TOC h1::before, #TOC h2::before { /* Catches TOC titles */
+  content: none !important;
+  counter-increment: none !important;
+}
+
+/* 4. Increment counters and display them for all other headings */
+h1::before {
+  counter-increment: h1;
+  content: counter(h1) ". ";
+}
+h2::before {
+  counter-increment: h2;
+  content: counter(h1) "." counter(h2) ". ";
+}
+h3::before {
+  counter-increment: h3;
+  content: counter(h1) "." counter(h2) "." counter(h3) ". ";
+}
+h4::before {
+  counter-increment: h4;
+  content: counter(h1) "." counter(h2) "." counter(h3) "." counter(h4) ". ";
+}
+h5::before {
+  counter-increment: h5;
+  content: counter(h1) "." counter(h2) "." counter(h3) "." counter(h4) "." counter(h5) ". ";
+}
+h6::before {
+  counter-increment: h6;
+  content: counter(h1) "." counter(h2) "." counter(h3) "." counter(h4) "." counter(h5) "." counter(h6) ". ";
+}

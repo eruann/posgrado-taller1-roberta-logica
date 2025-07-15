@@ -1,5 +1,6 @@
 ---
-title: "Taller de Tesis I – Entrega II"
+title: "Observabilidad de la inferencia lógica en modelos de lenguaje tipo transformer"
+subtitle: "Análisis de la codificación implícita de reglas de inferencia lógica en embeddings de RoBERTa-base"
 author: "Matias Marcelo Rodríguez Matus (G1)"
 format:
   pdf:
@@ -8,14 +9,79 @@ format:
     margin-right: 2cm
     margin-top: 2cm
     margin-bottom: 2cm
-    toc: false
+    toc: true
+    toc-depth: 2
+    number-sections: true
+    colorlinks: true
+    include-in-header:
+      - text: |
+          <style>
+          @media print {
+            /* --- Formato de Tapa tipo Tesis --- */
+            #title-block-header .title {
+              font-family: "Garamond", "Times New Roman", serif;
+              font-size: 24pt;
+              text-align: center;
+              font-weight: bold;
+              margin-top: 2in;
+              margin-bottom: 1in;
+            }
+            #title-block-header .subtitle {
+              font-family: "Garamond", "Times New Roman", serif;
+              font-size: 16pt;
+              text-align: center;
+              font-style: italic;
+              margin-bottom: 2in;
+            }
+            #title-block-header .author {
+              font-family: "Garamond", "Times New Roman", serif;
+              font-size: 14pt;
+              text-align: center;
+              margin-bottom: 2in;
+            }
+
+            /* --- Saltos de Página --- */
+            #TOC {
+              break-before: page;
+            #   break-after: page;
+            }
+
+            /* --- Numeración de Páginas --- */
+            /* Define el estilo de numeración para todas las páginas */
+            @page {
+              @bottom-center {
+                content: counter(page);
+                font-size: 10pt;
+                color: #666;
+              }
+            }
+            /* Oculta el número en la primera página (tapa) */
+            @page :first {
+              @bottom-center {
+                content: none;
+              }
+            }
+          }
+          </style>
+  html:
+    toc: true
+    toc-depth: 2
+    number-sections: true
+    html-math-method: katex
 execute:
-  echo: false        # oculta el código salvo que lo cambies
-  warning: false     # oculta advertencias
-  message: false     # oculta mensajes de librerías
+  echo: false        
+  warning: false     
+  message: false   
 ---
 
-## 1 · Pregunta y objetivos revisados {#pregunta}
+
+# Introducción
+
+## Contexto y motivación científica
+
+Los modelos de lenguaje transformer han demostrado capacidades notables en tareas de razonamiento y comprensión del lenguaje natural. Sin embargo, la naturaleza implícita de sus representaciones internas plantea preguntas fundamentales sobre qué tipo de estructuras lógicas codifican. Este trabajo investiga si los espacios vectoriales de un modelo RoBERTa-base, sin fine-tuning, capturan reglas de inferencia de la Lógica clásica y de Primer Orden de manera implícita.
+
+## Objetivos del trabajo y pregunta de investigación
 
 ¿Codifican los espacios vectoriales de un LLM general (RoBERTa‑base, sin fine‑tuning) reglas de inferencia de la Lógica de Primer Orden (LPO)?
 
@@ -30,27 +96,13 @@ Feedback de la entrega 1:
 
 * El **LPO** posee mayor capacidad para capturar propiedades y relaciones del lenguaje natural; se espera que esto facilite la identificación de *estructuras inferenciales* que la lógica proposicional no permite observar por sí sola.
 
-## 2 · Editor a usar
+## Estructura del documento
 
-Se usara Vscode + Quarto. Quarto es una herramienta *open-source* que convierte documentos que combinan Markdown + código en pdf. Como alternativa se usara Vscode + LaTex si se descubre que el trabajo en Quarto trae alguna complejidad o problemas.
+Este documento presenta el análisis experimental completo organizado en las siguientes secciones: marco teórico con revisión de literatura relevante, metodología detallando datasets y pipeline experimental, análisis exploratorio de datos, resultados de experimentos de clustering y probing, discusión de hallazgos y limitaciones, y conclusiones con recomendaciones para trabajo futuro.
 
-## 3 · Metodología
+# Marco teórico
 
-Para averiguar si los embeddings de un modelo **RoBERTa-base** sin *fine-tuning* codifican inferencias lógicas, partimos de dos corpus complementarios. SNLI actúa como línea base: refleja inferencia informal del lenguaje cotidiano y está profundamente estudiado en la literatura, lo que facilita contrastes. FOLIO, en cambio, fue construido a partir de fórmulas de Lógica de Primer Orden (LPO); su sintaxis expresa cuantificadores y relaciones explícitas, lo que lo convierte en el terreno ideal para rastrear regularidades lógicas profundas. 
-
-El procedimento se divide en seis pasos: 
-
-#. Se genera un *embedding* por enunciado y se combinan (concatenación y diferencia) las representaciones vectoriales de premisa e hipótesis de modo que captemos tanto las características individuales como las discrepancias semánticas. 
-#. Se aplica **PCA** para reducir la dimensionalidad de 768 dimensiones a un numero menor, 50 dimensiones por ejemplo, a fin de poder compactar el espacio vectorial y reducir coste computacional 
-#. Se aplica **UMAP** para proyectar en dos dimensiones, de modo que la estructura geométrica sea visualizable.
-#. Sobre ese plano reducido se ejecuta **K-Means** con *k = 3*; la hipótesis es que, si el espacio vectorial codifica inferencia, los clústeres tenderán a alinearse con las etiquetas originales (entailment, contradiction, neutral / true, false, uncertain).
-#. Entrenamos un **árbol de decisión** limitado en principio a cuatro niveles: buscamos obtener una medida de cuán separables son las clases y, al mismo tiempo, revelar qué ejes del embedding concentran información lógica. 
-#. Repetimos todo el proceso en FOLIO y comparamos patrones con SNLI. 
-#. Adicionalmente, incorporariamos un *probing* específico: regresión logística dirigida a cuantificadores universales y existenciales para verificar si esos rasgos son recuperables directamente de los vectores. 
-
-Para los clústeres, calculamos **purity** y **NMI** frente a las etiquetas; para el árbol, **accuracy** y analizamos las reglas de decisión con mayor información. Este enfoque pretende medir cuánto de la estructura lógica subyace en la geometría aprendida.
-
-## 4 · Marco teórico
+## Relevamiento de trabajos previos y relevantes
 
 Se proponen los siguientes papers para el desarrollo del trabajo:
 
@@ -63,8 +115,21 @@ Se proponen los siguientes papers para el desarrollo del trabajo:
 3. Cai et al. (2021) – *Isotropy in the Contextual Embedding Space*.  
    ‣ Demuestran que los embeddings contextualizados son anisotrópicos y ofrecen medidas para cuantificar ese sesgo geométrico.
 
+## Conceptos y técnicas de ciencia de datos utilizados
 
-## 5 · EDA
+[Pendiente completar]
+
+# Metodología
+
+## Presentación y descripción de los datos
+
+Para averiguar si los embeddings de un modelo **RoBERTa-base** sin *fine-tuning* codifican inferencias lógicas, partimos de dos corpus complementarios. SNLI actúa como línea base: refleja inferencia informal del lenguaje cotidiano y está profundamente estudiado en la literatura, lo que facilita contrastes. FOLIO, en cambio, fue construido a partir de fórmulas de Lógica de Primer Orden (LPO); su sintaxis expresa cuantificadores y relaciones explícitas, lo que lo convierte en el terreno ideal para rastrear regularidades lógicas profundas.
+
+## Preprocesamiento y limpieza de datos
+
+[Pendiente completar]
+
+## Análisis exploratorio de datos
 
 ```{python echo=false, message=false}
 # Carga de librerías y datasets
@@ -93,7 +158,6 @@ snli = load_dataset('stanfordnlp/snli')
 folio = load_dataset('yale-nlp/folio')
 
 ```
-
 
 ```{python echo=false, message=false}
 # Configure pandas display options for better PDF output
@@ -184,9 +248,8 @@ plt.show()
 
 ```
 
- 
 ### Ejemplos aleatorios de cada dataset
-```{python echo=false, message=false}
+```{python results='asis', echo=false, message=false}
 print('Ejemplo SNLI:')
 safe_display(df_snli.sample(1, random_state=1)[['premise', 'hypothesis', 'label_str']])
 print('\nEjemplo FOLIO lenguaje natural:')
@@ -198,7 +261,7 @@ safe_display(df_folio.sample(1, random_state=1)[['premises-FOL', 'conclusion-FOL
 
 ### ¿Cuál es la longitud de los textos en cada dataset?
 
-```{python echo=false, message=false}
+```{python results='asis', echo=false, message=false}
 df_snli['premise_len'] = df_snli['premise'].str.len()
 df_snli['hypothesis_len'] = df_snli['hypothesis'].str.len()
 df_folio['premises_len'] = df_folio['premises'].str.len()
@@ -266,7 +329,7 @@ Para confirmar que los corpous estén  en inglés, tomamos una muestra aleatoria
 def download_model():
     model_path = 'lid.176.bin'
     if not os.path.exists(model_path):
-        print("Downloading language detection model...")
+        #print("Downloading language detection model...")
         url = "https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.bin"
         response = requests.get(url, stream=True)
         total_size = int(response.headers.get('content-length', 0))
@@ -339,7 +402,7 @@ safe_display(summary)
 
 ### Análisis de Cross-Contamination
 
-```{python echo=false, message=false}
+```{python results='asis', echo=false, message=false}
 def analyze_cross_contamination(df, dataset_name):
     """
     Analiza la cross-contamination entre premisas e hipótesis/conclusiones
@@ -384,12 +447,12 @@ def analyze_cross_contamination(df, dataset_name):
     }
 
 # Analizar cross-contamination para ambos datasets
-print("Analizando cross-contamination...")
+#print("Analizando cross-contamination...")
 snli_contamination = analyze_cross_contamination(df_snli, 'SNLI')
 folio_contamination = analyze_cross_contamination(df_folio, 'FOLIO')
 
 # Mostrar resultados
-print("\n=== Cross-Contamination Analysis ===")
+print("\nAnálisis de Cross-Contamination)
 print(f"SNLI:")
 print(f"  - Premisas únicas: {snli_contamination['total_premises']}")
 print(f"  - Hipótesis únicas: {len(set(df_snli['hypothesis']))}")
@@ -436,7 +499,7 @@ if folio_contamination['overlap_examples']:
 
 ### Análisis de Estructura de Triplets
 
-```{python echo=false, message=false}
+```{python results='asis', echo=false, message=false}
 def analyze_triplet_structure(df, dataset_name):
     """
     Analiza si cada premisa tiene ejemplos para todas las clases (triplets completos)
@@ -509,7 +572,7 @@ def analyze_triplet_structure(df, dataset_name):
     }
 
 # Analizar estructura de triplets
-print("\n=== Análisis de Estructura de Triplets ===")
+print("\nAnálisis de Estructura de Triplets:")
 snli_triplets = analyze_triplet_structure(df_snli, 'SNLI')
 folio_triplets = analyze_triplet_structure(df_folio, 'FOLIO')
 
@@ -547,7 +610,7 @@ plt.tight_layout()
 plt.show()
 
 # Evaluar validez de la suposición de triplets sistemáticos
-print("\n=== Evaluación de Suposición de Triplets Sistemáticos ===")
+print("\nEvaluación de Suposición de Triplets Sistemáticos:")
 print(f"SNLI: {snli_triplets['percentage_triplets']:.2f}% de premisas forman triplets completos")
 print(f"FOLIO: {folio_triplets['percentage_triplets']:.2f}% de premisas forman triplets completos")
 
@@ -575,3 +638,83 @@ else:
 - **Sin ruido de idioma.** Ambos corpus están esencialmente 100 % en inglés, así que no se requiere filtrado lingüístico adicional.
 - **Cross-contamination.** Se identificó que existe cierta superposición entre premisas e hipótesis/conclusiones, lo que podría afectar la interpretación de los embeddings. Se recomienda considerar técnicas de filtrado para eliminar esta contaminación.
 - **Estructura de triplets.** El análisis revela que no todos los datasets tienen una estructura sistemática de triplets completos. Esto sugiere que el análisis contrastivo deberá adaptarse a la estructura real de cada dataset.
+
+## Descripción de las técnicas de análisis y modelado
+
+El procedimento se divide en seis pasos: 
+
+1. Se genera un *embedding* por enunciado y se combinan (concatenación y diferencia) las representaciones vectoriales de premisa e hipótesis de modo que captemos tanto las características individuales como las discrepancias semánticas. 
+2. Se aplica **PCA** para reducir la dimensionalidad de 768 dimensiones a un numero menor, 50 dimensiones por ejemplo, a fin de poder compactar el espacio vectorial y reducir coste computacional 
+3. Se aplica **UMAP** para proyectar en dos dimensiones, de modo que la estructura geométrica sea visualizable.
+4. Sobre ese plano reducido se ejecuta **K-Means** con *k = 3*; la hipótesis es que, si el espacio vectorial codifica inferencia, los clústeres tenderán a alinearse con las etiquetas originales (entailment, contradiction, neutral / true, false, uncertain).
+5. Entrenamos un **árbol de decisión** limitado en principio a cuatro niveles: buscamos obtener una medida de cuán separables son las clases y, al mismo tiempo, revelar qué ejes del embedding concentran información lógica. 
+6. Repetimos todo el proceso en FOLIO y comparamos patrones con SNLI. 
+7. Adicionalmente, incorporariamos un *probing* específico: regresión logística dirigida a cuantificadores universales y existenciales para verificar si esos rasgos son recuperables directamente de los vectores.
+
+## Descripción de la selección de características
+
+[Pendiente completar]
+
+## Descripción de las métricas de evaluación
+
+Para los clústeres, calculamos **purity** y **NMI** frente a las etiquetas; para el árbol, **accuracy** y analizamos las reglas de decisión con mayor información. Este enfoque pretende medir cuánto de la estructura lógica subyace en la geometría aprendida.
+
+## Descripción de los métodos estadísticos utilizados
+
+[Pendiente completar]
+
+# Resultados y discusión
+
+## Presentación y análisis de resultados
+
+[Pendiente completar con los resultados experimentales específicos]
+
+## Discusión de los resultados y su relevancia
+
+[Pendiente completar]
+
+## Limitaciones y posibles mejoras
+
+[Pendiente completar]
+
+# Conclusión
+
+## Resumen de los hallazgos principales
+
+[Pendiente completar]
+
+## Conclusiones generales y relación con los objetivos
+
+[Pendiente completar]
+
+## Recomendaciones para futuros trabajos
+
+[Pendiente completar]
+
+# Bibliografía
+
+## Referencias bibliográficas citadas
+
+1. Chen, X., & Gao, T. (2022). *Probing Linguistic Information for Logical Inference in Pre-trained Language Models*. 
+
+2. Coenen, A., Reif, E., Yuan, A., Kim, B., Pearce, A., Viégas, F., & Wattenberg, M. (2019). *Visualizing and Measuring the Geometry of BERT*. 
+
+3. Cai, X., Wang, J., Peng, N., & Wang, X. (2021). *Isotropy in the Contextual Embedding Space: Clusters and Manifolds*.
+
+## Otras fuentes consultadas
+
+[Pendiente completar]
+
+# Anexos
+
+## Código fuente utilizado en el análisis
+
+El código completo del análisis está disponible en: [Repositorio GitHub - Enlace pendiente]
+
+## Tablas y gráficos adicionales
+
+[Pendiente completar]
+
+## Otros materiales relevantes
+
+[Pendiente completar]
