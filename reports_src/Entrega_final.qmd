@@ -79,22 +79,29 @@ execute:
 
 ## Contexto y motivación científica
 
-Los modelos de lenguaje transformer han demostrado capacidades notables en tareas de razonamiento y comprensión del lenguaje natural. Sin embargo, la naturaleza implícita de sus representaciones internas plantea preguntas fundamentales sobre qué tipo de estructuras lógicas codifican. Este trabajo investiga si los espacios vectoriales de un modelo RoBERTa-base, sin fine-tuning, capturan reglas de inferencia de la Lógica clásica y de Primer Orden de manera implícita.
+Desde su introducción, la arquitectura Transformer ha superado ampliamente tanto a redes LSTM/ELMo como a modelos generativos GPT en métricas estándar de comprensión de lenguaje: en el benchmark GLUE, BERT‑large alcanza 80.5 puntos frente a 71.0 de ELMo‑LSTM y 72.8 de GPT (Devlin et al., 2019; Wang et al., 2018; Radford et al., 2018).  Sus representaciones internas permiten resolver tareas clásicas del pipeline de **Procesamiento del Lenguaje Natural (PLN)** etiquetado de parte‑de‑habla, coreferencias, dependencia gramatical que en **Redes Neuronales Recurrentes** (RNN)  requerían modelos más complejos . Investigaciones sobre BERT —uno de los modelos basados en la arquitectura Transformer más estudiados y adoptados como referencia— evidencian que sus espacios de activación separan subespacios semánticos y sintácticos con gran precisión, distinguiendo incluso sentidos de palabra con matices semánticos sutiles (Coenen et al., 2019). Más aún, estudios de probing muestran que estos modelos almacenan información necesaria para la inferencia lógica sin entrenamiento supervisado específico, superando baselines distribucionales (promedios de embeddings estáticos como word2vec/GloVe) y baselines basados en redes neuronales recurrentes (LSTM/GRU) (Chen & Gao, 2022).
+
+Este progreso motiva la pregunta de si, más allá de correlaciones superficiales, los Transformers codifican reglas de inferencia que fundamentan la consecuencia lógica (logical entailment). Verificar tal emergencia resulta metodológicamente más económico que imponerla mediante fine‑tuning y podría habilitar, a mediano plazo, la aplicación directa de restricciones lógicas en sistemas generativos sin penalizar su flexibilidad.
+
+Los análisis exploratorios preliminares sobre el dataset SNLI mostraron que la anisotropía de los embeddings (Cai et al., 2021) y el desbalance de etiquetas (en particular, la clase neutral) limitan la separabilidad geométrica de los razonamientos lógicos. Por ello, el diseño metodológico incorpora estrategias de normalización, sustracción de componentes dominantes y construcciones contrastivas (p. ej., vectores Δₑ – Δ꜀) para aislar la señal lógica antes de las etapas de reducción dimensional y clustering. Estas consideraciones se detallan en la Metodología, pero se adelantan aquí para subrayar el desafío empírico que motiva el enfoque adoptado.
+
+Se seleccionó RoBERTa‑base porque hereda la arquitectura BERT optimizada para comprensión y elimina objetivos de entrenamiento superfluos, mejorando su rendimiento sin introducir ruido adicional; además, al trabajar sin fine‑tuning evitamos confundir la emergencia espontánea de inferencia lógica con artefactos de entrenamiento supervisado en NLI. Utilizar RoBERTa sin ningún fine‑tuning resulta necesario para aislar la variable “emergencia espontánea” y descartar que la eventual presencia de inferencia lógica sea un artefacto del entrenamiento supervisado para Natural Language Inference (NLI).
 
 ## Objetivos del trabajo y pregunta de investigación
 
-¿Codifican los espacios vectoriales de un LLM general (RoBERTa‑base, sin fine‑tuning) reglas de inferencia de la Lógica de Primer Orden (LPO)?
+¿Codifican los espacios vectoriales de RoBERTa‑base, entrenado de manera general y sin fine‑tuning, reglas de inferencia de la lógica de enunciados y de la lógica de predicados de primer orden?
 
-Feedback de la entrega 1:
+**Objetivo general**
 
-* Se elimina el dataset **MALLS** para reducir la complejidad del experimento.
-* **SNLI** se usa como línea base porque:
-    * Es ampliamente utilizado para evaluar *entailment* en lenguaje natural.
-    * Ya existen estudios previos con RoBERTa y BERT.
+- Determinar empíricamente la presencia de estructuras geométricas que correspondan a reglas de inferencia lógica en las representaciones internas de RoBERTa.
 
-* **FOLIO**, generado a partir de LPO, es el foco principal del análisis: Permite explorar inferencia lógica con estructura formal explícita. Es ideal para estudiar si los embeddings codifican reglas lógicas profundas.
+**Objetivos específicos**
 
-* El **LPO** posee mayor capacidad para capturar propiedades y relaciones del lenguaje natural; se espera que esto facilite la identificación de *estructuras inferenciales* que la lógica proposicional no permite observar por sí sola.
+1. Reproducir los experimentos sintácticos de Hewitt & Manning (2019) —centrados en la detección de estructuras de dependencia— y trabajos posteriores, adaptándolos al dominio lógico‑semántico.
+2. Aplicar **reducción dimensional (UMAP, ZCA‑PCA)** y **clustering (k‑means)** sobre embeddings de hipótesis y premisas del dataset **SNLI** (principal) y **FOLIO** (validación LPO).
+3. Medir **Purity** y **NMI** de los clusters y entrenar **árboles de decisión** como *probes* para inspeccionar la alineación con reglas lógicas.
+4. Detectar el grado de **anisotropía** de los espacios resultantes, implementar correcciones y evaluar su impacto en las métricas anteriores.
+5. Analizar la correspondencia empírica entre los hallazgos y la teoría semántica de modelos de la lógica clásica (Gamut) a fin de contextualizar los resultados.
 
 ## Estructura del documento
 
@@ -452,7 +459,7 @@ snli_contamination = analyze_cross_contamination(df_snli, 'SNLI')
 folio_contamination = analyze_cross_contamination(df_folio, 'FOLIO')
 
 # Mostrar resultados
-print("\nAnálisis de Cross-Contamination)
+print("\nAnálisis de Cross-Contamination")
 print(f"SNLI:")
 print(f"  - Premisas únicas: {snli_contamination['total_premises']}")
 print(f"  - Hipótesis únicas: {len(set(df_snli['hypothesis']))}")

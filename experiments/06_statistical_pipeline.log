@@ -1,0 +1,73 @@
+2025-07-19 02:19:07,124 - INFO - 
+=== Running Analysis for: All-But-Mean Normalization ===
+2025-07-19 02:19:07,124 - INFO - Loaded results: Purity=0.504, NMI=0.000039
+2025-07-19 02:19:07,199 - INFO - Running K-means clustering...
+2025-07-19 02:19:07,310 - INFO - 
+--- Test 1: Clustering Significance ---
+2025-07-19 02:19:07,399 - INFO - 
+--- Test 2: Bootstrap Confidence Intervals ---
+2025-07-19 02:20:37,637 - INFO - 
+--- Test 3: Permutation Test ---
+2025-07-19 02:20:37,772 - INFO - 
+Running 100 permutation test iterations (Corrected Logic)...
+2025-07-19 02:20:38,559 - INFO -   Permutation iteration 10/100
+2025-07-19 02:20:39,333 - INFO -   Permutation iteration 20/100
+2025-07-19 02:20:40,109 - INFO -   Permutation iteration 30/100
+2025-07-19 02:20:40,897 - INFO -   Permutation iteration 40/100
+2025-07-19 02:20:41,714 - INFO -   Permutation iteration 50/100
+2025-07-19 02:20:42,527 - INFO -   Permutation iteration 60/100
+2025-07-19 02:20:43,329 - INFO -   Permutation iteration 70/100
+2025-07-19 02:20:44,146 - INFO -   Permutation iteration 80/100
+2025-07-19 02:20:44,906 - INFO -   Permutation iteration 90/100
+2025-07-19 02:20:45,719 - INFO -   Permutation iteration 100/100
+2025-07-19 02:20:45,800 - INFO - 
+=== Running Analysis for: No Normalization ===
+2025-07-19 02:20:45,800 - INFO - Loaded results: Purity=0.501, NMI=0.000002
+2025-07-19 02:20:45,840 - INFO - Running K-means clustering...
+2025-07-19 02:20:45,919 - INFO - 
+--- Test 1: Clustering Significance ---
+2025-07-19 02:20:45,992 - INFO - 
+--- Test 2: Bootstrap Confidence Intervals ---
+2025-07-19 02:22:24,631 - INFO - 
+--- Test 3: Permutation Test ---
+2025-07-19 02:22:24,757 - INFO - 
+Running 100 permutation test iterations (Corrected Logic)...
+2025-07-19 02:22:25,518 - INFO -   Permutation iteration 10/100
+2025-07-19 02:22:26,294 - INFO -   Permutation iteration 20/100
+2025-07-19 02:22:27,022 - INFO -   Permutation iteration 30/100
+2025-07-19 02:22:27,809 - INFO -   Permutation iteration 40/100
+2025-07-19 02:22:28,589 - INFO -   Permutation iteration 50/100
+2025-07-19 02:22:29,359 - INFO -   Permutation iteration 60/100
+2025-07-19 02:22:30,147 - INFO -   Permutation iteration 70/100
+2025-07-19 02:22:30,882 - INFO -   Permutation iteration 80/100
+2025-07-19 02:22:31,663 - INFO -   Permutation iteration 90/100
+2025-07-19 02:22:32,476 - INFO -   Permutation iteration 100/100
+2025-07-19 02:22:32,548 - INFO - 
+=== Comparing Conditions (All-But-Mean vs. None) ===
+2025-07-19 02:22:32,549 - INFO - NMI T-test: t=44.800, p=0.0000
+2025-07-19 02:22:32,550 - INFO - Purity T-test: t=49.172, p=0.0000
+2025-07-19 02:22:32,550 - INFO - 
+=== Comparing Datasets (SNLI vs. FOLIO) ===
+2025-07-19 02:22:32,550 - INFO - Loading SNLI embeddings...
+2025-07-19 02:22:37,475 - INFO - Loading FOLIO embeddings...
+2025-07-19 02:22:41,057 - INFO - Comparing L2 norm distributions: SNLI (n=540518) vs. FOLIO (n=578)
+2025-07-19 02:22:41,203 - INFO - Mann-Whitney U: statistic=258221858.000, p-value=0.0000
+2025-07-19 02:22:41,203 - INFO - Kolmogorov-Smirnov: statistic=0.643, p-value=0.0000
+2025-07-19 02:22:41,204 - INFO - Cohen's d: 1.189
+2025-07-19 02:22:41,204 - INFO - 
+=== Performing PCA Analysis ===
+2025-07-19 02:22:41,204 - INFO - Loading pre-PCA data from /home/matias/datascience/tesis-llm-lpo/data/snli/norm_comp_delta_ec_only/01_normalized_delta_all_but_mean/embeddings_delta_snli_layer_12_all_but_mean.parquet...
+2025-07-19 02:29:05,910 - INFO - Kaiser Criterion: 0 components with eigenvalue > 1.
+2025-07-19 02:29:05,911 - INFO - 
+--- Running Parallel Analysis (5 reps) ---
+2025-07-19 02:35:27,587 - INFO -   Rep 1/5...
+2025-07-19 02:43:39,660 - INFO -   Rep 2/5...
+2025-07-19 02:51:47,173 - INFO -   Rep 3/5...
+2025-07-19 02:59:56,514 - INFO -   Rep 4/5...
+2025-07-19 03:09:18,006 - INFO -   Rep 5/5...
+2025-07-19 03:17:27,924 - INFO - Parallel Analysis: 0 components are significant.
+2025-07-19 03:17:27,930 - INFO - 
+=== Applying Benjamini-Hochberg FDR Correction ===
+2025-07-19 03:17:27,930 - INFO - Corrected 8 p-values.
+2025-07-19 03:17:27,933 - INFO - 
+Combined results saved to: /home/matias/datascience/tesis-llm-lpo/experiments/snli_statistical_comparison_results.json
