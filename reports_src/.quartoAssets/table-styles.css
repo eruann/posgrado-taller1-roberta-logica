@@ -1,0 +1,55 @@
+/* FORCED text wrapping styles */
+.dataframe-container {
+    max-width: 100%;
+    margin: 1em 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8em;
+    table-layout: fixed;
+}
+
+.table {
+    margin-bottom: 1rem;
+    background-color: transparent;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+th, td {
+    padding: 8px 6px;
+    text-align: left;
+    vertical-align: top;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-all;
+    white-space: normal;
+    font-size: 0.8em;
+    line-height: 1.3;
+    height: auto;
+    min-height: 20px;
+}
+
+/* Print styles */
+@media print {
+    table {
+        font-size: 0.7em;
+        page-break-inside: avoid;
+    }
+    
+    th, td {
+        padding: 2px;
+        max-width: 100px;
+    }
+    
+    .dataframe-container {
+        page-break-inside: avoid;
+    }
+} 

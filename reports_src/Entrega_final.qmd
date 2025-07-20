@@ -2,8 +2,10 @@
 title: "Observabilidad de la inferencia lógica en modelos de lenguaje tipo transformer"
 subtitle: "Análisis de la codificación implícita de reglas de inferencia lógica en embeddings de RoBERTa-base"
 author: "Matias Marcelo Rodríguez Matus (G1)"
+year: 2025
 format:
   pdf:
+    pdf-engine: lualatex
     papersize: a4
     margin-left: 2cm
     margin-right: 2cm
@@ -15,59 +17,43 @@ format:
     colorlinks: true
     include-in-header:
       - text: |
-          <style>
-          @media print {
-            /* --- Formato de Tapa tipo Tesis --- */
-            #title-block-header .title {
-              font-family: "Garamond", "Times New Roman", serif;
-              font-size: 24pt;
-              text-align: center;
-              font-weight: bold;
-              margin-top: 2in;
-              margin-bottom: 1in;
-            }
-            #title-block-header .subtitle {
-              font-family: "Garamond", "Times New Roman", serif;
-              font-size: 16pt;
-              text-align: center;
-              font-style: italic;
-              margin-bottom: 2in;
-            }
-            #title-block-header .author {
-              font-family: "Garamond", "Times New Roman", serif;
-              font-size: 14pt;
-              text-align: center;
-              margin-bottom: 2in;
-            }
-
-            /* --- Saltos de Página --- */
-            #TOC {
-              break-before: page;
-            #   break-after: page;
-            }
-
-            /* --- Numeración de Páginas --- */
-            /* Define el estilo de numeración para todas las páginas */
-            @page {
-              @bottom-center {
-                content: counter(page);
-                font-size: 10pt;
-                color: #666;
-              }
-            }
-            /* Oculta el número en la primera página (tapa) */
-            @page :first {
-              @bottom-center {
-                content: none;
-              }
-            }
-          }
-          </style>
+          \usepackage{amsmath}
+          \usepackage{amssymb}
+          \usepackage{geometry}
+          \usepackage{fancyhdr}
+          \usepackage{fontspec}
+          \usepackage{setspace}
+          \usepackage{tocloft}
+          \usepackage{hyperref}
+          \usepackage{longtable}
+          \usepackage{array}
+          \usepackage{booktabs}
+          \usepackage{makecell}
+          \usepackage{graphicx}
+          \usepackage{url}
+          \setmainfont{Times New Roman}
+          \fontsize{12}{12}\selectfont
+          \setcounter{tocdepth}{2}
+          % Table configuration for better margins
+          \setlength{\tabcolsep}{3pt}
+          \renewcommand{\arraystretch}{1.1}
+          \pagestyle{fancy}
+          \fancyhf{}
+          \rfoot{\thepage}
+          \renewcommand{\headrulewidth}{0pt}
+          \linespread{1.0}
+          \setlength{\baselineskip}{12pt}
+          \setlength{\parskip}{0pt}
+          \setlength{\parsep}{0pt}
+          \setlength{\headsep}{0pt}
+          \setlength{\footskip}{0pt}
+          \setlength{\textheight}{24cm}
+          \setlength{\textwidth}{16cm}
   html:
     toc: true
     toc-depth: 2
     number-sections: true
-    html-math-method: katex
+    html-math-method: mathjax
 execute:
   echo: false        
   warning: false     
@@ -79,66 +65,111 @@ execute:
 
 ## Contexto y motivación científica
 
-Desde su introducción, la arquitectura Transformer ha superado ampliamente tanto a redes LSTM/ELMo como a modelos generativos GPT en métricas estándar de comprensión de lenguaje: en el benchmark GLUE, BERT‑large alcanza 80.5 puntos frente a 71.0 de ELMo‑LSTM y 72.8 de GPT (Devlin et al., 2019; Wang et al., 2018; Radford et al., 2018).  Sus representaciones internas permiten resolver tareas clásicas del pipeline de **Procesamiento del Lenguaje Natural (PLN)** etiquetado de parte‑de‑habla, coreferencias, dependencia gramatical que en **Redes Neuronales Recurrentes** (RNN)  requerían modelos más complejos . Investigaciones sobre BERT —uno de los modelos basados en la arquitectura Transformer más estudiados y adoptados como referencia— evidencian que sus espacios de activación separan subespacios semánticos y sintácticos con gran precisión, distinguiendo incluso sentidos de palabra con matices semánticos sutiles (Coenen et al., 2019). Más aún, estudios de probing muestran que estos modelos almacenan información necesaria para la inferencia lógica sin entrenamiento supervisado específico, superando baselines distribucionales (promedios de embeddings estáticos como word2vec/GloVe) y baselines basados en redes neuronales recurrentes (LSTM/GRU) (Chen & Gao, 2022).
+Desde su introducción, la arquitectura Transformer ha superado ampliamente tanto a redes LSTM/ELMo como a modelos generativos GPT en métricas estándar de comprensión de lenguaje: en el benchmark **GLUE**, BERT‑large alcanza 80.5 puntos frente a 71.0 de ELMo‑LSTM y 72.8 de GPT (Devlin et al., 2019; Wang et al., 2018; Radford et al., 2018).  Sus representaciones internas permiten resolver tareas clásicas del *pipeline* de **Procesamiento del Lenguaje Natural (PLN)** etiquetado de parte‑de‑habla, coreferencias, dependencia gramatical que en **Redes Neuronales Recurrentes (RNN)**  requerían modelos más complejos . Investigaciones sobre BERT —uno de los modelos basados en la arquitectura Transformer más estudiados y adoptados como referencia— evidencian que sus espacios de activación separan subespacios semánticos y sintácticos con gran precisión, distinguiendo incluso sentidos de palabra con matices semánticos sutiles (Coenen et al., 2019). Más aún, estudios de *probing* muestran que estos modelos almacenan información necesaria para la **inferencia lógica** sin entrenamiento supervisado específico, superando baselines distribucionales (promedios de embeddings estáticos como word2vec/GloVe) y baselines basados en redes neuronales recurrentes (LSTM/GRU) (Chen & Gao, 2022).
 
-Este progreso motiva la pregunta de si, más allá de correlaciones superficiales, los Transformers codifican reglas de inferencia que fundamentan la consecuencia lógica (logical entailment). Verificar tal emergencia resulta metodológicamente más económico que imponerla mediante fine‑tuning y podría habilitar, a mediano plazo, la aplicación directa de restricciones lógicas en sistemas generativos sin penalizar su flexibilidad.
+Este progreso motiva la pregunta de si, más allá de correlaciones superficiales, los Transformers **codifican reglas de inferencia que fundamentan la consecuencia lógica** (*logical entailment*). Verificar tal emergencia resulta metodológicamente más económico que imponerla mediante *fine‑tuning* y podría habilitar, a mediano plazo, la **aplicación directa de restricciones lógicas en sistemas generativos** sin penalizar su flexibilidad.
 
-Los análisis exploratorios preliminares sobre el dataset SNLI mostraron que la anisotropía de los embeddings (Cai et al., 2021) y el desbalance de etiquetas (en particular, la clase neutral) limitan la separabilidad geométrica de los razonamientos lógicos. Por ello, el diseño metodológico incorpora estrategias de normalización, sustracción de componentes dominantes y construcciones contrastivas (p. ej., vectores Δₑ – Δ꜀) para aislar la señal lógica antes de las etapas de reducción dimensional y clustering. Estas consideraciones se detallan en la Metodología, pero se adelantan aquí para subrayar el desafío empírico que motiva el enfoque adoptado.
-
-Se seleccionó RoBERTa‑base porque hereda la arquitectura BERT optimizada para comprensión y elimina objetivos de entrenamiento superfluos, mejorando su rendimiento sin introducir ruido adicional; además, al trabajar sin fine‑tuning evitamos confundir la emergencia espontánea de inferencia lógica con artefactos de entrenamiento supervisado en NLI. Utilizar RoBERTa sin ningún fine‑tuning resulta necesario para aislar la variable “emergencia espontánea” y descartar que la eventual presencia de inferencia lógica sea un artefacto del entrenamiento supervisado para Natural Language Inference (NLI).
+Se seleccionó **RoBERTa‑base** porque hereda la arquitectura BERT optimizada para comprensión y elimina objetivos de entrenamiento superfluos, mejorando su rendimiento sin introducir ruido adicional; además, al trabajar sin *fine‑tuning* evitamos confundir la emergencia espontánea de inferencia lógica con artefactos de entrenamiento supervisado en NLI. Utilizar **RoBERTa sin ningún fine‑tuning** resulta necesario para aislar la variable “emergencia espontánea” y descartar que la eventual presencia de inferencia lógica sea un artefacto del entrenamiento supervisado para *Natural Language Inference* (NLI).
 
 ## Objetivos del trabajo y pregunta de investigación
 
-¿Codifican los espacios vectoriales de RoBERTa‑base, entrenado de manera general y sin fine‑tuning, reglas de inferencia de la lógica de enunciados y de la lógica de predicados de primer orden?
+> *¿Codifican los espacios vectoriales de RoBERTa‑base, entrenado de manera general y sin fine‑tuning, reglas de inferencia de la lógica de enunciados y, subsidiariamente, de la lógica de predicados de primer orden?*
 
 **Objetivo general**
 
-- Determinar empíricamente la presencia de estructuras geométricas que correspondan a reglas de inferencia lógica en las representaciones internas de RoBERTa.
+- Determinar empíricamente la presencia (o ausencia) de estructuras geométricas que correspondan a reglas de inferencia lógica en las representaciones internas de RoBERTa.
 
 **Objetivos específicos**
 
-1. Reproducir los experimentos sintácticos de Hewitt & Manning (2019) —centrados en la detección de estructuras de dependencia— y trabajos posteriores, adaptándolos al dominio lógico‑semántico.
+1. Reproducir los experimentos de Chen & Gao (2022) —centrados en el *probing* de información lingüística para inferencia lógica— y estudios afines, adaptándolos a nuestro dominio lógico‑semántico.
 2. Aplicar **reducción dimensional (UMAP, ZCA‑PCA)** y **clustering (k‑means)** sobre embeddings de hipótesis y premisas del dataset **SNLI** (principal) y **FOLIO** (validación LPO).
 3. Medir **Purity** y **NMI** de los clusters y entrenar **árboles de decisión** como *probes* para inspeccionar la alineación con reglas lógicas.
 4. Detectar el grado de **anisotropía** de los espacios resultantes, implementar correcciones y evaluar su impacto en las métricas anteriores.
 5. Analizar la correspondencia empírica entre los hallazgos y la teoría semántica de modelos de la lógica clásica (Gamut) a fin de contextualizar los resultados.
 
+
 ## Estructura del documento
 
-Este documento presenta el análisis experimental completo organizado en las siguientes secciones: marco teórico con revisión de literatura relevante, metodología detallando datasets y pipeline experimental, análisis exploratorio de datos, resultados de experimentos de clustering y probing, discusión de hallazgos y limitaciones, y conclusiones con recomendaciones para trabajo futuro.
+El trabajo se organiza de la siguiente manera:
 
+- **Cap. 1 Introducción**, Motivación, pregunta y objetivos.
+- **Cap. 2 Marco teórico**, Revisión bibliográfica de lógica formal, semántica distribuida y trabajos sobre estructura lógica en LLMs.
+- **Cap. 3 Metodología**, Descripción detallada de datasets, preprocesamiento, métricas y pipeline experimental.
+- **Cap. 4 Resultados y discusión**, Presentación cuantitativa y cualitativa de resultados, análisis crítico y comparación con literatura.
+- **Cap. 5 Conclusión**, Síntesis de aportes, limitaciones y líneas futuras.
+- **Cap. 6 Bibliografía**, Fuentes citadas.
+- **Cap. 7 Anexos**, Código y material suplementario.
+  
 # Marco teórico
 
 ## Relevamiento de trabajos previos y relevantes
 
 Se proponen los siguientes papers para el desarrollo del trabajo:
 
-1. Chen & Gao (2022) – *Probing Linguistic Information for Logical Inference in PLMs*.  
-   ‣ Muestran, vía probes lineales, qué tan bien los LLMs distinguen operadores lógicos y reglas de inferencia.
+1. **Estructura geométrica de los Transformers.**
 
-2. Coenen et al. (2019) – *Visualizing & Measuring the Geometry of BERT*.  
-   ‣ Proponen métricas y técnicas de visualización que revelan la estructura de clústeres y ejes semánticos en embeddings BERT.
+   - *Visualizing & Measuring the Geometry of BERT* (Coenen et al., 2019) demuestra, mediante UMAP y métricas de dispersión, que BERT segrega información semántica y sintáctica en subespacios lineales diferenciados.
+   - El hallazgo legitima la búsqueda de **otros subespacios especializados** –por ejemplo, un subespacio “lógico” responsable de la inferencia.
 
-3. Cai et al. (2021) – *Isotropy in the Contextual Embedding Space*.  
-   ‣ Demuestran que los embeddings contextualizados son anisotrópicos y ofrecen medidas para cuantificar ese sesgo geométrico.
+2. **Codificación de inferencia lógica mediante probing.**
+
+   - *Probing Linguistic Information for Logical Inference in Pre-trained Language Models* (Chen & Gao, 2022) aplica clasificadores lineales sobre embeddings sin fine‑tuning y verifica que los modelos codifican operadores lógicos (¬, ∧, ∨) y ciertas reglas de inferencia proposicional.
+   - Constituye el antecedente metodológico directo de este trabajo: extendemos sus *probes* a configuraciones no lineales (árboles de decisión) y a tareas de **entailment** de oraciones completas.
+
+3. **Propiedades globales de la nube de embeddings.**
+
+   - *Isotropy in the Contextual Embedding Space* (Cai et al., 2021) revela que los embeddings contextualizados presentan **anisotropía** –concentración de varianza en pocas direcciones– y propone métricas y normalizaciones (ZCA, “all‑but‑the‑top”) para mitigarla.
+   - Estas técnicas son adoptadas aquí como paso previo al análisis de inferencia, con la hipótesis de que un espacio más isotrópico favorece la detección de regularidades lógicas.
+
+Además, los fundamentos de **consecuencia lógica** y **semántica de modelos** se enmarcan en la exposición clásica de Gamut (1991), que define la relación ⊨ entre premisas y conclusión y sirve de referencia conceptual para interpretar los resultados.
 
 ## Conceptos y técnicas de ciencia de datos utilizados
 
-[Pendiente completar]
+A continuación se resumen los conceptos y herramientas fundamentales empleados en el estudio:
+
+- **Embeddings contextualizados**: vectores de 768 dimensiones extraídos de las capas 9–12 de RoBERTa‑base, donde suele concentrarse la información semántica.
+
+- **Vectores de relación (Δ)**: diferencia $hipótesis − premisa$ que captura la transformación semántica dentro de cada par.
+
+- **Vector de contraste (Δ_{EC})**: diferencia entre los vectores de relación de *entailment* y *contradiction*, $Δ_{E} - Δ_{C}$. Basado en la dualidad lógica explicada en Gamut (1991), donde $\operatorname{Entail}(P,H) \iff \lnot\,\operatorname{Contradict}(P,H)$, anula el contenido léxico compartido y destaca la señal de la etiqueta lógica.
+
+- **Análisis contrastivo**: Constituye una técnica metodológica desarrollada en este trabajo para explorar la codificación geométrica de relaciones lógicas en espacios vectoriales de embeddings. Esta aproximación se fundamenta en la hipótesis de que las operaciones lógicas se manifiestan como transformaciones regulares y direccionales en el espacio de representación, siguiendo la tradición iniciada por los trabajos sobre analogías vectoriales de Mikolov et al. (2013). El método opera construyendo vectores de contraste que capturan la diferencia entre representaciones de relaciones lógicas opuesta, específicamente, el vector de contraste Δ_{EC} permite aislar la señal informativa de la inferencia lógica del ruido léxico compartido entre premisas e hipótesis, bajo la premisa teórica de que si los embeddings codifican estructura semántico-lógica, entonces relaciones del mismo tipo deberían generar patrones vectoriales consistentes independientemente del contenido lexical específico.
+
+- **Reducción dimensional**: métodos lineales (PCA, ZCA–whitening) y no lineales (UMAP) que facilitan la exploración visual y la aplicación de algoritmos no supervisados.
+
+- **Normalización**: técnicas para uniformizar la escala y dispersión de embeddings, incluyendo all‑but‑the‑mean (eliminación de componentes principales dominantes), per‑type normalization (media por categoría), standard scaling (media=0, desviación estándar=1) y L2 normalization (vectores unitarios).
+
+- **Principal component removal (Deflación)**: enfoque sistemático de eliminación de las primeras K componentes principales (top‑K PC removal) para reducir el efecto de anisotropía y resaltar señales subyacentes.
+
+- **Clustering**: uso de k‑means para detectar agrupamientos alineados con las etiquetas de inferencia; la calidad se mide con **Purity** y **NMI**.
+
+- **Probes**: clasificadores livianos —aquí, árboles de decisión poco profundos— que estiman cuánta información lógica es separable a partir de los embeddings.
+
+- **Anisotropía**: rasgo observado en el cual los embeddings contextualizados de modelos como BERT o RoBERTa tienden a agruparse en un “cono” muy estrecho del espacio vectorial, de modo que la mayoría de los vectores puntúan alto en similitud de coseno entre sí. Esta característica, resultado del entrenamiento de los Transformers, dificulta la identificación de ejes semánticos y lógicos diferenciados (Cai et al., 2021).
+
+- **Isotropía**: estado en el cual los embeddings se distribuyen de manera más uniforme en todas las direcciones del espacio vectorial, reduciendo sesgos causados por componentes dominantes y facilitando que técnicas geométricas como clustering y probes separen con mayor claridad relaciones lógicas y semánticas.
+
+- **Consecuencia lógica (entailment)**: para Gamut (1991), una proposición ψ es consecuencia lógica de un conjunto de premisas φ cuando “la verdad de las primeras implica la de la última”: en toda situación en que las premisas fueran verdaderas, también lo sería la conclusión. En SNLI, la etiqueta *entailment* se asigna cuando un anotador puede redactar una hipótesis que sea “definitivamente una descripción verdadera” de la escena dada la premisa. En FOLIO este caso se anota como *True*, pues la conclusión se sigue de los axiomas de primer orden que describen ese “mundo”.
+
+- **Contradicción**: según Gamut (1991), una contradicción es una fórmula que es falsa bajo todas las valuaciones posibles. En SNLI la etiqueta *contradiction* se usa para hipótesis “definitivamente falsas” respecto de la premisa; en FOLIO el análogo es *False*.
 
 # Metodología
 
 ## Presentación y descripción de los datos
 
 Para averiguar si los embeddings de un modelo **RoBERTa-base** sin *fine-tuning* codifican inferencias lógicas, partimos de dos corpus complementarios. SNLI actúa como línea base: refleja inferencia informal del lenguaje cotidiano y está profundamente estudiado en la literatura, lo que facilita contrastes. FOLIO, en cambio, fue construido a partir de fórmulas de Lógica de Primer Orden (LPO); su sintaxis expresa cuantificadores y relaciones explícitas, lo que lo convierte en el terreno ideal para rastrear regularidades lógicas profundas.
-
-## Preprocesamiento y limpieza de datos
-
-[Pendiente completar]
+- *Conjuntos de datos**:
+*
+  - **SNLI** (Stanford Natural Language Inference): \~570 000 pares P–H con etiquetas *entailment*, *neutral* y *contradiction*, creados a partir de subtítulos de imágenes.
+  - **FOLIO** (First-Order Logic Inference Over stories): 1 435 problemas con fórmulas de LPO y etiquetas *True*, *False* y *Unknown*, diseñados para evaluar inferencia de primer orden.
+- - **Neutralidad y desconocimiento**: en SNLI la etiqueta *neutral* indica que la hipótesis “podría ser verdadera” dado el contexto pero no se garantiza ni descarta. En FOLIO se emplea *Unknown* para conclusiones cuya verdad no puede determinarse solo a partir de las premisas formales.
 
 ## Análisis exploratorio de datos
 
-```{python echo=false, message=false}
+```{python}
+#| echo: false
+#| output: asis
+#| message: false
 # Carga de librerías y datasets
 import numpy as np
 from datasets import load_dataset
@@ -166,11 +197,14 @@ folio = load_dataset('yale-nlp/folio')
 
 ```
 
-```{python echo=false, message=false}
+```{python}
+#| echo: false
+#| output: asis
+#| message: false
 # Configure pandas display options for better PDF output
 pd.set_option('display.max_columns', None)
-pd.set_option('display.max_colwidth', 50)  # Limit column width to prevent overflow
-pd.set_option('display.width', 100)  # Limit overall display width
+pd.set_option('display.max_colwidth', None)  # Allow full text display
+pd.set_option('display.width', 60)  # Narrow display width
 pd.set_option('display.precision', 2)  # Limit decimal places
 pd.set_option('display.max_rows', 10)  # Limit number of rows displayed
 
@@ -181,20 +215,84 @@ plt.rcParams['savefig.dpi'] = 150
 plt.rcParams['font.size'] = 10  # Slightly smaller font size
 plt.style.use('seaborn-v0_8-whitegrid')  # Use a clean style
 
-# Custom display function to ensure dataframes are properly contained
-def safe_display(df,indexOption=False):
-    """Wrap dataframe in a container with overflow handling for better PDF output"""
-    html = df.to_html(index=indexOption)
-    wrapped_html = f'<div class="dataframe-container">{html}</div>'
-    ipython_display(HTML(wrapped_html))
+# Función para generar tablas LaTeX simples
+def safe_display(df, indexOption=False):
+    """
+    Renderiza DataFrames como tablas LaTeX simples con text wrapping.
+    """
+    
+    def escape_latex(text):
+        """Escapa caracteres especiales para LaTeX"""
+        if pd.isna(text) or text is None:
+            return ""
+        text = str(text)
+        # Escapar caracteres LaTeX
+        replacements = [
+            ('\\', '\\textbackslash{}'),
+            ('&', '\\&'),
+            ('%', '\\%'),
+            ('#', '\\#'),
+            ('_', '\\_'),
+            ('$', '\\$'),
+            ('{', '\\{'),
+            ('}', '\\}'),
+            ('^', '\\textasciicircum{}'),
+            ('~', '\\textasciitilde{}')
+        ]
+        for old, new in replacements:
+            text = text.replace(old, new)
+        return text
+    
+    # Preparar datos
+    df_clean = df.copy()
+    if indexOption:
+        df_clean = df_clean.reset_index()
+    
+    # Aplicar escape a todas las columnas
+    for col in df_clean.columns:
+        df_clean[col] = df_clean[col].astype(str).apply(escape_latex)
+    
+    num_cols = len(df_clean.columns)
+    
+    # Generar tabla LaTeX simple
+    latex_lines = []
+    latex_lines.append("\\begin{table}[ht]")
+    latex_lines.append("\\centering")
+    
+    # Usar tabular simple con columnas p{} para wrapping
+    col_spec = "p{0.25\\textwidth} " * num_cols
+    latex_lines.append(f"\\begin{{tabular}}{{{col_spec}}}")
+    latex_lines.append("\\hline")
+    
+    # Headers
+    headers = [f"\\textbf{{{escape_latex(col)}}}" for col in df_clean.columns]
+    latex_lines.append(" & ".join(headers) + " \\\\")
+    latex_lines.append("\\hline")
+    
+    # Datos
+    for _, row in df_clean.iterrows():
+        row_data = [str(row[col]) for col in df_clean.columns]
+        latex_lines.append(" & ".join(row_data) + " \\\\")
+    
+    latex_lines.append("\\hline")
+    latex_lines.append("\\end{tabular}")
+    latex_lines.append("\\end{table}")
+    
+    # Imprimir como bloque LaTeX
+    print("```{=latex}")
+    print("\n".join(latex_lines))
+    print("```")
 ```
 
 ### ¿Cuál es la estructura general de los datasets?
 
-```{python echo=false, message=false}
+```{python}
+#| echo: false
+#| output: asis
+#| message: false
 pd.set_option('display.max_columns', None)
-# We're using a limited colwidth instead of None to prevent table overflow
-pd.set_option('display.max_colwidth', 50)  
+# Allow full text display for proper wrapping
+pd.set_option('display.max_colwidth', None)  
 
 summary = pd.DataFrame({
     'Dataset': ['SNLI', 'FOLIO'],
@@ -203,13 +301,19 @@ summary = pd.DataFrame({
     'Test size': [len(snli['test']), 'N/A'],
     'Columns': [snli['train'].column_names, folio['train'].column_names]
 })
-safe_display(summary.T,indexOption=True)
-
+estructura_datasets = summary.T
+estructura_datasets.columns = estructura_datasets.iloc[0]
+estructura_datasets = estructura_datasets[1:]
+estructura_datasets
+safe_display(estructura_datasets, indexOption=True)
 ```
 
 ### ¿Cómo se distribuyen las clases en cada dataset?
 
-```{python echo=false, message=false}
+```{python}
+#| echo: false
+#| output: asis
+#| message: false
 # --- preparar dataframes ---
 df_snli = pd.DataFrame(snli['train'])
 # Filtrar ejemplos con label -1 (no etiquetados)
@@ -256,19 +360,25 @@ plt.show()
 ```
 
 ### Ejemplos aleatorios de cada dataset
-```{python results='asis', echo=false, message=false}
-print('Ejemplo SNLI:')
+```{python}
+#| echo: false
+#| output: asis
+#| message: false
+print('SNLI:')
 safe_display(df_snli.sample(1, random_state=1)[['premise', 'hypothesis', 'label_str']])
-print('\nEjemplo FOLIO lenguaje natural:')
+print('FOLIO lenguaje natural:')
 safe_display(df_folio.sample(1, random_state=1)[['premises', 'conclusion', 'label']])
-print('\nEjemplo FOLIO LPO:')
+print('FOLIO LPO:')
 safe_display(df_folio.sample(1, random_state=1)[['premises-FOL', 'conclusion-FOL', 'label']])
 
 ```
 
 ### ¿Cuál es la longitud de los textos en cada dataset?
 
-```{python results='asis', echo=false, message=false}
+```{python}
+#| echo: false
+#| output: asis
+#| message: false
 df_snli['premise_len'] = df_snli['premise'].str.len()
 df_snli['hypothesis_len'] = df_snli['hypothesis'].str.len()
 df_folio['premises_len'] = df_folio['premises'].str.len()
@@ -278,23 +388,42 @@ df_folio['conclusion_len'] = df_folio['conclusion'].str.len()
 plt.figure(figsize=(6,2.5))
 plt.subplot(1,2,1)
 sns.histplot(df_snli['premise_len'], bins=20, kde=True)
-plt.title('Distribución de longitud de premisas- SNLI')
+plt.title('Distribución de longitud de premisas \n - SNLI')
 plt.subplot(1,2,2)
 sns.histplot(df_folio['premises_len'], bins=20, kde=True)
-plt.title('Distribución de longitud de premisas - FOLIO')
+plt.title('Distribución de longitud de premisas \n - FOLIO')
 plt.tight_layout()
 plt.show()
 
-print('Longitud promedio premise SNLI:', df_snli['premise_len'].mean())
-print('Longitud promedio premises FOLIO:', df_folio['premises_len'].mean())
-print('Longitud promedio hypothesis SNLI:', df_snli['hypothesis_len'].mean())
-print('Longitud promedio conclusion FOLIO:', df_folio['conclusion_len'].mean())
+
+# El DataFrame largo de métricas de longitud
+metricas_longitud = pd.DataFrame({
+    'Métrica': [
+        'Longitud promedio premise/premises',
+        'Longitud promedio hypothesis/conclusion'
+    ],
+    'SNLI': [
+        df_snli['premise_len'].mean().round(2),
+        df_snli['hypothesis_len'].mean().round(2)
+    ],
+    'FOLIO': [
+        df_folio['premises_len'].mean().round(2),
+        df_folio['conclusion_len'].mean().round(2)
+    ]
+})
+
+
+
+safe_display(metricas_longitud,indexOption=False)
 
 ```
 
 ### ¿Existen valores nulos o duplicados?
 
-```{python echo=false, message=false}
+```{python}
+#| echo: false
+#| output: asis
+#| message: false
 def resumen_col_null_dup(df, nombre, exclude_cols=None):
     """
     Retorna un DataFrame con columnas:
@@ -328,11 +457,355 @@ resumen = pd.concat([res_snli, res_folio], ignore_index=True)
 safe_display(resumen)
 ```
 
+### Análisis de Cross-Contamination
+
+**Cross-contamination** se refiere a la presencia del mismo texto funcionando en roles diferentes dentro de un dataset. Específicamente, identificamos casos donde una cadena de texto aparece tanto como premisa en algunos registros como hipótesis/conclusión en otros registros del mismo corpus.
+
+Este fenómeno puede introducir sesgos en el análisis de embeddings por dos razones principales:
+
+1. **Confusión de roles semánticos**: El modelo debe asignar representaciones vectoriales consistentes a textos idénticos, independientemente de si aparecen como premisa o hipótesis. Esto puede crear ambigüedad en la codificación de la dirección de la inferencia lógica.
+
+2. **Inflación artificial de patrones**: Los embeddings pueden captar correlaciones espurias basadas en la repetición léxica en lugar de relaciones lógicas genuinas, lo que distorsionaría nuestras métricas de separabilidad geométrica.
+
+El análisis cuantifica el nivel de cross-contamination calculando la intersección entre el conjunto de textos únicos que aparecen como premisas y el conjunto de textos únicos que aparecen como hipótesis/conclusiones. Un porcentaje bajo de overlap (< 1%) sugiere que el dataset mantiene roles textuales bien diferenciados, mientras que un overlap alto podría requerir filtrado previo al análisis de embeddings.
+
+
+```{python}
+#| echo: false
+#| output: asis
+#| message: false
+def analyze_cross_contamination(df, dataset_name):
+    """
+    Analiza la cross-contamination entre premisas e hipótesis/conclusiones
+    """
+    # Extraer textos únicos
+    if 'premise' in df.columns:  # SNLI
+        premises = set(df['premise'])
+        hypotheses = set(df['hypothesis'])
+        text_cols = ['premise', 'hypothesis']
+    else:  # FOLIO
+        premises = set(df['premises'])
+        hypotheses = set(df['conclusion'])
+        text_cols = ['premises', 'conclusion']
+    
+    # Calcular overlap
+    overlap = premises.intersection(hypotheses)
+    
+    # Matriz de contaminación
+    is_premise = {text: True for text in premises}
+    is_hypothesis = {text: True for text in hypotheses}
+    all_texts = premises.union(hypotheses)
+    
+    contamination_counts = Counter()
+    for text in all_texts:
+        role = ("premise" if text in is_premise else "not_premise",
+                "hypothesis" if text in is_hypothesis else "not_hypothesis")
+        contamination_counts[role] += 1
+    
+    # Crear matriz
+    contamination_matrix = pd.DataFrame(0, 
+                                      index=['is_premise', 'not_premise'], 
+                                      columns=['is_hypothesis', 'not_hypothesis'])
+    for (p_role, h_role), count in contamination_counts.items():
+        contamination_matrix.loc[p_role, h_role] = count
+    
+    return {
+        'overlap_count': len(overlap),
+        'total_premises': len(premises),
+        'total_hypotheses': len(hypotheses),
+        'contamination_matrix': contamination_matrix,
+        'overlap_examples': list(overlap)[:5] if overlap else []
+    }
+
+# Analizar cross-contamination para ambos datasets
+#print("Analizando cross-contamination...")
+snli_contamination = analyze_cross_contamination(df_snli, 'SNLI')
+folio_contamination = analyze_cross_contamination(df_folio, 'FOLIO')
+
+# Recopilar métricas de cross-contamination
+cross = pd.DataFrame({
+  'Dataset': ['SNLI', 'FOLIO'],
+  'Premisas únicas': [
+    snli_contamination['total_premises'],
+    folio_contamination['total_premises']
+  ],
+  'Hipótesis/Conclusiones únicas': [
+    len(set(df_snli['hypothesis'])),
+    len(set(df_folio['conclusion']))
+  ],
+  'Textos en ambos roles': [
+    snli_contamination['overlap_count'],
+    folio_contamination['overlap_count']
+  ],
+  '% Overlap': [
+    round(snli_contamination['overlap_count'] / snli_contamination['total_premises'] * 100, 2),
+    round(folio_contamination['overlap_count'] / folio_contamination['total_premises'] * 100, 2)
+  ]
+})
+
+def show_contamination_examples(df, overlap_texts, dataset_name):
+    """
+    Muestra ejemplos de cross-contamination en una tabla de 2 columnas para ahorrar espacio.
+    """
+    if 'premise' in df.columns:  # SNLI
+        premise_col, hypothesis_col, label_col = 'premise', 'hypothesis', 'label_str'
+    else:  # FOLIO
+        premise_col, hypothesis_col, label_col = 'premises', 'conclusion', 'label'
+
+    try:
+        # Tomamos el primer texto con overlap para usar como ejemplo
+        text = list(overlap_texts)[0]
+        print(f"\n**Ejemplo de contaminación en {dataset_name} para el texto:** \"_{text[:100]}{'...' if len(text) > 100 else ''}_\"")
+    except IndexError:
+        # Si no hay textos en la lista, no hacemos nada
+        return
+
+    # Buscamos un ejemplo donde el texto es PREMISA y otro donde es HIPOTESIS
+    as_premise = df[df[premise_col] == text].head(1)
+    as_hypothesis = df[df[hypothesis_col] == text].head(1)
+
+    # Si no encontramos ambos casos, no podemos construir la tabla comparativa
+    if as_premise.empty or as_hypothesis.empty:
+        return
+
+    # Formateamos el contenido de cada celda de la tabla con HTML
+    p_row = as_premise.iloc[0]
+    h_row = as_hypothesis.iloc[0]
+
+    # Celda para "Aparece como Premisa"
+    premise_cell = (
+        f"<b>Premise:</b> \"{p_row[premise_col]}\"<br>"
+        f"<b>{hypothesis_col.title()}:</b> \"{p_row[hypothesis_col]}\"<br>"
+        f"<b>Label:</b> {p_row[label_col]}"
+    )
+    # Celda para "Aparece como Hipótesis"
+    hypothesis_cell = (
+        f"<b>Premise:</b> \"{h_row[premise_col]}\"<br>"
+        f"<b>{hypothesis_col.title()}:</b> \"{h_row[hypothesis_col]}\"<br>"
+        f"<b>Label:</b> {h_row[label_col]}"
+    )
+
+    # Creamos un DataFrame que será nuestra tabla
+    table_df = pd.DataFrame({
+        f'Aparece como Premise': [premise_cell],
+        f'Aparece como {hypothesis_col.title()}': [hypothesis_cell]
+    })
+    
+    # Convertimos el DataFrame a HTML, asegurándonos de que las etiquetas <br> no se escapen
+    html = table_df.to_html(index=False, escape=False, justify='left')
+    # Usamos la función de display para renderizar el HTML en Quarto
+    ipython_display(HTML(html))
+
+print("<br><br>")
+# Mostrar ejemplos de overlap
+if snli_contamination['overlap_examples']:
+    overlap_set_snli = set(snli_contamination['overlap_examples'])
+    show_contamination_examples(df_snli, overlap_set_snli, 'SNLI')
+else:
+    print("**No se encontraron ejemplos de cross-contamination en SNLI**")
+
+if folio_contamination['overlap_examples']:
+    overlap_set_folio = set(folio_contamination['overlap_examples'])
+    show_contamination_examples(df_folio, overlap_set_folio, 'FOLIO')
+else:
+    print("**No se encontraron ejemplos de cross-contamination en FOLIO**")
+
+print("<br><br>")
+print('**Resultados del análisis de cross-contamination:**\n')
+safe_display(cross,indexOption=False)
+
+# Visualizar matrices de contaminación
+fig, axes = plt.subplots(1, 2, figsize=(10, 4))
+
+# SNLI
+sns.heatmap(snli_contamination['contamination_matrix'], 
+            annot=True, fmt='.0f', cmap='viridis', ax=axes[0])
+axes[0].set_title('Cross-Contamination SNLI')
+axes[0].set_xlabel('Rol')
+axes[0].set_ylabel('Rol')
+
+# FOLIO
+sns.heatmap(folio_contamination['contamination_matrix'], 
+            annot=True, fmt='.0f', cmap='viridis', ax=axes[1])
+axes[1].set_title('Cross-Contamination FOLIO')
+axes[1].set_xlabel('Rol')
+axes[1].set_ylabel('Rol')
+
+plt.tight_layout()
+plt.show()
+
+
+```
+
+
+### Análisis de Estructura de Tripletas
+
+Definimos una tripleta como un conjunto de tres registros que comparten la misma premisa, pero tienen diferentes etiquetas de inferencia lógica. Específicamente:
+
+- **Tripleta completa**: Una premisa que tiene al menos un ejemplo para cada una de las tres clases de inferencia (entailment/true, contradiction/false, neutral/uncertain)
+- **Tripleta balanceada**: Una tripleta donde cada clase está representada exactamente una vez (1-1-1)
+
+
+```{python}
+#| echo: false
+#| output: asis
+#| message: false
+def analyze_triplet_structure(df, dataset_name):
+    """
+    Analiza si cada premisa tiene ejemplos para todas las clases (triplets completos)
+    """
+    if 'premise' in df.columns:  # SNLI
+        premise_col = 'premise'
+        hypothesis_col = 'hypothesis'
+        label_col = 'label'
+        label_map = {0: 'entailment', 1: 'neutral', 2: 'contradiction'}
+    else:  # FOLIO
+        premise_col = 'premises'
+        hypothesis_col = 'conclusion'
+        label_col = 'label'
+        # Mapeo corregido basado en las etiquetas reales de FOLIO
+        # Verificar primero las etiquetas reales
+        unique_labels = set(df[label_col])
+        #print(f"Etiquetas únicas en {dataset_name}: {unique_labels}")
+        
+        # Mapeo dinámico basado en las etiquetas encontradas
+        if 'True' in unique_labels and 'False' in unique_labels:
+            label_map = {'True': 'true', 'False': 'false', 'Uncertain': 'uncertain'}
+        elif 0 in unique_labels and 1 in unique_labels:
+            label_map = {0: 'true', 1: 'false', 2: 'uncertain'}
+        else:
+            # Mapeo genérico si no reconocemos el patrón
+            label_map = {label: str(label).lower() for label in unique_labels}
+    
+    # Agregar nombres de etiquetas
+    df_analysis = df.copy()
+    df_analysis['label_name'] = df_analysis[label_col].map(label_map)
+    
+    # Contar etiquetas únicas por premisa
+    premise_label_counts = df_analysis.groupby(premise_col)['label_name'].nunique()
+    total_premises = len(premise_label_counts)
+    
+    # Distribución de premisas por número de etiquetas
+    label_distribution = premise_label_counts.value_counts().sort_index()
+    
+    # Contar triplets completos
+    if 'premise' in df.columns:  # SNLI
+        complete_triplets = label_distribution.get(3, 0)  # entailment, neutral, contradiction
+    else:  # FOLIO
+        complete_triplets = label_distribution.get(3, 0)  # true, false, uncertain
+    
+    # Análisis de balance en triplets completos
+    if complete_triplets > 0:
+        if 'premise' in df.columns:
+            triplet_premises = premise_label_counts[premise_label_counts == 3].index
+        else:
+            triplet_premises = premise_label_counts[premise_label_counts == 3].index
+        
+        triplet_df = df_analysis[df_analysis[premise_col].isin(triplet_premises)]
+        hypotheses_per_label = triplet_df.groupby([premise_col, 'label_name']).size().unstack(fill_value=0)
+        
+        # Verificar balance perfecto (1-1-1)
+        if 'premise' in df.columns:
+            balanced_triplets = hypotheses_per_label[
+                (hypotheses_per_label['entailment'] == hypotheses_per_label['contradiction']) &
+                (hypotheses_per_label['entailment'] == hypotheses_per_label['neutral'])
+            ]
+        else:
+            # Para FOLIO, verificar balance basado en las etiquetas reales
+            label_names = list(hypotheses_per_label.columns)
+            if len(label_names) >= 3:
+                balanced_triplets = hypotheses_per_label[
+                    (hypotheses_per_label[label_names[0]] == hypotheses_per_label[label_names[1]]) &
+                    (hypotheses_per_label[label_names[0]] == hypotheses_per_label[label_names[2]])
+                ]
+            else:
+                balanced_triplets = pd.DataFrame()
+        
+        num_perfectly_balanced = len(balanced_triplets)
+        avg_hypotheses_per_label = hypotheses_per_label.mean()
+    else:
+        num_perfectly_balanced = 0
+        avg_hypotheses_per_label = pd.Series([0,0,0], 
+                                           index=['entailment', 'neutral', 'contradiction'] if 'premise' in df.columns 
+                                           else ['true', 'false', 'uncertain'])
+    
+    return {
+        'total_premises': total_premises,
+        'complete_triplets': complete_triplets,
+        'label_distribution': label_distribution,
+        'perfectly_balanced': num_perfectly_balanced,
+        'avg_hypotheses_per_label': avg_hypotheses_per_label,
+        'percentage_triplets': complete_triplets / total_premises * 100 if total_premises > 0 else 0
+    }
+
+# Analizar estructura de triplets
+snli_triplets = analyze_triplet_structure(df_snli, 'SNLI')
+folio_triplets = analyze_triplet_structure(df_folio, 'FOLIO')
+
+# Extraer métricas clave para presentación
+print ("Resultados del análisis de estructura de tripletas:\n")
+print("<br>")
+wide_triplets = pd.DataFrame({
+    'Métrica': [
+        'Premisas totales',
+        'Tripletas completas',
+        'Porcentaje de tripletas',
+        'Tripletas balanceadas'
+    ],
+    'SNLI': [
+        f"{snli_triplets['total_premises']:,}",
+        f"{snli_triplets['complete_triplets']:,}",
+        f"{snli_triplets['percentage_triplets']:.2f}%",
+        f"{snli_triplets['perfectly_balanced']:,}"
+    ],
+    'FOLIO': [
+        f"{folio_triplets['total_premises']:,}",
+        f"{folio_triplets['complete_triplets']:,}",
+        f"{folio_triplets['percentage_triplets']:.2f}%",
+        f"{folio_triplets['perfectly_balanced']:,}"
+    ]
+})
+safe_display(wide_triplets,indexOption=False)
+
+
+```
+
+
+
+```{python}
+#| echo: false
+#| output: asis
+#| message: false
+# Visualizar distribución de etiquetas por premisa
+fig, axes = plt.subplots(1, 2, figsize=(10, 4))
+
+# SNLI
+snli_dist = snli_triplets['label_distribution']
+axes[0].bar(snli_dist.index, snli_dist.values)
+axes[0].set_title('Distribución de etiquetas por premisa - SNLI')
+axes[0].set_xlabel('Número de etiquetas únicas')
+axes[0].set_ylabel('Número de premisas')
+
+# FOLIO
+folio_dist = folio_triplets['label_distribution']
+axes[1].bar(folio_dist.index, folio_dist.values)
+axes[1].set_title('Distribución de etiquetas por premisa - FOLIO')
+axes[1].set_xlabel('Número de etiquetas únicas')
+axes[1].set_ylabel('Número de premisas')
+
+plt.tight_layout()
+plt.show()
+```
+
 ### ¿Todo el texto está en inglés? ¿Hay ruido de otros idiomas?
 
-Para confirmar que los corpous estén  en inglés, tomamos una muestra aleatoria de 1000 enunciados por columna y aplicamos fastText. Calculamos la proporción de entradas marcadas como "en" y listamos cuántas oraciones quedaron etiquetadas como otro idioma o "unknown". Se revisaron los ejemplos marcados como en otro idioma y se encontro que eran errores de etiquetado. Los datasets estan 100% en inglés.
+Para confirmar que los corpus estén  en inglés, tomamos una muestra aleatoria de 1000 enunciados por columna y aplicamos fastText. Calculamos la proporción de entradas marcadas como "en" y listamos cuántas oraciones quedaron etiquetadas como otro idioma o "unknown". Se revisaron los ejemplos marcados como en otro idioma y se encontro que eran errores de etiquetado. Los datasets estan 100% en inglés.
 
-```{python echo=false, message=false}
+
+```{python}
+#| echo: false
+#| output: asis
+#| message: false
 def download_model():
     model_path = 'lid.176.bin'
     if not os.path.exists(model_path):
@@ -407,234 +880,6 @@ safe_display(summary)
 
 ```
 
-### Análisis de Cross-Contamination
-
-```{python results='asis', echo=false, message=false}
-def analyze_cross_contamination(df, dataset_name):
-    """
-    Analiza la cross-contamination entre premisas e hipótesis/conclusiones
-    """
-    # Extraer textos únicos
-    if 'premise' in df.columns:  # SNLI
-        premises = set(df['premise'])
-        hypotheses = set(df['hypothesis'])
-        text_cols = ['premise', 'hypothesis']
-    else:  # FOLIO
-        premises = set(df['premises'])
-        hypotheses = set(df['conclusion'])
-        text_cols = ['premises', 'conclusion']
-    
-    # Calcular overlap
-    overlap = premises.intersection(hypotheses)
-    
-    # Matriz de contaminación
-    is_premise = {text: True for text in premises}
-    is_hypothesis = {text: True for text in hypotheses}
-    all_texts = premises.union(hypotheses)
-    
-    contamination_counts = Counter()
-    for text in all_texts:
-        role = ("premise" if text in is_premise else "not_premise",
-                "hypothesis" if text in is_hypothesis else "not_hypothesis")
-        contamination_counts[role] += 1
-    
-    # Crear matriz
-    contamination_matrix = pd.DataFrame(0, 
-                                      index=['is_premise', 'not_premise'], 
-                                      columns=['is_hypothesis', 'not_hypothesis'])
-    for (p_role, h_role), count in contamination_counts.items():
-        contamination_matrix.loc[p_role, h_role] = count
-    
-    return {
-        'overlap_count': len(overlap),
-        'total_premises': len(premises),
-        'total_hypotheses': len(hypotheses),
-        'contamination_matrix': contamination_matrix,
-        'overlap_examples': list(overlap)[:5] if overlap else []
-    }
-
-# Analizar cross-contamination para ambos datasets
-#print("Analizando cross-contamination...")
-snli_contamination = analyze_cross_contamination(df_snli, 'SNLI')
-folio_contamination = analyze_cross_contamination(df_folio, 'FOLIO')
-
-# Mostrar resultados
-print("\nAnálisis de Cross-Contamination")
-print(f"SNLI:")
-print(f"  - Premisas únicas: {snli_contamination['total_premises']}")
-print(f"  - Hipótesis únicas: {len(set(df_snli['hypothesis']))}")
-print(f"  - Textos que aparecen en ambos roles: {snli_contamination['overlap_count']}")
-print(f"  - Porcentaje de overlap: {snli_contamination['overlap_count']/snli_contamination['total_premises']*100:.2f}%")
-
-print(f"\nFOLIO:")
-print(f"  - Premisas únicas: {folio_contamination['total_premises']}")
-print(f"  - Conclusiones únicas: {len(set(df_folio['conclusion']))}")
-print(f"  - Textos que aparecen en ambos roles: {folio_contamination['overlap_count']}")
-print(f"  - Porcentaje de overlap: {folio_contamination['overlap_count']/folio_contamination['total_premises']*100:.2f}%")
-
-# Visualizar matrices de contaminación
-fig, axes = plt.subplots(1, 2, figsize=(10, 4))
-
-# SNLI
-sns.heatmap(snli_contamination['contamination_matrix'], 
-            annot=True, fmt='.0f', cmap='viridis', ax=axes[0])
-axes[0].set_title('Cross-Contamination SNLI')
-axes[0].set_xlabel('Rol')
-axes[0].set_ylabel('Rol')
-
-# FOLIO
-sns.heatmap(folio_contamination['contamination_matrix'], 
-            annot=True, fmt='.0f', cmap='viridis', ax=axes[1])
-axes[1].set_title('Cross-Contamination FOLIO')
-axes[1].set_xlabel('Rol')
-axes[1].set_ylabel('Rol')
-
-plt.tight_layout()
-plt.show()
-
-# Mostrar ejemplos de overlap
-if snli_contamination['overlap_examples']:
-    print("\nEjemplos de textos que aparecen como premisa e hipótesis en SNLI:")
-    for i, text in enumerate(snli_contamination['overlap_examples'], 1):
-        print(f"{i}. \"{text[:100]}{'...' if len(text) > 100 else ''}\"")
-
-if folio_contamination['overlap_examples']:
-    print("\nEjemplos de textos que aparecen como premisa y conclusión en FOLIO:")
-    for i, text in enumerate(folio_contamination['overlap_examples'], 1):
-        print(f"{i}. \"{text[:100]}{'...' if len(text) > 100 else ''}\"")
-```
-
-### Análisis de Estructura de Triplets
-
-```{python results='asis', echo=false, message=false}
-def analyze_triplet_structure(df, dataset_name):
-    """
-    Analiza si cada premisa tiene ejemplos para todas las clases (triplets completos)
-    """
-    if 'premise' in df.columns:  # SNLI
-        premise_col = 'premise'
-        hypothesis_col = 'hypothesis'
-        label_col = 'label'
-        label_map = {0: 'entailment', 1: 'neutral', 2: 'contradiction'}
-    else:  # FOLIO
-        premise_col = 'premises'
-        hypothesis_col = 'conclusion'
-        label_col = 'label'
-        label_map = {'True': 'true', 'False': 'false', 'Uncertain': 'uncertain'}
-    
-    # Agregar nombres de etiquetas
-    df_analysis = df.copy()
-    df_analysis['label_name'] = df_analysis[label_col].map(label_map)
-    
-    # Contar etiquetas únicas por premisa
-    premise_label_counts = df_analysis.groupby(premise_col)['label_name'].nunique()
-    total_premises = len(premise_label_counts)
-    
-    # Distribución de premisas por número de etiquetas
-    label_distribution = premise_label_counts.value_counts().sort_index()
-    
-    # Contar triplets completos
-    if 'premise' in df.columns:  # SNLI
-        complete_triplets = label_distribution.get(3, 0)  # entailment, neutral, contradiction
-    else:  # FOLIO
-        complete_triplets = label_distribution.get(3, 0)  # true, false, uncertain
-    
-    # Análisis de balance en triplets completos
-    if complete_triplets > 0:
-        if 'premise' in df.columns:
-            triplet_premises = premise_label_counts[premise_label_counts == 3].index
-        else:
-            triplet_premises = premise_label_counts[premise_label_counts == 3].index
-        
-        triplet_df = df_analysis[df_analysis[premise_col].isin(triplet_premises)]
-        hypotheses_per_label = triplet_df.groupby([premise_col, 'label_name']).size().unstack(fill_value=0)
-        
-        # Verificar balance perfecto (1-1-1)
-        if 'premise' in df.columns:
-            balanced_triplets = hypotheses_per_label[
-                (hypotheses_per_label['entailment'] == hypotheses_per_label['contradiction']) &
-                (hypotheses_per_label['entailment'] == hypotheses_per_label['neutral'])
-            ]
-        else:
-            balanced_triplets = hypotheses_per_label[
-                (hypotheses_per_label['true'] == hypotheses_per_label['false']) &
-                (hypotheses_per_label['true'] == hypotheses_per_label['uncertain'])
-            ]
-        
-        num_perfectly_balanced = len(balanced_triplets)
-        avg_hypotheses_per_label = hypotheses_per_label.mean()
-    else:
-        num_perfectly_balanced = 0
-        avg_hypotheses_per_label = pd.Series([0,0,0], 
-                                           index=['entailment', 'neutral', 'contradiction'] if 'premise' in df.columns 
-                                           else ['true', 'false', 'uncertain'])
-    
-    return {
-        'total_premises': total_premises,
-        'complete_triplets': complete_triplets,
-        'label_distribution': label_distribution,
-        'perfectly_balanced': num_perfectly_balanced,
-        'avg_hypotheses_per_label': avg_hypotheses_per_label,
-        'percentage_triplets': complete_triplets / total_premises * 100 if total_premises > 0 else 0
-    }
-
-# Analizar estructura de triplets
-print("\nAnálisis de Estructura de Triplets:")
-snli_triplets = analyze_triplet_structure(df_snli, 'SNLI')
-folio_triplets = analyze_triplet_structure(df_folio, 'FOLIO')
-
-# Mostrar resultados
-print(f"\nSNLI:")
-print(f"  - Premisas totales: {snli_triplets['total_premises']}")
-print(f"  - Triplets completos: {snli_triplets['complete_triplets']}")
-print(f"  - Porcentaje de triplets: {snli_triplets['percentage_triplets']:.2f}%")
-print(f"  - Triplets perfectamente balanceados: {snli_triplets['perfectly_balanced']}")
-
-print(f"\nFOLIO:")
-print(f"  - Premisas totales: {folio_triplets['total_premises']}")
-print(f"  - Triplets completos: {folio_triplets['complete_triplets']}")
-print(f"  - Porcentaje de triplets: {folio_triplets['percentage_triplets']:.2f}%")
-print(f"  - Triplets perfectamente balanceados: {folio_triplets['perfectly_balanced']}")
-
-# Visualizar distribución de etiquetas por premisa
-fig, axes = plt.subplots(1, 2, figsize=(10, 4))
-
-# SNLI
-snli_dist = snli_triplets['label_distribution']
-axes[0].bar(snli_dist.index, snli_dist.values)
-axes[0].set_title('Distribución de etiquetas por premisa - SNLI')
-axes[0].set_xlabel('Número de etiquetas únicas')
-axes[0].set_ylabel('Número de premisas')
-
-# FOLIO
-folio_dist = folio_triplets['label_distribution']
-axes[1].bar(folio_dist.index, folio_dist.values)
-axes[1].set_title('Distribución de etiquetas por premisa - FOLIO')
-axes[1].set_xlabel('Número de etiquetas únicas')
-axes[1].set_ylabel('Número de premisas')
-
-plt.tight_layout()
-plt.show()
-
-# Evaluar validez de la suposición de triplets sistemáticos
-print("\nEvaluación de Suposición de Triplets Sistemáticos:")
-print(f"SNLI: {snli_triplets['percentage_triplets']:.2f}% de premisas forman triplets completos")
-print(f"FOLIO: {folio_triplets['percentage_triplets']:.2f}% de premisas forman triplets completos")
-
-if snli_triplets['percentage_triplets'] > 50:
-    print("SNLI: La suposición de triplets sistemáticos es VÁLIDA")
-elif snli_triplets['percentage_triplets'] > 10:
-    print("SNLI: La suposición de triplets sistemáticos es PARCIALMENTE VÁLIDA")
-else:
-    print("SNLI: La suposición de triplets sistemáticos es INVÁLIDA")
-
-if folio_triplets['percentage_triplets'] > 50:
-    print("FOLIO: La suposición de triplets sistemáticos es VÁLIDA")
-elif folio_triplets['percentage_triplets'] > 10:
-    print("FOLIO: La suposición de triplets sistemáticos es PARCIALMENTE VÁLIDA")
-else:
-    print("FOLIO: La suposición de triplets sistemáticos es INVÁLIDA")
-```
 
 ### Conclusiones del EDA
 
@@ -642,21 +887,193 @@ else:
 - **Balance de clases.** SNLI está casi perfectamente balanceado (~33 % por etiqueta) mientras que FOLIO muestra un sesgo hacia "True" (38.8 %) y "False" queda en 28.9 %. Este desbalance debe considerarse al entrenar.
 - **Longitud y formalidad.** Las premisas de FOLIO son cinco veces más largas que las de SNLI (345 vs. 66 car.). Esto podria generar embeddings con magnitudes mayores. Se debera evaluar la aplicacion de tecnicas de normalización. 
 - **Calidad y duplicados.** No hay valores nulos. Aunque ciertas premisas o conclusiones se repiten, nunca se duplica la combinación completa de premisa e hipótesis/conclusión. Como el embedding vectorial se genera sobre cada registro completo, esas repeticiones parciales no afectan la consistencia del espacio y pueden conservarse sin problemas.
+- **Cross-contaminacaión**: Se identificó que existe una superposición del 0.95% entre premisas e hipótesis/conclusiones en SNLI (1,432 textos aparecen en ambos roles), lo que puede introducir sesgos en el análisis de embeddings. Se procederá a la eliminación de los textos que aparecen en ambos roles. FOLIO no presenta contaminación cruzada.
+- **Estructura de tripletas**: Aunque SNLI presenta un 97.84% de tripletas completas (premisas con las tres etiquetas de inferencia), FOLIO solo alcanza 46.76%. Esto significa que el análisis contrastivo deberá adaptarse a la estructura real de cada dataset, siendo más robusto en SNLI para comparaciones entre las tres categorías lógicas, mientras que en FOLIO requerirá estrategias alternativas debido a la menor cobertura sistemática.
 - **Sin ruido de idioma.** Ambos corpus están esencialmente 100 % en inglés, así que no se requiere filtrado lingüístico adicional.
-- **Cross-contamination.** Se identificó que existe cierta superposición entre premisas e hipótesis/conclusiones, lo que podría afectar la interpretación de los embeddings. Se recomienda considerar técnicas de filtrado para eliminar esta contaminación.
-- **Estructura de triplets.** El análisis revela que no todos los datasets tienen una estructura sistemática de triplets completos. Esto sugiere que el análisis contrastivo deberá adaptarse a la estructura real de cada dataset.
+
+## Preprocesamiento y limpieza de datos
+
+Basándose en los hallazgos del análisis exploratorio, se llevaron a cabo las siguientes tareas de limpieza de los datos antes de la creacion y analisis de embeddings.
+
+### Filtrado inicial de datos no válidos
+
+**SNLI**: Se eliminaron registros con `label = -1` (ejemplos no etiquetados o ambiguos), reduciendo el dataset de 570,152 a 549,367 registros válidos. Estos casos representaban aproximadamente 3.6% del dataset original y correspondían a instancias donde los anotadores no pudieron llegar a un consenso sobre la relación de inferencia.
+
+**FOLIO**: No presentó registros con etiquetas faltantes o inválidas. Todos los 1,435 ejemplos mantuvieron etiquetas válidas (*True*, *False*, *Unknown*).
+
+### Eliminación de contaminación cruzada
+
+Como se identificó en el EDA, SNLI presentaba 1,432 textos (0.95%) que aparecían tanto como premisas como hipótesis en diferentes registros. Se eliminó 2,864 registros adicionales (0.52% del dataset limpio) que se encontraban en ambos roles, resultando en un dataset final de 546,503 ejemplos para SNLI.
+
+**FOLIO** no requirió este filtrado al no presentar contaminación cruzada.
+
+### Filtrado por estructura de tripletas
+
+Dado que SNLI presenta 97.84% de tripletas completas mientras FOLIO solo 46.76%, se implementó un filtrado que retiene únicamente premisas con representación en las tres categorías de inferencia.
+
+**SNLI**: 147,241 tripletas balanceadas
+
+**FOLIO**: Se descarta debido a la baja cobertura, manteniendo el dataset completo para preservar la representatividad
 
 ## Descripción de las técnicas de análisis y modelado
 
-El procedimento se divide en seis pasos: 
+### Resumen del procedimiento experimental
 
-1. Se genera un *embedding* por enunciado y se combinan (concatenación y diferencia) las representaciones vectoriales de premisa e hipótesis de modo que captemos tanto las características individuales como las discrepancias semánticas. 
-2. Se aplica **PCA** para reducir la dimensionalidad de 768 dimensiones a un numero menor, 50 dimensiones por ejemplo, a fin de poder compactar el espacio vectorial y reducir coste computacional 
-3. Se aplica **UMAP** para proyectar en dos dimensiones, de modo que la estructura geométrica sea visualizable.
-4. Sobre ese plano reducido se ejecuta **K-Means** con *k = 3*; la hipótesis es que, si el espacio vectorial codifica inferencia, los clústeres tenderán a alinearse con las etiquetas originales (entailment, contradiction, neutral / true, false, uncertain).
-5. Entrenamos un **árbol de decisión** limitado en principio a cuatro niveles: buscamos obtener una medida de cuán separables son las clases y, al mismo tiempo, revelar qué ejes del embedding concentran información lógica. 
-6. Repetimos todo el proceso en FOLIO y comparamos patrones con SNLI. 
-7. Adicionalmente, incorporariamos un *probing* específico: regresión logística dirigida a cuantificadores universales y existenciales para verificar si esos rasgos son recuperables directamente de los vectores.
+1. **Generación y composición de embeddings** — Para cada par premisa-hipótesis extraemos los vectores contextuales de las capas 9-12 de RoBERTa-base y calculamos el **vector diferencia** $\delta = \mathbf{p} - \mathbf{h}$. Este paso crea la materia prima del análisis.
+
+2. **Construcción de datasets *full* y *delta*** — Los embeddings se almacenan en formato Parquet *wide*. La vista *full* conserva las tres partes (premise, hypothesis, delta); la vista *delta* retiene solo $\delta$. Se añaden hashes SHA-256 y la etiqueta lógica normalizada $y \in \{0,1,2\}$ para reproducibilidad.
+
+3. **Reducción dimensional lineal** — Aplicamos **PCA** y su variante **ZCA-whitening** hasta 50 componentes para decorrelacionar las dimensiones y, opcionalmente, eliminamos los primeros $k$ ejes dominantes ("*all-but-the-top*"). Así mitigamos la anisotropía intrínseca del espacio.
+
+4. **Proyección no lineal con UMAP** — Sobre las 50 PCs proyectamos a 2D mediante **UMAP** ($n\_neighbors \in \{5,15,30\}$, $min\_dist \in \{0.1,0.3\}$) para inspeccionar la geometría y alimentar algoritmos que asumen baja dimensión.
+
+5. **Clustering con K-Means** — Ejecutamos **k-means** ($k=3$ para *ECN*, $k=2$ para *EC*) en el plano UMAP. Evaluamos con **Purity** y **NMI** si los clústeres se alinean con las etiquetas lógicas.
+
+6. **Medición de anisotropía** — Cuantificamos el grado de anisotropía del espacio vectorial mediante las métricas $s_{inter}$ y $s_{intra}$ (Cai et al., 2021) para evaluar cómo las transformaciones afectan la distribución isotrópica de los embeddings.
+
+7. **Probing con árboles de decisión** — Entrenamos árboles de decisión de profundidad $\leq 4$ sobre las 50 componentes principales resultantes.
+
+8. **Análisis contrastivo y variantes normalizadas** — Repetimos todo el pipeline en (i) vectores de contraste derivados de tripletas E-C-N y (ii) cuatro esquemas de normalización (none, per_type, all_but_mean, standard). Este barrido revela qué transformaciones exponen mejor la señal de inferencia.
+
+Cada experimento se ejecuta tanto en **SNLI** como en **FOLIO**, con y sin la etiqueta *Neutral*. El tracking se automatiza vía **MLflow**, y la mayoría de las operaciones (PCA, UMAP, k-means) se aceleran en GPU mediante **cuML**.
+
+
+### Extracción de embeddings
+
+Los estudios de *probing* (Tenney et al., 2019; Rogers et al., 2020) demuestran que las capas superiores de modelos Transformer concentran información semántica de alto nivel, mientras que las capas inferiores retienen rasgos superficiales. Con base en este antecedente, se extrajeron los embeddings de las **capas 9, 10, 11 y 12** de RoBERTa-base (12 capas en total), obteniendo cuatro "vistas" distintas del mismo corpus. Cada embedding es un vector de **768 dimensiones**.
+
+> "Para determinar dónde se aloja la señal lógica hay que mirar un poco más arriba de las capas puramente gramaticales pero antes de la salida del *[CLS]*." —Tenney et al. (2019)
+
+###  Construcción de datasets *full* y *delta*
+
+Buscamos disponer de dos representaciones complementarias:
+
+* **full** — conserva la identidad de las oraciones: `premise`, `hypothesis` y la **diferencia** $\delta = \mathbf{p} - \mathbf{h}$.
+* **delta** — descarta los vectores absolutos y retiene únicamente la transformación semántica entre premisa e hipótesis.
+
+Los datasets se guardaron en formato **Parquet** *wide* para posibilitar *I/O* columnar eficiente y trazabilidad offline:
+
+| Columna | Descripción |
+|---------|-------------|
+| `premise_0 … premise_767` | Embedding capa-L de la premisa |
+| `hypothesis_0 … hypothesis_767` | Embedding capa-L de la hipótesis |
+| `delta_0 … delta_767` | Diferencia componente a componente |
+| `premise_hash`, `pair_hash` | SHA-256 para análisis contrastivo |
+| `label` | 0=Entailment, 1=Contradiction, 2=Neutral |
+
+
+### Batería exploratoria con las tres clases (ECN)
+
+Como punto de partida, el primer experimento buscó detectar —**sin ninguna normalización especial**— si la geometría bruta de los embeddings ya separa las etiquetas *entailment*, *contradiction* y *neutral*.
+
+El pipeline siguió estos pasos:
+
+1. **PCA / ZCA-whitening** a 50 componentes para decorrelacionar y reducir ruido (Jolliffe, 2002).
+2. **Deflación ("slice")**: siguiendo a Ethayarajh (2019), que demuestra que remover los primeros $k$ componentes atenúa la frecuencia de temas irrelevantes; se testearon $k \in \{15, 20, 30\}$.
+3. **UMAP-2D** con $n\_neighbors = 15$ y métricas (*euclidean*, *manhattan* , *Mahalanobis* ).
+4. **K-Means** ($k = 3$) para verificar si las proyecciones forman agrupamientos coherentes con las etiquetas.
+
+Los mejores resultados para SNLI mostraron purity $\leq 0.38$ y NMI $\approx 0.005$, indicando ausencia de estructura lógica detectable en bruto.
+
+> "Los puntos se apiñan en un cono hiperdimensional: cualquier par aleatorio parece similar." —Raffel et al. (2021)
+
+Esta observación nos llevó a aceptar la existenica de  **anisotropía** severa tal como la describe Cai et al. (2021).
+
+
+### Correcciones de anisotropía (*all-but-the-top*)
+
+Dado que los resultados iniciales sugirieron problemas de anisotropía, se aplicó una serie de normalizaciones basadas en las ideas de *center-shifting* a nivel de cluster propuestas por Cai et al. (2021). 
+
+Siguiendo la propuesta original de Mu & Viswanath (2018) de centrar globalmente los embeddings, Cai et al. van un paso más allá: tras identificar clusters naturales mediante K-means, restan a cada vector la media de su propio cluster. De este modo, cada cluster queda centrado en el origen, eliminando el sesgo de posición que hacía que los cosenos inter-cluster fuesen sistemáticamente altos y revelando la isotropía local dentro de cada agrupación.
+
+Sin embargo, no se aplicó *center-shifting* directamente, ya que el experimento de Cai difiere del nuestro en un punto clave: mientras que Cai et al. realizan clustering libre con K-means para descubrir agrupaciones naturales en el espacio, nuestro enfoque debe restringir el número de clusters a k=3 (para SNLI) y k=2 (para clasificación binaria), dado que buscamos estructura semántico-lógica específica.
+
+Se emplearon los siguientes tipos de normalización:
+
+1. **all_but_mean** — Normalización global con centramiento conjunto:
+
+$$\tilde{v}_i = \frac{v_i - \mu_{global}}{||v_i - \mu_{global}||_2}$$
+
+donde $\mu_{global}$ es la media de todos los vectores concatenados (premise, hypothesis, delta).
+
+2. **per_type** — Normalización específica por tipo de vector:
+
+$$\tilde{v}_i^{(t)} = \frac{v_i^{(t)} - \mu_t}{||v_i^{(t)} - \mu_t||_2}$$
+
+donde $\mu_t$ es la media específica del tipo $t \in \{premise, hypothesis, delta\}$.
+
+3. **standard** — Estandarización Z-score por tipo:
+
+$$\tilde{v}_i^{(t)} = \frac{v_i^{(t)} - \mu_t}{\sigma_t}$$
+
+donde $\sigma_t$ es la desviación estándar por dimensión del tipo $t$.
+
+Cada variante repitió la rejilla experimental completa del § 2.
+
+Los cambios en purity/NMI fueron marginales. Sin embargo, el cociente $s_{inter}/s_{intra}$ —nuestro indicador de isotropía— mostró reducciones de apenas un orden de magnitud: insuficiente para exponer la estructura latente buscada.
+
+Los resultados iniciales con las tres clases (ECN) mostraron purity ≤ 0.38 y estructura lógica poco detectable. Esto confirmo la hipótesis de Bowman et al. (2015) sobre la heterogeneidad semántica de la clase Neutral. Siguiendo el enfoque de Chen y Gao (2022), quienes se concentraron en pares Entailment-Contradiction para tareas de probing lógico, se decidió evaluar si la señal lógica estaba enmascarada por la dispersión de la clase Neutral más que por la anisotropía del espacio.
+
+### Filtro de la etiqueta *Neutral* (experimentos EC)
+
+La literatura de NLI (Bowman et al., 2015) advierte que *Neutral* recoge casos heterogéneos e incluso contradictorios. Para verificar esta hipótesis, se generaron datasets **EC** (solo dos clases: *Entailment* y *Contradiction*) y se repitió el pipeline completo.
+
+**Resultado clave**: Purity $\approx 0.58$, NMI $\approx 0.018$ (en capa 11, vista delta, método cross-differences).
+
+La mejora sustancial confirma que la ambigüedad semántica de *Neutral* interfería sistemáticamente con la separación geométrica entre las clases lógicamente opuestas.
+
+---
+
+## 5. Análisis contrastivo basado en tripletas
+
+### 5.1 Motivación teórica
+
+Dado que la eliminación de *Neutral* mostró mejoras significativas, el siguiente paso consistió en explorar técnicas de contraste más sofisticadas. Mikolov et al. (2013) demostraron que las analogías vectoriales siguen patrones lineales. Inspirados en esa idea, definimos —para cada premisa que cuenta con al menos dos hipótesis etiquetadas distintamente— un **vector de contraste** que sustrae el contenido léxico común y realza la información específica de la etiqueta lógica.
+
+Para SNLI ($\approx 134k$ premisas con tripleta E-C-N) se implementaron tres variantes:
+
+| Variante | Fórmula | Intuición geométrica |
+|----------|---------|----------------------|
+| **arithmetic_mean** | media aritmética de los tres $\delta$ | Centro del triángulo E-C-N |
+| **geometric_median** | mediana geométrica | Centro robusto a *outliers* |
+| **cross_differences** | $\delta_E - \delta_C$ (y signo opuesto) | Direcciones opuestas $\approx$ negación lógica |
+
+### 5.2 Hallazgos empíricos
+
+**En configuración EC**: la mejor purity alcanza **0.578** (capa 10, arithmetic_mean) y **0.577-0.578** para cross_differences, con NMI $\approx 0.018$.
+
+**En configuración ECN**: los valores descienden a $\approx 0.34$.
+
+**Interpretación**: la dirección vectorial entre deltas de *Entailment* y *Contradiction* parece capturar efectivamente la noción de "verdad vs. falsedad" que subyace a la consecuencia lógica (Gamut, 1991).
+
+---
+
+## 6. Métrica de anisotropía
+
+Para cuantificar el grado de anisotropía, se adoptó la formulación de Cai et al. (2021):
+
+$$s_{inter} = \frac{1}{n} \sum_{i \neq j} \langle x_i, x_j \rangle, \quad s_{intra} = \frac{1}{n} \sum_i ||x_i||^2$$
+
+Cuanto menor $s_{inter}$, mayor isotropía. Las transformaciones `cross_differences` reducen $s_{inter}$ **de 0.038 a $9.5 \times 10^{-8}$** (capa 11) —tres órdenes de magnitud— sin perjudicar $s_{intra}$.
+
+Este resultado indica que los métodos contrastivos no solo mejoran la separabilidad sino que también corrigen la distribución anisotrópica del espacio vectorial.
+
+---
+
+## 7. *Probing* con árboles de decisión
+
+Para evaluar la separabilidad lineal y no lineal de la información lógica, se entrenaron **árboles de decisión** ($max\_depth = 4$) sobre las 50 componentes principales resultantes.
+
+| Vista | Capa | Accuracy (5-fold CV) |
+|-------|------|----------------------|
+| contrastive-EC | 9 | **0.681 ± 0.002** |
+| contrastive-EC | 10 | 0.679 ± 0.003 |
+| delta (none) | 11 | 0.602 ± 0.004 |
+| full (none) | 12 | 0.600 ± 0.003 |
+
+La ganancia de $\approx 8-10$ puntos porcentuales respecto al azar (0.5) sugiere que **existe información lógica explorable mediante clasificadores de baja complejidad**.
+
+En FOLIO, limitado a dos clases y sin estructura de tripletas, los mejores *accuracies* rondaron 0.60, corroborando la tendencia general.
 
 ## Descripción de la selección de características
 
@@ -702,15 +1119,31 @@ Para los clústeres, calculamos **purity** y **NMI** frente a las etiquetas; par
 
 ## Referencias bibliográficas citadas
 
-1. Chen, X., & Gao, T. (2022). *Probing Linguistic Information for Logical Inference in Pre-trained Language Models*. 
+Devlin, J., Chang, M.-W., Lee, K., & Toutanova, K. (2019). *BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding*. arXiv preprint arXiv:1810.04805.
 
-2. Coenen, A., Reif, E., Yuan, A., Kim, B., Pearce, A., Viégas, F., & Wattenberg, M. (2019). *Visualizing and Measuring the Geometry of BERT*. 
+Wang, A., Singh, A., Michael, J., Hill, F., Levy, O., & Bowman, S. R. (2018). *GLUE: A Multi-Task Benchmark and Analysis Platform for Natural Language Understanding*. arXiv preprint arXiv:1804.07411.
 
-3. Cai, X., Wang, J., Peng, N., & Wang, X. (2021). *Isotropy in the Contextual Embedding Space: Clusters and Manifolds*.
+Coenen, A., Kim, N., Pearce, A., & Goodwin, S. (2019). *Visualizing and Measuring the Geometry of BERT*. arXiv preprint arXiv:1906.02715.
+
+Chen, J., & Gao, Y. (2022). *Probing Linguistic Information for Logical Inference in Pre-trained Language Models*. arXiv preprint arXiv:2205.06176.
+
+
+Hewitt, J., & Manning, C. D. (2019). *A Structural Probe for Finding Syntax in Word Representations*. *Transactions of the Association for Computational Linguistics, 7*, 309‑324. [https://arxiv.org/abs/1903.06355](https://arxiv.org/abs/1903.06355).
+
+Cai, W., Zheng, Y., Popa, A., Žabokrtský, Z., & Guha, A. (2021). *Isotropy in the Contextual Embedding Space of Language Models*. arXiv preprint arXiv:2102.09531.
+
+Gamut, L. T. F. (1991). Logic, language, and meaning, volume 1: Introduction to logic. University of Chicago Press. [Traducción al español: Gamut, L. T. F. (2002). Introducción a la lógica. Editorial Universitaria de Buenos Aires.]
+
+Mikolov, T., Chen, K., Corrado, G., & Dean, J. (2013). Efficient estimation of word representations in vector space. Proceedings of the International Conference on Learning Representations (ICLR).
+
+
 
 ## Otras fuentes consultadas
 
-[Pendiente completar]
+Levy, O., & Goldberg, Y. (2014). Neural word embedding as implicit matrix factorization. Advances in Neural Information Processing Systems, 27, 2177-2185.
+
+Radford, A., Narasimhan, K., Salimans, T., & Sutskever, I. (2018). *Improving Language Understanding by Generative Pre-Training*. OpenAI Technical Report.
+
 
 # Anexos
 
