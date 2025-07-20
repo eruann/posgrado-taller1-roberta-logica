@@ -61,6 +61,8 @@ execute:
 ---
 
 
+\newpage
+
 # Introducción
 
 ## Contexto y motivación científica
@@ -69,7 +71,7 @@ Desde su introducción, la arquitectura Transformer ha superado ampliamente tant
 
 Este progreso motiva la pregunta de si, más allá de correlaciones superficiales, los Transformers **codifican reglas de inferencia que fundamentan la consecuencia lógica** (*logical entailment*). Verificar tal emergencia resulta metodológicamente más económico que imponerla mediante *fine‑tuning* y podría habilitar, a mediano plazo, la **aplicación directa de restricciones lógicas en sistemas generativos** sin penalizar su flexibilidad.
 
-Se seleccionó **RoBERTa‑base** porque hereda la arquitectura BERT optimizada para comprensión y elimina objetivos de entrenamiento superfluos, mejorando su rendimiento sin introducir ruido adicional; además, al trabajar sin *fine‑tuning* evitamos confundir la emergencia espontánea de inferencia lógica con artefactos de entrenamiento supervisado en NLI. Utilizar **RoBERTa sin ningún fine‑tuning** resulta necesario para aislar la variable “emergencia espontánea” y descartar que la eventual presencia de inferencia lógica sea un artefacto del entrenamiento supervisado para *Natural Language Inference* (NLI).
+Se seleccionó **RoBERTa‑base** porque hereda la arquitectura BERT optimizada para comprensión y elimina objetivos de entrenamiento superfluos, mejorando su rendimiento sin introducir ruido adicional; además, al trabajar sin *fine‑tuning* evitamos confundir la emergencia espontánea de inferencia lógica con artefactos de entrenamiento supervisado en NLI. Utilizar **RoBERTa sin ningún fine‑tuning** resulta necesario para aislar la variable "emergencia espontánea" y descartar que la eventual presencia de inferencia lógica sea un artefacto del entrenamiento supervisado para *Natural Language Inference* (NLI).
 
 ## Objetivos del trabajo y pregunta de investigación
 
@@ -109,7 +111,7 @@ Se proponen los siguientes papers para el desarrollo del trabajo:
 1. **Estructura geométrica de los Transformers.**
 
    - *Visualizing & Measuring the Geometry of BERT* (Coenen et al., 2019) demuestra, mediante UMAP y métricas de dispersión, que BERT segrega información semántica y sintáctica en subespacios lineales diferenciados.
-   - El hallazgo legitima la búsqueda de **otros subespacios especializados** –por ejemplo, un subespacio “lógico” responsable de la inferencia.
+   - El hallazgo legitima la búsqueda de **otros subespacios especializados** –por ejemplo, un subespacio "lógico" responsable de la inferencia.
 
 2. **Codificación de inferencia lógica mediante probing.**
 
@@ -118,7 +120,7 @@ Se proponen los siguientes papers para el desarrollo del trabajo:
 
 3. **Propiedades globales de la nube de embeddings.**
 
-   - *Isotropy in the Contextual Embedding Space* (Cai et al., 2021) revela que los embeddings contextualizados presentan **anisotropía** –concentración de varianza en pocas direcciones– y propone métricas y normalizaciones (ZCA, “all‑but‑the‑top”) para mitigarla.
+   - *Isotropy in the Contextual Embedding Space* (Cai et al., 2021) revela que los embeddings contextualizados presentan **anisotropía** –concentración de varianza en pocas direcciones– y propone métricas y normalizaciones (ZCA, "all‑but‑the‑top") para mitigarla.
    - Estas técnicas son adoptadas aquí como paso previo al análisis de inferencia, con la hipótesis de que un espacio más isotrópico favorece la detección de regularidades lógicas.
 
 Además, los fundamentos de **consecuencia lógica** y **semántica de modelos** se enmarcan en la exposición clásica de Gamut (1991), que define la relación ⊨ entre premisas y conclusión y sirve de referencia conceptual para interpretar los resultados.
@@ -145,13 +147,13 @@ A continuación se resumen los conceptos y herramientas fundamentales empleados 
 
 - **Probes**: clasificadores livianos —aquí, árboles de decisión poco profundos— que estiman cuánta información lógica es separable a partir de los embeddings.
 
-- **Anisotropía**: rasgo observado en el cual los embeddings contextualizados de modelos como BERT o RoBERTa tienden a agruparse en un “cono” muy estrecho del espacio vectorial, de modo que la mayoría de los vectores puntúan alto en similitud de coseno entre sí. Esta característica, resultado del entrenamiento de los Transformers, dificulta la identificación de ejes semánticos y lógicos diferenciados (Cai et al., 2021).
+- **Anisotropía**: rasgo observado en el cual los embeddings contextualizados de modelos como BERT o RoBERTa tienden a agruparse en un "cono" muy estrecho del espacio vectorial, de modo que la mayoría de los vectores puntúan alto en similitud de coseno entre sí. Esta característica, resultado del entrenamiento de los Transformers, dificulta la identificación de ejes semánticos y lógicos diferenciados (Cai et al., 2021).
 
 - **Isotropía**: estado en el cual los embeddings se distribuyen de manera más uniforme en todas las direcciones del espacio vectorial, reduciendo sesgos causados por componentes dominantes y facilitando que técnicas geométricas como clustering y probes separen con mayor claridad relaciones lógicas y semánticas.
 
-- **Consecuencia lógica (entailment)**: para Gamut (1991), una proposición ψ es consecuencia lógica de un conjunto de premisas φ cuando “la verdad de las primeras implica la de la última”: en toda situación en que las premisas fueran verdaderas, también lo sería la conclusión. En SNLI, la etiqueta *entailment* se asigna cuando un anotador puede redactar una hipótesis que sea “definitivamente una descripción verdadera” de la escena dada la premisa. En FOLIO este caso se anota como *True*, pues la conclusión se sigue de los axiomas de primer orden que describen ese “mundo”.
+- **Consecuencia lógica (entailment)**: para Gamut (1991), una proposición ψ es consecuencia lógica de un conjunto de premisas φ cuando "la verdad de las primeras implica la de la última": en toda situación en que las premisas fueran verdaderas, también lo sería la conclusión. En SNLI, la etiqueta *entailment* se asigna cuando un anotador puede redactar una hipótesis que sea "definitivamente una descripción verdadera" de la escena dada la premisa. En FOLIO este caso se anota como *True*, pues la conclusión se sigue de los axiomas de primer orden que describen ese "mundo".
 
-- **Contradicción**: según Gamut (1991), una contradicción es una fórmula que es falsa bajo todas las valuaciones posibles. En SNLI la etiqueta *contradiction* se usa para hipótesis “definitivamente falsas” respecto de la premisa; en FOLIO el análogo es *False*.
+- **Contradicción**: según Gamut (1991), una contradicción es una fórmula que es falsa bajo todas las valuaciones posibles. En SNLI la etiqueta *contradiction* se usa para hipótesis "definitivamente falsas" respecto de la premisa; en FOLIO el análogo es *False*.
 
 # Metodología
 
@@ -162,7 +164,7 @@ Para averiguar si los embeddings de un modelo **RoBERTa-base** sin *fine-tuning*
 *
   - **SNLI** (Stanford Natural Language Inference): \~570 000 pares P–H con etiquetas *entailment*, *neutral* y *contradiction*, creados a partir de subtítulos de imágenes.
   - **FOLIO** (First-Order Logic Inference Over stories): 1 435 problemas con fórmulas de LPO y etiquetas *True*, *False* y *Unknown*, diseñados para evaluar inferencia de primer orden.
-- - **Neutralidad y desconocimiento**: en SNLI la etiqueta *neutral* indica que la hipótesis “podría ser verdadera” dado el contexto pero no se garantiza ni descarta. En FOLIO se emplea *Unknown* para conclusiones cuya verdad no puede determinarse solo a partir de las premisas formales.
+- - **Neutralidad y desconocimiento**: en SNLI la etiqueta *neutral* indica que la hipótesis "podría ser verdadera" dado el contexto pero no se garantiza ni descarta. En FOLIO se emplea *Unknown* para conclusiones cuya verdad no puede determinarse solo a partir de las premisas formales.
 
 ## Análisis exploratorio de datos
 
@@ -220,13 +222,10 @@ def safe_display(df, indexOption=False):
     """
     Renderiza DataFrames como tablas LaTeX simples con text wrapping.
     """
-    
     def escape_latex(text):
-        """Escapa caracteres especiales para LaTeX"""
         if pd.isna(text) or text is None:
             return ""
         text = str(text)
-        # Escapar caracteres LaTeX
         replacements = [
             ('\\', '\\textbackslash{}'),
             ('&', '\\&'),
@@ -242,43 +241,41 @@ def safe_display(df, indexOption=False):
         for old, new in replacements:
             text = text.replace(old, new)
         return text
-    
-    # Preparar datos
+
     df_clean = df.copy()
     if indexOption:
         df_clean = df_clean.reset_index()
-    
-    # Aplicar escape a todas las columnas
     for col in df_clean.columns:
         df_clean[col] = df_clean[col].astype(str).apply(escape_latex)
-    
     num_cols = len(df_clean.columns)
-    
-    # Generar tabla LaTeX simple
     latex_lines = []
     latex_lines.append("\\begin{table}[ht]")
     latex_lines.append("\\centering")
-    
-    # Usar tabular simple con columnas p{} para wrapping
-    col_spec = "p{0.25\\textwidth} " * num_cols
-    latex_lines.append(f"\\begin{{tabular}}{{{col_spec}}}")
-    latex_lines.append("\\hline")
-    
-    # Headers
-    headers = [f"\\textbf{{{escape_latex(col)}}}" for col in df_clean.columns]
-    latex_lines.append(" & ".join(headers) + " \\\\")
-    latex_lines.append("\\hline")
-    
-    # Datos
-    for _, row in df_clean.iterrows():
-        row_data = [str(row[col]) for col in df_clean.columns]
-        latex_lines.append(" & ".join(row_data) + " \\\\")
-    
-    latex_lines.append("\\hline")
-    latex_lines.append("\\end{tabular}")
+    # Si la tabla es la de cross (5 columnas), usar tabularx y L
+    if num_cols == 5:
+        latex_lines.append("\\begin{tabularx}{\\textwidth}{L L L L L}")
+        latex_lines.append("\\toprule")
+        headers = [f"\\textbf{{{escape_latex(col)}}}" for col in df_clean.columns]
+        latex_lines.append(" & ".join(headers) + " \\\\")
+        latex_lines.append("\\midrule")
+        for _, row in df_clean.iterrows():
+            row_data = [str(row[col]) for col in df_clean.columns]
+            latex_lines.append(" & ".join(row_data) + " \\\\")
+        latex_lines.append("\\bottomrule")
+        latex_lines.append("\\end{tabularx}")
+    else:
+        col_spec = "p{0.25\\textwidth} " * num_cols
+        latex_lines.append(f"\\begin{{tabular}}{{{col_spec}}}")
+        latex_lines.append("\\hline")
+        headers = [f"\\textbf{{{escape_latex(col)}}}" for col in df_clean.columns]
+        latex_lines.append(" & ".join(headers) + " \\\\")
+        latex_lines.append("\\hline")
+        for _, row in df_clean.iterrows():
+            row_data = [str(row[col]) for col in df_clean.columns]
+            latex_lines.append(" & ".join(row_data) + " \\\\")
+        latex_lines.append("\\hline")
+        latex_lines.append("\\end{tabular}")
     latex_lines.append("\\end{table}")
-    
-    # Imprimir como bloque LaTeX
     print("```{=latex}")
     print("\n".join(latex_lines))
     print("```")
@@ -304,7 +301,6 @@ summary = pd.DataFrame({
 estructura_datasets = summary.T
 estructura_datasets.columns = estructura_datasets.iloc[0]
 estructura_datasets = estructura_datasets[1:]
-estructura_datasets
 safe_display(estructura_datasets, indexOption=True)
 ```
 
@@ -574,15 +570,15 @@ def show_contamination_examples(df, overlap_texts, dataset_name):
 
     # Celda para "Aparece como Premisa"
     premise_cell = (
-        f"<b>Premise:</b> \"{p_row[premise_col]}\"<br>"
-        f"<b>{hypothesis_col.title()}:</b> \"{p_row[hypothesis_col]}\"<br>"
-        f"<b>Label:</b> {p_row[label_col]}"
+        f"Premise: {p_row[premise_col]}\n\n"
+        f"{hypothesis_col.title()}: {p_row[hypothesis_col]}\n\n"
+        f"Label: {p_row[label_col]}"
     )
     # Celda para "Aparece como Hipótesis"
     hypothesis_cell = (
-        f"<b>Premise:</b> \"{h_row[premise_col]}\"<br>"
-        f"<b>{hypothesis_col.title()}:</b> \"{h_row[hypothesis_col]}\"<br>"
-        f"<b>Label:</b> {h_row[label_col]}"
+        f"Premise: {h_row[premise_col]}\n\n"
+        f"{hypothesis_col.title()}: {h_row[hypothesis_col]}\n\n"
+        f"Label: {h_row[label_col]}"
     )
 
     # Creamos un DataFrame que será nuestra tabla
@@ -591,10 +587,8 @@ def show_contamination_examples(df, overlap_texts, dataset_name):
         f'Aparece como {hypothesis_col.title()}': [hypothesis_cell]
     })
     
-    # Convertimos el DataFrame a HTML, asegurándonos de que las etiquetas <br> no se escapen
-    html = table_df.to_html(index=False, escape=False, justify='left')
-    # Usamos la función de display para renderizar el HTML en Quarto
-    ipython_display(HTML(html))
+    # Usar safe_display en lugar de to_html
+    safe_display(table_df, indexOption=False)
 
 print("<br><br>")
 # Mostrar ejemplos de overlap
@@ -783,14 +777,14 @@ fig, axes = plt.subplots(1, 2, figsize=(10, 4))
 snli_dist = snli_triplets['label_distribution']
 axes[0].bar(snli_dist.index, snli_dist.values)
 axes[0].set_title('Distribución de etiquetas por premisa - SNLI')
-axes[0].set_xlabel('Número de etiquetas únicas')
+axes[0].set_xlabel('Número de etiquetas por premisa')
 axes[0].set_ylabel('Número de premisas')
 
 # FOLIO
 folio_dist = folio_triplets['label_distribution']
 axes[1].bar(folio_dist.index, folio_dist.values)
 axes[1].set_title('Distribución de etiquetas por premisa - FOLIO')
-axes[1].set_xlabel('Número de etiquetas únicas')
+axes[1].set_xlabel('Número de etiquetas por premisa')
 axes[1].set_ylabel('Número de premisas')
 
 plt.tight_layout()

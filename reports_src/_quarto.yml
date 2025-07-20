@@ -4,42 +4,9 @@ project:
 
 lang: es
 
-resources:
-  - .quartoAssets/paged.polyfill.js
-  - .quartoAssets/preview.css
-  - .quartoAssets/print.css
-  - .quartoAssets/styles.css
-  - .quartoAssets/counter-off.css
+# Solo LuaLaTeX - sin recursos HTML
 
 format:
-  html:
-    include-in-header:
-      - text: |
-          <!-- PagedJS for live preview -->
-          <script src=".quartoAssets/paged.polyfill.js"></script>
-          <link rel="stylesheet" href=".quartoAssets/preview.css" media="screen">
-    css:
-      - .quartoAssets/styles.css
-      - .quartoAssets/table-styles.css
-    fig-format: png
-    fig-dpi: 300
-
-  pdf-paged:
-    pagedjs: true
-    number-sections: true
-    css:
-      - .quartoAssets/styles.css
-      - .quartoAssets/table-styles.css
-    margin-left: 1in
-    margin-right: 1in
-    margin-top: 1in
-    margin-bottom: 1in
-    documentclass: scrartcl
-    papersize: A4
-    classoption: [a4paper]
-    fig-format: png
-    fig-dpi: 300
-
   pdf:                
     pdf-engine: lualatex
     number-sections: true
@@ -74,6 +41,22 @@ format:
           \setcounter{tocdepth}{2}
           % Columna que hace wrap automático
           \newcolumntype{L}{>{\raggedright\arraybackslash}X}
+          % Configuración para carátula centrada
+          \usepackage{titling}
+          \setlength{\droptitle}{-2cm}
+          \pretitle{\begin{center}\LARGE}
+          \posttitle{\end{center}}
+          \preauthor{\begin{center}\large}
+          \postauthor{\end{center}}
+          \predate{\begin{center}\large}
+          \postdate{\end{center}}
+          % Configuración para TOC en página separada
+          \usepackage{tocloft}
+          \renewcommand{\cfttoctitlefont}{\hfill\Large\bfseries}
+          \renewcommand{\cftaftertoctitle}{\hfill}
+          % Forzar TOC en página separada
+          \usepackage{etoolbox}
+          \pretocmd{\tableofcontents}{\clearpage}{}{}
           \pagestyle{fancy}
           \fancyhf{}
           \rfoot{\thepage}
