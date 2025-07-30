@@ -1,5 +1,7 @@
 # Carpetas a ignorar
 archivados/
+archived/
+memory-bank/
 data/
 mlruns/
 
