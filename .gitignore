@@ -12,3 +12,4 @@ __pycache__/
 .DS_Store
 .env
 .cursor/rules/datascientist.mdc
+.cursor/rules/memory-bank.mdc

@@ -26,12 +26,13 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Individual anisotropy analysis for normalized embeddings")
     parser.add_argument("--input_path", required=True, type=Path, help="Path to normalized embeddings file")
     parser.add_argument("--output_dir", required=True, type=Path, help="Output directory for results")
-    parser.add_argument("--dataset", required=True, help="Dataset name (e.g., snli, folio)")
+    parser.add_argument("--dataset_name", required=True, help="Dataset name (e.g., snli, folio)")
     parser.add_argument("--layer_num", required=True, type=int, help="Layer number")
     parser.add_argument("--experiment_name", default="anisotropy_analysis", help="MLflow experiment name")
     parser.add_argument("--embedding_type", default="full", choices=["full", "delta"], 
                        help="Type of embedding (full or delta)")
     parser.add_argument("--normalization_type", default="", help="Normalization method used")
+    parser.add_argument("--config", default="", help="Configuration (EC/ECN)")
     parser.add_argument("--provenance", default="{}", help="Provenance JSON string")
     parser.add_argument("--run_id", default="", help="MLflow run ID")
     return parser.parse_args()
@@ -76,7 +77,10 @@ def calculate_anisotropy(file_path: Path, emb_type: str, calculations: list) -> 
 
 def main():
     """Main execution function."""
+    print("🔍 Starting anisotropy analysis...")
     args = parse_args()
+    
+    print(f"🔍 Args: {args}")
     
     # Setup output directory
     args.output_dir.mkdir(parents=True, exist_ok=True)
@@ -85,15 +89,18 @@ def main():
     if hasattr(args, 'experiment_name') and args.experiment_name:
         mlflow.set_experiment(args.experiment_name)
     
-    # Create run with consistent naming pattern
-    run_name = f"{args.run_id}_layer_{args.layer_num}_70_anisotropy" if hasattr(args, 'run_id') and args.run_id else f"{args.dataset}_layer_{args.layer_num}_70_anisotropy"
+    # Create run name with config first (if available)
+    if hasattr(args, 'config') and args.config:
+        run_name = f"{args.run_id}_{args.config}_layer_{args.layer_num}_70_anisotropy_{args.embedding_type}" if hasattr(args, 'run_id') and args.run_id else f"{args.dataset_name}_{args.config}_layer_{args.layer_num}_70_anisotropy_{args.embedding_type}"
+    else:
+        run_name = f"{args.run_id}_layer_{args.layer_num}_70_anisotropy_{args.embedding_type}" if hasattr(args, 'run_id') and args.run_id else f"{args.dataset_name}_layer_{args.layer_num}_70_anisotropy_{args.embedding_type}"
     
     with mlflow.start_run(run_name=run_name) as run:
         print(f"--- Starting Anisotropy Analysis ---")
         
         print(f"Input: {args.input_path}")
         print(f"Output: {args.output_dir}")
-        print(f"Dataset: {args.dataset}")
+        print(f"Dataset: {args.dataset_name}")
         print(f"Layer: {args.layer_num}")
         print(f"Embedding Type: {args.embedding_type}")
         
@@ -117,7 +124,7 @@ def main():
                 mlflow.log_metrics(metrics)
                 
                 # Save results to file
-                results_file = args.output_dir / f"anisotropy_{args.dataset}_layer{args.layer_num}.json"
+                results_file = args.output_dir / f"anisotropy_{args.dataset_name}_layer{args.layer_num}.json"
                 with open(results_file, 'w') as f:
                     json.dump(metrics, f, indent=2)
                 

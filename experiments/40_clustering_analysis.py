@@ -29,7 +29,7 @@ def parse_args():
     parser.add_argument("--k", type=int, required=True, help="Number of clusters")
     parser.add_argument("--max_iter", type=int, default=300)
     parser.add_argument("--random_state", type=int, default=42)
-    parser.add_argument("--dataset", default="snli", help="Dataset name")
+    parser.add_argument("--dataset_name", default="snli", help="Dataset name")
     parser.add_argument("--experiment_name", default="kmeans-gpu")
     parser.add_argument("--reduction_type", choices=["pca", "umap"], required=True)
     parser.add_argument("--layer_num", type=int, default=12)
@@ -40,6 +40,7 @@ def parse_args():
     parser.add_argument("--original_pca_n_components_before_slice", type=int, required=False)
     parser.add_argument("--skipped_n_components", type=int, required=False)
     parser.add_argument("--normalization_type", default="", help="Normalization method used")
+    parser.add_argument("--config", default="", help="Configuration (EC/ECN)")
     parser.add_argument("--provenance", type=str, help="JSON string with pipeline parameters")
     parser.add_argument("--run_id", default="", help="MLflow run ID")
     return parser.parse_args()
@@ -305,26 +306,32 @@ def main():
     if hasattr(args, 'experiment_name') and args.experiment_name:
         mlflow.set_experiment(args.experiment_name)
     
-    # Create run with consistent naming pattern
-    run_name = f"{args.run_id}_layer_{args.layer_num}_40_clustering_k{args.k}" if hasattr(args, 'run_id') and args.run_id else f"{args.dataset}_layer_{args.layer_num}_40_clustering_k{args.k}"
+    # Create run name with config first (if available)
+    if hasattr(args, 'config') and args.config:
+        run_name = f"{args.run_id}_{args.config}_layer_{args.layer_num}_40_clustering_k{args.k}" if hasattr(args, 'run_id') and args.run_id else f"{args.dataset_name}_{args.config}_layer_{args.layer_num}_40_clustering_k{args.k}"
+    else:
+        run_name = f"{args.run_id}_layer_{args.layer_num}_40_clustering_k{args.k}" if hasattr(args, 'run_id') and args.run_id else f"{args.dataset_name}_layer_{args.layer_num}_40_clustering_k{args.k}"
     
     with mlflow.start_run(run_name=run_name) as run:
         start_time = time.time()
         
-        # Log all parameters automatically
-        mlflow.log_params(vars(args))
-        
-        # Log provenance if provided
+        # Log provenance if provided (before args to avoid conflicts)
         if hasattr(args, 'provenance') and args.provenance:
             try:
                 provenance = json.loads(args.provenance)
-                mlflow.log_params(provenance)
+                # Filter out any parameters that might conflict with args
+                filtered_provenance = {k: v for k, v in provenance.items() if not hasattr(args, k) or getattr(args, k) == ''}
+                if filtered_provenance:
+                    mlflow.log_params(filtered_provenance)
             except json.JSONDecodeError:
                 print("Warning: Could not decode provenance JSON")
         
+        # Log all parameters automatically
+        mlflow.log_params(vars(args))
+        
         # Set tags
         mlflow.set_tag("experiment_name", args.experiment_name)
-        mlflow.set_tag("dataset", args.dataset)
+        mlflow.set_tag("dataset", args.dataset_name)
         mlflow.set_tag("layer_num", args.layer_num)
         mlflow.set_tag("reduction_type", args.reduction_type)
         

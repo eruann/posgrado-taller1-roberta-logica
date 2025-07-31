@@ -15,7 +15,8 @@ def get_classification_metrics(y_true, y_pred) -> dict:
     # Determine if binary or multiclass
     n_classes = len(set(y_true) | set(y_pred))
     if n_classes == 2:
-        average = 'binary'
+        # For binary classification, use 'weighted' to avoid pos_label issues
+        average = 'weighted'
     else:
         average = 'weighted'  # Use weighted average for multiclass
     

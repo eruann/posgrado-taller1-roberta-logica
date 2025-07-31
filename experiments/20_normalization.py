@@ -30,8 +30,10 @@ def parse_args():
                        help="Normalization type")
     parser.add_argument("--experiment_name", required=True, help="MLflow experiment name")
     parser.add_argument("--layer_num", required=True, type=int, help="Layer number")
+    parser.add_argument("--dataset_name", default="", help="Dataset name")
     parser.add_argument("--provenance", default="{}", help="Provenance JSON string")
     parser.add_argument("--run_id", default="", help="MLflow run ID")
+    parser.add_argument("--config", default="", help="Configuration (EC/ECN)")
     return parser.parse_args()
 
 def aggressive_cleanup():
@@ -407,8 +409,11 @@ def main():
     if hasattr(args, 'experiment_name') and args.experiment_name:
         mlflow.set_experiment(args.experiment_name)
     
-    # Create run with consistent naming pattern
-    run_name = f"{args.run_id}_layer_{args.layer_num}_20_normalization_{args.normalization_type}" if hasattr(args, 'run_id') and args.run_id else f"{args.dataset}_layer_{args.layer_num}_20_normalization_{args.normalization_type}"
+    # Create run name with config first (if available)
+    if hasattr(args, 'config') and args.config:
+        run_name = f"{args.run_id}_{args.config}_layer_{args.layer_num}_20_normalization_{args.normalization_type}" if hasattr(args, 'run_id') and args.run_id else f"{args.dataset_name}_{args.config}_layer_{args.layer_num}_20_normalization_{args.normalization_type}"
+    else:
+        run_name = f"{args.run_id}_layer_{args.layer_num}_20_normalization_{args.normalization_type}" if hasattr(args, 'run_id') and args.run_id else f"{args.dataset_name}_layer_{args.layer_num}_20_normalization_{args.normalization_type}"
     
     with mlflow.start_run(run_name=run_name) as run:
         start_time = time.time()

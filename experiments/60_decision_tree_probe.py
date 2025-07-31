@@ -36,6 +36,7 @@ def parse_args():
     parser.add_argument("--min_samples_split", type=int, default=50, help="Min samples to split a node.")
     parser.add_argument("--scale_features", action='store_true', help="Apply StandardScaler to features before training.")
     parser.add_argument("--normalization_type", default="", help="Normalization method used")
+    parser.add_argument("--config", default="", help="Configuration (EC/ECN)")
     parser.add_argument("--provenance", type=str, default="{}", help="JSON string with provenance info from previous steps.")
     parser.add_argument("--run_id", type=str, default=None, help="MLflow run ID")
     return parser.parse_args()
@@ -50,8 +51,11 @@ def main():
     if hasattr(args, 'experiment_name') and args.experiment_name:
         mlflow.set_experiment(args.experiment_name)
     
-    # Create run with consistent naming pattern
-    run_name = f"{args.run_id}_layer_{args.layer_num}_60_probing" if hasattr(args, 'run_id') and args.run_id else f"{args.dataset_name}_layer_{args.layer_num}_60_probing"
+    # Create run name with config first (if available)
+    if hasattr(args, 'config') and args.config:
+        run_name = f"{args.run_id}_{args.config}_layer_{args.layer_num}_60_probing_d{args.max_depth}" if hasattr(args, 'run_id') and args.run_id else f"{args.dataset_name}_{args.config}_layer_{args.layer_num}_60_probing_d{args.max_depth}"
+    else:
+        run_name = f"{args.run_id}_layer_{args.layer_num}_60_probing_d{args.max_depth}" if hasattr(args, 'run_id') and args.run_id else f"{args.dataset_name}_layer_{args.layer_num}_60_probing_d{args.max_depth}"
     
     with mlflow.start_run(run_name=run_name) as run:
         print(f"--- Starting MLflow Run: {run.info.run_name} ---")

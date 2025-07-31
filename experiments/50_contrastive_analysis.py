@@ -98,7 +98,9 @@ def parse_args():
         "--plot_sample_size", type=int, default=50000,
         help="Number of points to sample for UMAP visualization. Set to 0 for no sampling."
     )
+    p.add_argument("--dataset_name", default="", help="Dataset name")
     p.add_argument("--normalization_type", default="", help="Normalization method used")
+    p.add_argument("--config", default="", help="Configuration (EC/ECN)")
     p.add_argument("--provenance", default="{}", help="Provenance JSON string")
     p.add_argument("--run_id", default="", help="MLflow run ID")
     return p.parse_args()
@@ -452,19 +454,25 @@ def main():
     if hasattr(args, 'experiment_name') and args.experiment_name:
         mlflow.set_experiment(args.experiment_name)
     
-    # Create run with consistent naming pattern
-    run_name = f"{args.run_id}_50_contrastive" if hasattr(args, 'run_id') and args.run_id else f"{args.dataset}_50_contrastive"
+    # Create run name with config first (if available)
+    if hasattr(args, 'config') and args.config:
+        run_name = f"{args.run_id}_{args.config}_layer_{args.layers[0]}_50_contrastive_{args.normalization_type}" if hasattr(args, 'run_id') and args.run_id else f"{args.dataset_name}_{args.config}_layer_{args.layers[0]}_50_contrastive_{args.normalization_type}"
+    else:
+        run_name = f"{args.run_id}_layer_{args.layers[0]}_50_contrastive_{args.normalization_type}" if hasattr(args, 'run_id') and args.run_id else f"{args.dataset_name}_layer_{args.layers[0]}_50_contrastive_{args.normalization_type}"
     
     with mlflow.start_run(run_name=run_name) as run:
-        mlflow.log_params(vars(args))
-        
-        # Log provenance if provided
+        # Log provenance if provided (before args to avoid conflicts)
         if hasattr(args, 'provenance') and args.provenance:
             try:
                 provenance = json.loads(args.provenance)
-                mlflow.log_params(provenance)
+                # Filter out any parameters that might conflict with args
+                filtered_provenance = {k: v for k, v in provenance.items() if not hasattr(args, k) or getattr(args, k) == ''}
+                if filtered_provenance:
+                    mlflow.log_params(filtered_provenance)
             except json.JSONDecodeError:
                 print("Warning: Could not decode provenance JSON")
+        
+        mlflow.log_params(vars(args))
 
         summary_data = []
         for layer in args.layers:

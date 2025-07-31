@@ -1,14 +1,37 @@
+# Core data science libraries
 pandas==2.2.2
 numpy==1.26.4
 scipy==1.13.1
-scikit-learn==1.4.2 # Version compatible with RAPIDS 25.04 (cuml)
-statsmodels==0.14.2
-mlflow==2.12.1
+scikit-learn==1.4.2
+
+# Machine learning and model libraries
 torch==2.3.1
 transformers==4.40.2
 datasets==2.18.0
-tqdm==4.66.4
+
+# GPU acceleration (RAPIDS)
+cudf
+cupy
+cuml
+
+# Visualization
 matplotlib==3.8.4
 seaborn==0.13.2
+
+# Dimensionality reduction
 umap-learn==0.5.6
-pyarrow==16.1.0 
+
+# Data formats
+pyarrow==16.1.0
+
+# Experiment tracking
+mlflow==2.12.1
+
+# Progress bars and utilities
+tqdm==4.66.4
+
+# Statistical analysis
+statsmodels==0.14.2
+
+# Graph visualization (for decision trees)
+graphviz 
