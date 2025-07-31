@@ -37,7 +37,9 @@ def parse_args():
     parser.add_argument("--layer_num", type=int, required=True)
     parser.add_argument("--input_n_components", type=int, required=True)
     parser.add_argument("--skipped_n_components", type=int, default=0)
+    parser.add_argument("--normalization_type", default="", help="Normalization method used")
     parser.add_argument("--provenance", default="{}", help="Provenance JSON string")
+    parser.add_argument("--run_id", default="", help="MLflow run ID")
     return parser.parse_args()
 
 def aggressive_cleanup():
@@ -98,9 +100,10 @@ def validate_input_data(df):
     """Validate and clean input data"""
     print(f"Input data shape: {df.shape}")
     
-    # Identify feature columns
-    feature_cols = [col for col in df.columns if col != 'label']
-    print(f"Feature columns: {len(feature_cols)}")
+    # Identify feature columns (exclude label and ID columns)
+    exclude_cols = ['label', 'premise_id', 'hypothesis_id']
+    feature_cols = [col for col in df.columns if col not in exclude_cols]
+    print(f"Feature columns: {len(feature_cols)} (excluded: {exclude_cols})")
     
     if len(feature_cols) == 0:
         raise ValueError("No feature columns found (expected columns other than 'label')")
@@ -263,34 +266,26 @@ def process_umap_gpu(input_path: str, output_path: str, n_neighbors: int, min_di
 def main():
     args = parse_args()
     
-    # Set up MLflow
-    mlflow.set_experiment(args.experiment_name)
+    # Handle MLflow run creation - Flat structure
+    if hasattr(args, 'experiment_name') and args.experiment_name:
+        mlflow.set_experiment(args.experiment_name)
     
-    # Create descriptive run name
-    run_name = f"{args.dataset}_{args.n_neighbors}neighbors_{args.metric}_layer{args.layer_num}"
+    # Create run with consistent naming pattern
+    run_name = f"{args.run_id}_layer_{args.layer_num}_32_umap" if hasattr(args, 'run_id') and args.run_id else f"{args.dataset}_layer_{args.layer_num}_32_umap"
     
-    with mlflow.start_run(run_name=run_name):
+    with mlflow.start_run(run_name=run_name) as run:
         start_time = time.time()
         
-        # Log parameters
-        mlflow.log_param("pca_path", str(args.pca_path))
-        mlflow.log_param("out_path", str(args.out_path))
-        mlflow.log_param("n_neighbors", args.n_neighbors)
-        mlflow.log_param("min_dist", args.min_dist)
-        mlflow.log_param("metric", args.metric)
-        mlflow.log_param("n_components", args.n_components)
-        mlflow.log_param("dataset", args.dataset)
-        mlflow.log_param("reduction_type", args.reduction_type)
-        mlflow.log_param("layer_num", args.layer_num)
-        mlflow.log_param("input_n_components", args.input_n_components)
-        mlflow.log_param("skipped_n_components", args.skipped_n_components)
+        # Log all parameters automatically
+        mlflow.log_params(vars(args))
         
-        # Log provenance
-        try:
-            provenance = json.loads(args.provenance)
-            mlflow.log_params(provenance)
-        except json.JSONDecodeError:
-            print("Warning: Could not decode provenance JSON")
+        # Log provenance if provided
+        if hasattr(args, 'provenance') and args.provenance:
+            try:
+                provenance = json.loads(args.provenance)
+                mlflow.log_params(provenance)
+            except json.JSONDecodeError:
+                print("Warning: Could not decode provenance JSON")
         
         # Set tags
         mlflow.set_tag("experiment_name", args.experiment_name)

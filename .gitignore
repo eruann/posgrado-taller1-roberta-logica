@@ -4,6 +4,7 @@ archived/
 memory-bank/
 data/
 mlruns/
+output**/
 
 # También es buena práctica ignorar archivos comunes
 __pycache__/

@@ -49,6 +49,9 @@ if [ $# -eq 0 ]; then
     echo "  $0 snli --layers 10 11 --pca_components 25 50"
     echo "  $0 snli --umap_neighbors 15 100 --slice_n_values 0 3"
     echo "  $0 snli --umap_metrics_pca euclidean manhattan --kmeans_k_values 2 3"
+    echo "  $0 snli --normalization_methods all_but_mean"
+    echo "  $0 snli --normalization_methods none all_but_mean --skip_embeddings"
+    echo "  $0 snli  # Automatically skips existing normalizations"
     echo ""
     echo "Parámetros disponibles:"
     echo "  --layers <num1> <num2> ...     Capas a procesar (default: 9 10 11 12)"
@@ -61,6 +64,7 @@ if [ $# -eq 0 ]; then
     echo "  --kmeans_k_values <num1> <num2> Valores k para K-means (default: 2 3)"
     echo "  --reduction_types <t1> <t2>    Tipos de reducción (default: pca zca)"
     echo "  --probe_max_depth <num>        Profundidad máxima para probes (default: 4)"
+    echo "  --normalization_methods <m1> <m2> Métodos de normalización específicos (auto-skip si existen)"
     echo "  --skip_embeddings              Saltar extracción de embeddings"
     echo "  --skip_normalization           Saltar normalización"
     echo "  --skip_anisotropy              Saltar medición de anisotropía"
@@ -90,7 +94,7 @@ fi
 print_info "Ejecutando pipeline principal..."
 print_info "Parámetros adicionales: $@"
 
-python scripts/pipelines/10_run_pipeline.py \
+python3 scripts/pipelines/10_run_pipeline.py \
     --dataset "$DATASET" \
     --output_dir "$OUTPUT_DIR" \
     --experiment_name "unified_pipeline_${DATASET}" \
@@ -106,7 +110,8 @@ if [ $? -eq 0 ]; then
     
     echo ""
     print_info "Configuraciones ejecutadas:"
-    echo "  • Normalizaciones: none, all_but_mean, per_type, standard, cross_differences, arithmetic_mean, geometric_median"
+    echo "  • Normalizaciones: ${NORMALIZATION_METHODS:-none, all_but_mean, per_type, standard, cross_differences, arithmetic_mean, geometric_median}"
+    echo "  • Comportamiento: Auto-skip de normalizaciones existentes por capa"
     echo "  • Configuraciones: EC (Entailment-Contradiction), ECN (Entailment-Contradiction-Neutral)"
     echo "  • Capas: ${LAYERS:-9 10 11 12}"
     echo "  • Componentes PCA: ${PCA_COMPONENTS:-1 5 50}"

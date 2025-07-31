@@ -22,6 +22,7 @@ This script implements the following process:
 """
 
 import argparse
+import json
 import sys
 from pathlib import Path
 from datetime import datetime
@@ -97,6 +98,9 @@ def parse_args():
         "--plot_sample_size", type=int, default=50000,
         help="Number of points to sample for UMAP visualization. Set to 0 for no sampling."
     )
+    p.add_argument("--normalization_type", default="", help="Normalization method used")
+    p.add_argument("--provenance", default="{}", help="Provenance JSON string")
+    p.add_argument("--run_id", default="", help="MLflow run ID")
     return p.parse_args()
 
 def calculate_purity(y_true, y_pred) -> float:
@@ -411,28 +415,26 @@ def analyze_layer(
     
     layer_results = []
     
-    with mlflow.start_run(run_name=f"layer_{layer_num}", nested=True):
-        mlflow.log_param("layer", layer_num)
+    # Flat structure - no nested runs
+    mlflow.log_param("layer", layer_num)
+    
+    for mode in ["ECN", "EC"]:
+        mlflow.log_param("mode", mode)
         
-        for mode in ["ECN", "EC"]:
-            with mlflow.start_run(run_name=f"mode_{mode}", nested=True):
-                mlflow.log_param("mode", mode)
-                
-                for method in methods:
-                    with mlflow.start_run(run_name=f"method_{method}", nested=True):
-                        mlflow.log_param("method", method)
-                        
-                        results = run_single_analysis(
-                            mode, method, gdf, output_dir, layer_num, plot_sample_size
-                        )
+        for method in methods:
+            mlflow.log_param("method", method)
             
-                        if results:
-                            layer_results.append({
-                                "layer": layer_num,
-                                "mode": mode,
-                                "method": method,
-                                **results,
-                            })
+            results = run_single_analysis(
+                mode, method, gdf, output_dir, layer_num, plot_sample_size
+            )
+    
+            if results:
+                layer_results.append({
+                    "layer": layer_num,
+                    "mode": mode,
+                    "method": method,
+                    **results,
+                })
                             
     return layer_results
 
@@ -446,9 +448,23 @@ def main():
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     
-    mlflow.set_experiment(args.experiment_name)
-    with mlflow.start_run(run_name="main_analysis_run"):
+    # Handle MLflow run creation - Flat structure
+    if hasattr(args, 'experiment_name') and args.experiment_name:
+        mlflow.set_experiment(args.experiment_name)
+    
+    # Create run with consistent naming pattern
+    run_name = f"{args.run_id}_50_contrastive" if hasattr(args, 'run_id') and args.run_id else f"{args.dataset}_50_contrastive"
+    
+    with mlflow.start_run(run_name=run_name) as run:
         mlflow.log_params(vars(args))
+        
+        # Log provenance if provided
+        if hasattr(args, 'provenance') and args.provenance:
+            try:
+                provenance = json.loads(args.provenance)
+                mlflow.log_params(provenance)
+            except json.JSONDecodeError:
+                print("Warning: Could not decode provenance JSON")
 
         summary_data = []
         for layer in args.layers:

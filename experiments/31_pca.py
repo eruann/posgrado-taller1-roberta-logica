@@ -82,7 +82,9 @@ def parse_args():
     parser.add_argument("--experiment_name", default="pca-gpu")
     parser.add_argument("--dataset", required=True, help="Dataset name")
     parser.add_argument("--layer_num", type=int, required=True, help="Embedding layer number")
+    parser.add_argument("--normalization_type", default="", help="Normalization method used")
     parser.add_argument("--provenance", default="{}", help="Provenance JSON string")
+    parser.add_argument("--run_id", default="", help="MLflow run ID")
     return parser.parse_args()
 
 def log_scalar(key, value):
@@ -152,17 +154,12 @@ def process_pca_gpu(input_path: str, output_path: str, n_components: int, chunk_
     if df.empty:
         raise ValueError("Input data is empty")
     
-    # Identify embedding columns dynamically
-    embedding_cols = [col for col in df.columns if 'embedding' in col]
-    if not embedding_cols:
-        # Fallback for older formats or delta embeddings
-        # Assumes all columns except IDs and labels are feature columns
-        non_feature_cols = ['label', 'premise_id', 'hypothesis_id']
-        feature_cols = [col for col in df.columns if col not in non_feature_cols]
-        print("-> Could not find 'embedding' columns, using fallback features.")
-    else:
-        feature_cols = embedding_cols
-        print(f"-> Found {len(feature_cols)} embedding columns.")
+    # Identify feature columns (exclude label and ID columns)
+    exclude_cols = ['label', 'premise_id', 'hypothesis_id']
+    feature_cols = [col for col in df.columns if col not in exclude_cols]
+    print(f"-> Feature columns: {len(feature_cols)} (excluded: {exclude_cols})")
+    print(f"-> First few feature columns: {feature_cols[:5]}")
+    print(f"-> Last few feature columns: {feature_cols[-5:]}")
 
     if not feature_cols:
         raise ValueError("Could not determine feature columns for PCA.")
@@ -202,7 +199,7 @@ def process_pca_gpu(input_path: str, output_path: str, n_components: int, chunk_
 def _process_standard_pca(df, feature_cols, output_path, n_components):
     """Standard PCA for smaller datasets"""
     # Extract and normalize data
-    X = df[feature_cols].values.astype('float64')
+    X = df[feature_cols].values.astype('float32')
     
     # Input validation and cleaning
     if cp.any(cp.isnan(X)) or cp.any(cp.isinf(X)):
@@ -216,10 +213,11 @@ def _process_standard_pca(df, feature_cols, output_path, n_components):
     std_vals = cp.where(std_vals < 1e-7, 1.0, std_vals)  # Avoid division by zero
     X_normalized = (X - mean_vals) / std_vals
     
-    # Fit PCA
-    print("Fitting PCA...")
-    pca = GPU_PCA(n_components=n_components, svd_solver='full')
+    # Fit PCA with faster solver
+    print(f"Fitting PCA with {n_components} components on {X_normalized.shape[0]} samples × {X_normalized.shape[1]} features...")
+    pca = GPU_PCA(n_components=n_components, svd_solver='auto')
     X_pca = pca.fit_transform(X_normalized)
+    print("PCA fitting completed!")
     
     # Output validation
     if cp.any(cp.isnan(X_pca)) or cp.any(cp.isinf(X_pca)):
@@ -229,7 +227,14 @@ def _process_standard_pca(df, feature_cols, output_path, n_components):
     pca_df = cudf.DataFrame({
         f'PCA_{i+1}': X_pca[:, i].astype('float32') for i in range(n_components)
     })
-    pca_df['label'] = df['label'].values
+    # Preserve label as numeric codes (do NOT feed into PCA)
+    if df['label'].dtype.kind in ('b', 'i', 'u', 'f'):
+        pca_df['label'] = df['label'].astype('int8').values
+        zca_label = df['label'].astype('int8').values
+    else:
+        codes = df['label'].astype('category').cat.codes
+        pca_df['label'] = codes.astype('int8').values
+        zca_label = codes.astype('int8').values
     
     # Create ZCA (whitened) variant
     eigenvalues = pca.explained_variance_
@@ -240,12 +245,18 @@ def _process_standard_pca(df, feature_cols, output_path, n_components):
     zca_df = cudf.DataFrame({
         f'PCA_{i+1}': X_zca[:, i].astype('float32') for i in range(n_components)
     })
-    zca_df['label'] = df['label'].values
+    zca_df['label'] = zca_label
     
     # Save both variants
     base_path = Path(output_path)
-    pca_path = base_path.parent / f"pca_{base_path.name}"
-    zca_path = base_path.parent / f"zca_{base_path.name}"
+    if base_path.name.startswith("pca_"):
+        # Caller already provided a pca_ prefixed filename
+        pca_path = base_path
+        zca_path = base_path.with_name(base_path.name.replace("pca_", "zca_", 1))
+    else:
+        # Add prefixes ourselves
+        pca_path = base_path.parent / f"pca_{base_path.name}"
+        zca_path = base_path.parent / f"zca_{base_path.name}"
     
     print(f"Saving PCA results to {pca_path}")
     pca_df.to_parquet(pca_path)
@@ -267,7 +278,7 @@ def _process_standard_pca(df, feature_cols, output_path, n_components):
         'explained_variance_ratio': pca.explained_variance_ratio_.tolist(),
         'total_explained_variance': float(cp.sum(pca.explained_variance_ratio_)),
         'n_components_used': n_components,
-        'method': 'standard_pca',
+        'pca_method': 'standard_pca',
         'variants_created': ['pca', 'zca'],
         'pca_path': str(pca_path),
         'zca_path': str(zca_path)
@@ -403,8 +414,14 @@ def _process_incremental_pca(df, feature_cols, output_path, n_components, chunk_
     
     # Save both variants
     base_path = Path(output_path)
-    pca_path = base_path.parent / f"pca_{base_path.name}"
-    zca_path = base_path.parent / f"zca_{base_path.name}"
+    if base_path.name.startswith("pca_"):
+        # Caller already provided a pca_ prefixed filename
+        pca_path = base_path
+        zca_path = base_path.with_name(base_path.name.replace("pca_", "zca_", 1))
+    else:
+        # Add prefixes ourselves
+        pca_path = base_path.parent / f"pca_{base_path.name}"
+        zca_path = base_path.parent / f"zca_{base_path.name}"
     
     print(f"Saving PCA results to {pca_path}")
     pca_df.to_parquet(pca_path)
@@ -422,7 +439,7 @@ def _process_incremental_pca(df, feature_cols, output_path, n_components, chunk_
         'explained_variance_ratio': pca.explained_variance_ratio_.tolist(),
         'total_explained_variance': float(cp.sum(pca.explained_variance_ratio_)),
         'n_components_used': n_components,
-        'method': 'incremental_pca',
+        'pca_method': 'incremental_pca',
         'variants_created': ['pca', 'zca'],
         'pca_path': str(pca_path),
         'zca_path': str(zca_path)
@@ -431,29 +448,26 @@ def _process_incremental_pca(df, feature_cols, output_path, n_components, chunk_
 def main():
     args = parse_args()
     
-    # Set up MLflow
-    mlflow.set_experiment(args.experiment_name)
+    # Handle MLflow run creation - Flat structure
+    if hasattr(args, 'experiment_name') and args.experiment_name:
+        mlflow.set_experiment(args.experiment_name)
     
-    # Create descriptive run name
-    run_name = f"{args.dataset}_{args.n_components}comp_layer{args.layer_num}"
+    # Create run with consistent naming pattern
+    run_name = f"{args.run_id}_layer_{args.layer_num}_31_pca" if hasattr(args, 'run_id') and args.run_id else f"{args.dataset}_layer_{args.layer_num}_31_pca"
     
-    with mlflow.start_run(run_name=run_name):
+    with mlflow.start_run(run_name=run_name) as run:
         start_time = time.time()
         
-        # Log parameters
-        mlflow.log_param("source_path", str(args.source_path))
-        mlflow.log_param("out", str(args.out))
-        mlflow.log_param("n_components", args.n_components)
-        mlflow.log_param("chunk_size_mode", args.chunk_size_mode)
-        mlflow.log_param("dataset", args.dataset)
-        mlflow.log_param("layer_num", args.layer_num)
+        # Log all parameters automatically
+        mlflow.log_params(vars(args))
         
-        # Log provenance
-        try:
-            provenance = json.loads(args.provenance)
-            mlflow.log_params(provenance)
-        except json.JSONDecodeError:
-            print("Warning: Could not decode provenance JSON")
+        # Log provenance if provided
+        if hasattr(args, 'provenance') and args.provenance:
+            try:
+                provenance = json.loads(args.provenance)
+                mlflow.log_params(provenance)
+            except json.JSONDecodeError:
+                print("Warning: Could not decode provenance JSON")
         
         # Set tags
         mlflow.set_tag("experiment_name", args.experiment_name)

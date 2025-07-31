@@ -39,7 +39,9 @@ def parse_args():
     parser.add_argument("--umap_source_reduction_type", type=str, choices=["pca", "zca"], required=False)
     parser.add_argument("--original_pca_n_components_before_slice", type=int, required=False)
     parser.add_argument("--skipped_n_components", type=int, required=False)
+    parser.add_argument("--normalization_type", default="", help="Normalization method used")
     parser.add_argument("--provenance", type=str, help="JSON string with pipeline parameters")
+    parser.add_argument("--run_id", default="", help="MLflow run ID")
     return parser.parse_args()
 
 def aggressive_cleanup():
@@ -185,11 +187,13 @@ def validate_input_data(df):
     if 'label' not in df.columns:
         raise ValueError("Input data must contain 'label' column")
     
-    feature_cols = [col for col in df.columns if col != 'label']
+    # Identify feature columns (exclude label and ID columns)
+    exclude_cols = ['label', 'premise_id', 'hypothesis_id']
+    feature_cols = [col for col in df.columns if col not in exclude_cols]
     if len(feature_cols) == 0:
         raise ValueError("No feature columns found")
     
-    print(f"Feature columns: {len(feature_cols)}")
+    print(f"Feature columns: {len(feature_cols)} (excluded: {exclude_cols})")
     
     # Check for NaN/Inf values
     initial_rows = len(df)
@@ -297,37 +301,21 @@ def process_kmeans_gpu(input_path: str, output_path: str, k: int, max_iter: int 
 def main():
     args = parse_args()
     
-    # Set up MLflow
-    mlflow.set_experiment(args.experiment_name)
+    # Handle MLflow run creation - Flat structure
+    if hasattr(args, 'experiment_name') and args.experiment_name:
+        mlflow.set_experiment(args.experiment_name)
     
-    # Create descriptive run name
-    run_name = f"{args.dataset}_k{args.k}_layer{args.layer_num}"
+    # Create run with consistent naming pattern
+    run_name = f"{args.run_id}_layer_{args.layer_num}_40_clustering_k{args.k}" if hasattr(args, 'run_id') and args.run_id else f"{args.dataset}_layer_{args.layer_num}_40_clustering_k{args.k}"
     
-    with mlflow.start_run(run_name=run_name):
+    with mlflow.start_run(run_name=run_name) as run:
         start_time = time.time()
         
-        # Log parameters
-        mlflow.log_param("input_path", str(args.input_path))
-        mlflow.log_param("out_path", str(args.out_path))
-        mlflow.log_param("k", args.k)
-        mlflow.log_param("max_iter", args.max_iter)
-        mlflow.log_param("random_state", args.random_state)
-        mlflow.log_param("dataset", args.dataset)
-        mlflow.log_param("reduction_type", args.reduction_type)
-        mlflow.log_param("layer_num", args.layer_num)
+        # Log all parameters automatically
+        mlflow.log_params(vars(args))
         
-        # Log optional parameters
-        if args.input_n_components:
-            mlflow.log_param("input_n_components", args.input_n_components)
-        if args.umap_n_neighbors:
-            mlflow.log_param("umap_n_neighbors", args.umap_n_neighbors)
-        if args.umap_metric:
-            mlflow.log_param("umap_metric", args.umap_metric)
-        if args.umap_source_reduction_type:
-            mlflow.log_param("umap_source_reduction_type", args.umap_source_reduction_type)
-        
-        # Log provenance
-        if args.provenance:
+        # Log provenance if provided
+        if hasattr(args, 'provenance') and args.provenance:
             try:
                 provenance = json.loads(args.provenance)
                 mlflow.log_params(provenance)

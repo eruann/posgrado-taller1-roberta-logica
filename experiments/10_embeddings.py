@@ -50,6 +50,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import json
 import re
 from collections import defaultdict
 from pathlib import Path
@@ -103,6 +104,8 @@ def parse_args():
     p.add_argument("--dataset", default="snli", help="Name of the dataset to use from Hugging Face")
     p.add_argument("--layer_num", default="0-12", help="Layer range to process (e.g., '12' or '0-12'). Inclusive.")
     p.add_argument("--combine_only", action="store_true", help="Only combine existing part files, do not generate new embeddings.")
+    p.add_argument("--provenance", default="{}", help="Provenance JSON string")
+    p.add_argument("--run_id", default="", help="MLflow run ID")
     return p.parse_args()
 
 def parse_layer_range(range_str: str) -> range:
@@ -300,12 +303,24 @@ def main():
     
     use_cudf = use_gpu and RAPIDS_AVAILABLE
     dtype = torch.float16 if args.precision == "fp16" else torch.float32
-    mlflow.set_experiment(args.experiment_name)
-
-    with mlflow.start_run(run_name=f"{args.dataset}_all") as run:
-        for k, v in vars(args).items():
-            mlflow.log_param(k, v)
-        mlflow.log_param("layer_num", args.layer_num)
+    # Handle MLflow run creation - Flat structure
+    if hasattr(args, 'experiment_name') and args.experiment_name:
+        mlflow.set_experiment(args.experiment_name)
+    
+    # Create run with consistent naming pattern
+    run_name = f"{args.run_id}_layer_{args.layer_num}_10_embeddings" if hasattr(args, 'run_id') and args.run_id else f"{args.dataset}_layer_{args.layer_num}_10_embeddings"
+    
+    with mlflow.start_run(run_name=run_name) as run:
+        # Log all parameters automatically
+        mlflow.log_params(vars(args))
+        
+        # Log provenance if provided
+        if hasattr(args, 'provenance') and args.provenance:
+            try:
+                provenance = json.loads(args.provenance)
+                mlflow.log_params(provenance)
+            except json.JSONDecodeError:
+                print("Warning: Could not decode provenance JSON")
 
         tok = RobertaTokenizer.from_pretrained("roberta-base")
         model = RobertaModel.from_pretrained("roberta-base", torch_dtype=dtype).to(args.device).eval()

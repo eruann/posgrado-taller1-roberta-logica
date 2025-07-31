@@ -60,6 +60,8 @@ def parse_args():
     parser.add_argument("--experiment_name", default="statistical_validation", help="MLflow experiment name")
     parser.add_argument("--bootstrap_iterations", type=int, default=50, help="Number of bootstrap iterations")
     parser.add_argument("--permutation_iterations", type=int, default=100, help="Number of permutation test iterations")
+    parser.add_argument("--provenance", default="{}", help="Provenance JSON string")
+    parser.add_argument("--run_id", default="", help="MLflow run ID")
     return parser.parse_args()
 
 def test_clustering_significance(y_true, y_pred):
@@ -218,22 +220,26 @@ def main():
     # Setup output directory
     args.output_dir.mkdir(parents=True, exist_ok=True)
     
-    # Set up MLflow
-    mlflow.set_experiment(args.experiment_name)
+    # Handle MLflow run creation - Flat structure
+    if hasattr(args, 'experiment_name') and args.experiment_name:
+        mlflow.set_experiment(args.experiment_name)
     
-    with mlflow.start_run(run_name=f"statistical_validation_{args.dataset}") as run:
+    # Create run with consistent naming pattern
+    run_name = f"{args.run_id}_80_statistical_validation" if hasattr(args, 'run_id') and args.run_id else f"{args.dataset}_80_statistical_validation"
+    
+    with mlflow.start_run(run_name=run_name) as run:
         print(f"--- Starting Statistical Validation ---")
-        print(f"Results directory: {args.results_dir}")
-        print(f"Output directory: {args.output_dir}")
-        print(f"Dataset: {args.dataset}")
         
-        # Log parameters
-        mlflow.log_params({
-            "results_dir": str(args.results_dir),
-            "dataset": args.dataset,
-            "bootstrap_iterations": args.bootstrap_iterations,
-            "permutation_iterations": args.permutation_iterations
-        })
+        # Log all parameters automatically
+        mlflow.log_params(vars(args))
+        
+        # Log provenance if provided
+        if hasattr(args, 'provenance') and args.provenance:
+            try:
+                provenance = json.loads(args.provenance)
+                mlflow.log_params(provenance)
+            except json.JSONDecodeError:
+                print("Warning: Could not decode provenance JSON")
         
         # Analyze clustering results
         if args.results_dir.exists():

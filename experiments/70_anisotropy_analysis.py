@@ -31,6 +31,9 @@ def parse_args():
     parser.add_argument("--experiment_name", default="anisotropy_analysis", help="MLflow experiment name")
     parser.add_argument("--embedding_type", default="full", choices=["full", "delta"], 
                        help="Type of embedding (full or delta)")
+    parser.add_argument("--normalization_type", default="", help="Normalization method used")
+    parser.add_argument("--provenance", default="{}", help="Provenance JSON string")
+    parser.add_argument("--run_id", default="", help="MLflow run ID")
     return parser.parse_args()
 
 def run_command(cmd: list, cwd: Path = None) -> str:
@@ -78,24 +81,32 @@ def main():
     # Setup output directory
     args.output_dir.mkdir(parents=True, exist_ok=True)
     
-    # Set up MLflow
-    mlflow.set_experiment(args.experiment_name)
+    # Handle MLflow run creation - Flat structure
+    if hasattr(args, 'experiment_name') and args.experiment_name:
+        mlflow.set_experiment(args.experiment_name)
     
-    with mlflow.start_run(run_name=f"anisotropy_{args.dataset}_layer{args.layer_num}") as run:
+    # Create run with consistent naming pattern
+    run_name = f"{args.run_id}_layer_{args.layer_num}_70_anisotropy" if hasattr(args, 'run_id') and args.run_id else f"{args.dataset}_layer_{args.layer_num}_70_anisotropy"
+    
+    with mlflow.start_run(run_name=run_name) as run:
         print(f"--- Starting Anisotropy Analysis ---")
+        
         print(f"Input: {args.input_path}")
         print(f"Output: {args.output_dir}")
         print(f"Dataset: {args.dataset}")
         print(f"Layer: {args.layer_num}")
         print(f"Embedding Type: {args.embedding_type}")
         
-        # Log parameters
-        mlflow.log_params({
-            "input_path": str(args.input_path),
-            "dataset": args.dataset,
-            "layer_num": args.layer_num,
-            "embedding_type": args.embedding_type
-        })
+        # Log all parameters automatically
+        mlflow.log_params(vars(args))
+        
+        # Log provenance if provided
+        if hasattr(args, 'provenance') and args.provenance:
+            try:
+                provenance = json.loads(args.provenance)
+                mlflow.log_params(provenance)
+            except json.JSONDecodeError:
+                print("Warning: Could not decode provenance JSON")
         
         # Calculate anisotropy
         if args.input_path.exists():

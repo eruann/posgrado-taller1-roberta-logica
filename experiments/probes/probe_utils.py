@@ -43,7 +43,9 @@ def train_decision_tree_probe(
     except Exception as e:
         raise IOError(f"Could not read Parquet file at {data_path}") from e
 
-    feature_cols = [col for col in gdf.columns if col != 'label']
+    # Exclude non-feature columns (IDs and labels)
+    exclude_cols = ['label', 'premise_id', 'hypothesis_id']
+    feature_cols = [col for col in gdf.columns if col not in exclude_cols]
     X = gdf[feature_cols]
     y = gdf['label']
     

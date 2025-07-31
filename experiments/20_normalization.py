@@ -31,6 +31,7 @@ def parse_args():
     parser.add_argument("--experiment_name", required=True, help="MLflow experiment name")
     parser.add_argument("--layer_num", required=True, type=int, help="Layer number")
     parser.add_argument("--provenance", default="{}", help="Provenance JSON string")
+    parser.add_argument("--run_id", default="", help="MLflow run ID")
     return parser.parse_args()
 
 def aggressive_cleanup():
@@ -402,27 +403,26 @@ def process_normalization_gpu(source_path: Path, output_path: Path, normalizatio
 def main():
     args = parse_args()
     
-    # Set up MLflow
-    mlflow.set_experiment(args.experiment_name)
+    # Handle MLflow run creation - Flat structure
+    if hasattr(args, 'experiment_name') and args.experiment_name:
+        mlflow.set_experiment(args.experiment_name)
     
-    # Create descriptive run name
-    run_name = f"{args.normalization_type}_layer{args.layer_num}"
+    # Create run with consistent naming pattern
+    run_name = f"{args.run_id}_layer_{args.layer_num}_20_normalization_{args.normalization_type}" if hasattr(args, 'run_id') and args.run_id else f"{args.dataset}_layer_{args.layer_num}_20_normalization_{args.normalization_type}"
     
-    with mlflow.start_run(run_name=run_name):
+    with mlflow.start_run(run_name=run_name) as run:
         start_time = time.time()
         
-        # Log parameters
-        mlflow.log_param("source_path", str(args.source_path))
-        mlflow.log_param("out_path", str(args.out_path))
-        mlflow.log_param("normalization_type", args.normalization_type)
-        mlflow.log_param("layer_num", args.layer_num)
+        # Log all parameters automatically
+        mlflow.log_params(vars(args))
         
-        # Log provenance
-        try:
-            provenance = json.loads(args.provenance)
-            mlflow.log_params(provenance)
-        except json.JSONDecodeError:
-            print("Warning: Could not decode provenance JSON")
+        # Log provenance if provided
+        if hasattr(args, 'provenance') and args.provenance:
+            try:
+                provenance = json.loads(args.provenance)
+                mlflow.log_params(provenance)
+            except json.JSONDecodeError:
+                print("Warning: Could not decode provenance JSON")
         
         # Set tags
         mlflow.set_tag("experiment_name", args.experiment_name)

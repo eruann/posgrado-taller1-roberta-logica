@@ -12,9 +12,16 @@ def get_classification_metrics(y_true, y_pred) -> dict:
     """Calculates precision, recall, and confusion matrix."""
     cm = confusion_matrix(y_true, y_pred)
     
+    # Determine if binary or multiclass
+    n_classes = len(set(y_true) | set(y_pred))
+    if n_classes == 2:
+        average = 'binary'
+    else:
+        average = 'weighted'  # Use weighted average for multiclass
+    
     metrics = {
-        "precision": precision_score(y_true, y_pred, average='binary', zero_division=0),
-        "recall": recall_score(y_true, y_pred, average='binary', zero_division=0),
+        "precision": precision_score(y_true, y_pred, average=average, zero_division=0),
+        "recall": recall_score(y_true, y_pred, average=average, zero_division=0),
         "confusion_matrix": cm.tolist() # Convert to list for JSON serialization
     }
     return metrics

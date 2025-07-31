@@ -125,9 +125,9 @@ def main():
         
         run_command(umap_cmd)
         
-        # Log artifacts
-        mlflow.log_artifact(str(pca_output))
-        mlflow.log_artifact(str(umap_output))
+        # Log completion metrics
+        mlflow.log_metric("pca_completed", 1)
+        mlflow.log_metric("umap_completed", 1)
         
         print(f"\n✅ Dimensionality reduction pipeline completed!")
         print(f"📁 PCA output: {pca_output}")
